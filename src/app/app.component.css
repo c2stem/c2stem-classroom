@@ -1,0 +1,27 @@
+
+body{
+  margin: 0;
+}
+.nav-tabs{
+  padding-top: 50px;
+  /*border-style: solid;*/
+}
+.centerContent{
+
+  margin-bottom: 0px;
+}
+
+.maincontainer{
+   margin-top: 80px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+button{
+  height: 50px;
+  font-size: small;
+}
+
+.nav-link{
+  font-size: medium;
+}

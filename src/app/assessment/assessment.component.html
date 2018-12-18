@@ -1,0 +1,79 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <p>The following program simulates the motion of a sprite. </p>
+        <div class="shift">
+          <div>
+            <img class="responsive-img" src="assets/checkin_1.2.3a.jpg" width="30%">
+            <img class="responsive-img" src="assets/checkin_1.2.3b.jpg" width="50%">
+          </div>
+          <div class="shift">
+            <p>a. Which direction does the sprite travel in?</p>
+            <!--<form action="#">-->
+              <p>
+                <input class="with-gap" type="radio"
+                       formControlName="radio1_2_3_a"
+                       id="radio1_2_3_a" #radio1_2_3_a (click)="getRadio(radio1_2_3_a.id, radio1_2_3_a.value)" />
+                <label for="radio1_2_3_a">Left</label>
+              </p>
+              <p>
+                <input class="with-gap" type="radio"
+                       formControlName="radio1_2_3_b"
+                       id="radio1_2_3_b" #radio1_2_3_b (click)="getRadio(radio1_2_3_b.id, radio1_2_3_b.value)"  />
+                <label for="radio1_2_3_b">Right</label>
+              </p>
+              <p>
+                <input class="with-gap" type="radio"
+                       formControlName="radio1_2_3_c"
+                       id="radio1_2_3_c" #radio1_2_3_c (click)="getRadio(radio1_2_3_c.id, radio1_2_3_c.value)" />
+                <label for="radio1_2_3_c">Up</label>
+              </p>
+              <p>
+                <input class="with-gap"type="radio"
+                       formControlName="radio1_2_3_d"
+                       id="radio1_2_3_d" #radio1_2_3_d (click)="getRadio(radio1_2_3_d.id, radio1_2_3_d.value)" />
+                <label for="radio1_2_3_d">Down</label>
+              </p>
+            <!--</form>-->
+          </div>
+          <div>
+            <div class="row">
+              <!--<form class="col s12">-->
+                <div class="row">
+                  <div class="input-field col s12">
+                    <label>b. What is the sprite’s speed while in motion?</label>
+                    <input #box1
+                           id="box1"
+                           class="form-control"
+                           formControlName="box1"
+                           (keyup.enter) ="update(box1.value)"
+                           (blur)="update(box1.value)">
+                  </div>
+                  <div class="input-field col s12">
+                    <label>c. What is the total distance traveled that the sprite will have traveled when the simulation ends?</label>
+                    <input #box2
+                           id="box2"
+                           formControlName="box2"
+                           (keyup.enter) ="update(box2.value)"
+                           (blur)="update(box2.value)">
+                  </div>
+                  <div class="input-field col s12">
+                    <label>d. For how much time will the sprite have traveled when the simulation ends?</label>
+                    <input #box3
+                           id="box3"
+                           formControlName="box3"
+                           (keyup.enter) ="update(box3.value)"
+                           (blur)="update(box3.value)">
+                  </div>
+                </div>
+             <!-- </form>-->
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,73 @@
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+<mdb-navbar SideClass="navbar fixed-top navbar-expand-lg navbar-dark pink scrolling-navbar ie-nav" [containerInside]="false">
+  <mdb-navbar-brand>
+    <a class="logo navbar-brand" href="/">
+      <img src="assets/c2stemlogo.png" height="30" class="d-inline-block align-top" alt="">
+    </a>
+  </mdb-navbar-brand>
+  <links>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active waves-light" mdbWavesEffect>
+        <!--<a class="nav-link">Resources </a>-->
+        <button type="button" mdbBtn color="primary" class="relative waves-light" (click)="basicModal.show()" mdbWavesEffect>Resources</button>
+      </li>
+      <li class="nav-item waves-light" mdbWavesEffect>
+        <a class="nav-link" href="/user">Dashboard</a>
+      </li>
+      <li class="nav-item waves-light" mdbWavesEffect>
+        <a class="nav-link" href="/playground">Playground</a>
+      </li>
+      <li class="nav-item waves-light" mdbWavesEffect>
+        <a class="nav-link">Login</a>
+      </li>
+    </ul>
+  </links>
+</mdb-navbar>
+<!-- Main -->
+<main>
+  <div class="maincontainer">
+    <div class="centerContent" >
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</main>
+<!-- /.Main -->
+
+<!-- Footer -->
+<footer class="page-footer font-small pink fixed-bottom">
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-right py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col align-self-end">
+          <a class="nav-link" href="/user">Collaborate</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+
+<div mdbModal #basicModal="mdbModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myBasicModalLabel" aria-hidden="true" style="overflow-y: auto">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="basicModal.hide()">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title w-100" id="myModalLabel">Resources</h4>
+      </div>
+      <div class="modal-body">
+        <app-resources></app-resources>
+      </div>
+      <div class="modal-footer">
+        <button type="button" mdbBtn color="secondary" class="waves-light" aria-label="Close" (click)="basicModal.hide()" mdbWavesEffect>Close</button>
+        <button type="button" mdbBtn color="primary" class="relative waves-light" mdbWavesEffect>Save!</button>
+      </div>
+    </div>
+  </div>
+</div>

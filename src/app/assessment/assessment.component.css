@@ -1,0 +1,9 @@
+.scrollspy-example {
+  height: 360px;
+}
+body {
+  position: relative;
+}
+.navbar.navbar-dark .navbar-nav .nav-item .nav-link.active{
+  border-bottom: 2px solid white;
+}
