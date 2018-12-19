@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
@@ -14,6 +14,7 @@ import {HttpModule} from '@angular/http';
 import { PlaygroundComponent } from './playground/playground.component';
 import { HomeComponent } from './home/home.component';
 import { ResourcesComponent } from './resources/resources.component';
+import { IframeComponent } from './iframe/iframe.component';
 
 const appRoutes: Routes =[
   { path: '', component: HomeComponent},
@@ -40,12 +41,14 @@ const appRoutes: Routes =[
     InstructionComponent,
     PlaygroundComponent,
     HomeComponent,
-    ResourcesComponent
+    ResourcesComponent,
+    IframeComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    /*RouterModule.forRoot(appRoutes, { enableTracing: true}),*/
     RouterModule.forRoot(appRoutes),
     MDBBootstrapModule.forRoot()
   ],

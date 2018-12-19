@@ -7,7 +7,6 @@ body{
   /*border-style: solid;*/
 }
 .centerContent{
-
   margin-bottom: 0px;
 }
 
@@ -24,4 +23,8 @@ button{
 
 .nav-link{
   font-size: medium;
+}
+
+.navbar{
+  padding: 0!important;
 }
