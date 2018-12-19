@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, FormBuilder} from '@angular/forms';
+import {LoggingService} from '../logging.service';
 
 @Component({
   selector: 'app-assessment',
   templateUrl: './assessment.component.html',
-  styleUrls: ['./assessment.component.css']
+  styleUrls: ['./assessment.component.css'],
+  providers: [LoggingService]
 })
 export class AssessmentComponent implements OnInit {
   signupForm: FormGroup;
   value = '';
   id = '';
   clickvalue = '';
-  constructor() { }
+
+  constructor(private loggingService: LoggingService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.signupForm = new FormGroup({
@@ -23,18 +26,40 @@ export class AssessmentComponent implements OnInit {
       'box2' : new FormControl(null),
       'box3' : new FormControl(null)
     });
+    const formValues = sessionStorage.getItem('form');
+    if(formValues) {
+      this.applyFormValues(this.signupForm, JSON.parse(formValues));
+    }
+
+    this.
+      signupForm.
+      valueChanges.
+      subscribe( form => {
+        sessionStorage.setItem('form', JSON.stringify(form));
+    });
   }
 
   onSubmit() {
-    console.log(this.signupForm.value);
+    this.loggingService.logToConsole(this.signupForm.value);
   }
 
-  update(value: string) { this.value = value;
-  console.log(value);
+  update(value: string) {
+    this.value = value;
+    this.loggingService.logToConsole(value);
   }
 
   getRadio(id, clickvalue) {
+    this.loggingService.logIdValueToConsole(id, clickvalue);
+  }
+  private applyFormValues (group, formValues){
+    Object.keys(formValues).forEach(key => {
+      const formControl = group.controls[key];
 
-    console.log(id, clickvalue);
+      if (formControl instanceof FormGroup) {
+        this.applyFormValues(formControl, formValues[key]);
+      } else {
+        formControl.setValue(formValues[key]);
+      }
+    });
   }
 }
