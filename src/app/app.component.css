@@ -11,7 +11,7 @@ body{
 }
 
 .maincontainer{
-   margin-top: 80px;
+  margin-top: 60px;
   margin-left: 0;
   margin-right: 0;
 }
@@ -25,6 +25,3 @@ button{
   font-size: medium;
 }
 
-.navbar{
-  padding: 0!important;
-}

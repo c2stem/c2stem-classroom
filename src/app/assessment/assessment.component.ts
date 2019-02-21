@@ -9,15 +9,14 @@ import {LoggingService} from '../logging.service';
   providers: [LoggingService]
 })
 export class AssessmentComponent implements OnInit {
-  signupForm: FormGroup;
+  assessForm: FormGroup;
   value = '';
   id = '';
-  clickvalue = '';
 
   constructor(private loggingService: LoggingService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.signupForm = new FormGroup({
+    this.assessForm = new FormGroup({
       'radio1_2_3_a': new FormControl(null),
       'radio1_2_3_b': new FormControl(null),
       'radio1_2_3_c': new FormControl(null),
@@ -27,20 +26,20 @@ export class AssessmentComponent implements OnInit {
       'box3' : new FormControl(null)
     });
     const formValues = sessionStorage.getItem('form');
-    if(formValues) {
-      this.applyFormValues(this.signupForm, JSON.parse(formValues));
+    if (formValues) {
+      this.applyFormValues(this.assessForm, JSON.parse(formValues));
     }
 
     this.
-      signupForm.
-      valueChanges.
-      subscribe( form => {
-        sessionStorage.setItem('form', JSON.stringify(form));
+    assessForm.
+    valueChanges.
+    subscribe( assessForm => {
+      sessionStorage.setItem('assessForm', JSON.stringify(assessForm));
     });
   }
 
   onSubmit() {
-    this.loggingService.logToConsole(this.signupForm.value);
+    this.loggingService.logToConsole(this.assessForm.value);
   }
 
   update(value: string) {
@@ -51,7 +50,8 @@ export class AssessmentComponent implements OnInit {
   getRadio(id, clickvalue) {
     this.loggingService.logIdValueToConsole(id, clickvalue);
   }
-  private applyFormValues (group, formValues){
+
+  private applyFormValues (group, formValues) {
     Object.keys(formValues).forEach(key => {
       const formControl = group.controls[key];
 

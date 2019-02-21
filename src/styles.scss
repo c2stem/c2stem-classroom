@@ -3,3 +3,16 @@
 body{
   font-size: medium;
 }
+
+a.active{
+  color: darkturquoise;
+}
+
+.draggable {
+  cursor: move;
+  user-select: none;
+}
+
+.tooltip-inner {
+  font-size: 1.2rem;
+}

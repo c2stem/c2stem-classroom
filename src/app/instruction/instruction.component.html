@@ -1,88 +1,113 @@
-<ul class="nav nav-tabs ">
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/">Home</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/instruction">Instruction</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/inquiry">Inquiry</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/modelbuild">Model Building</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="assessment">Assessment</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/instruction">Instruction</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/inquiry">Inquiry</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/modelbuild">Model Building</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/assessment">Assessment</a>
-  </li>
-  <li role="presentation"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}">
-    <a routerLink="/modelbuild">Challenge</a>
-  </li>
-</ul>
-<div class="navbar navbar-fixed-left">
-  <ul class="nav nav-tabs ">
-    <li role="presentation"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
-      <a routerLink="/instruction/exercise1">Ex1</a>
-    </li>
-    <li role="presentation"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
-      <a routerLink="/instruction/exercise2">Ex2</a>
-    </li>
-    <li role="presentation"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
-      <a routerLink="/instruction/exercise3">Ex3</a>
-    </li>
-    <li role="presentation"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">
-      <a routerLink="/instruction/exercise4">Ex4</a>
-    </li>
-  </ul>
-  <div>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. In eu mi bibendum neque. Id diam vel quam elementum pulvinar etiam non quam. Adipiscing tristique risus nec feugiat in. Cras adipiscing enim eu turpis egestas pretium aenean pharetra. Nec feugiat nisl pretium fusce. In tellus integer feugiat scelerisque varius. </p>
-    <img src="assets/testimage.jpg" alt="..." class="img-rounded">
+<!--navigation tab-->
 
-    <input type="text" class="form-control" id="exampleInputName2" placeholder="Please enter your response">
-
-    <button type="button" class="btn btn-primary btn-sm">Small button</button>
-  </div>
-
-</div>
 <div class="container">
-  <iframe src="https://editor.c2stem.org" height="100%" width="100%" frameborder="0"></iframe>
+  <div class="row">
+    <button mdbBtn class="p-10 animated pulse infinite" type="button" color="danger" (click)="sidenav.toggle()" mdbTooltip="Click to draw/collapse the SideNav" placement="right" mdbWavesEffect><mdb-icon fas icon="bars" size="fa-2x"></mdb-icon></button>
+    <ul class="nav nav-tabs ">
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/">Home</a>
+      </li>
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/instruction">Instruction</a>
+      </li>
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/inquiry">Inquiry</a>
+      </li>
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/modelbuild">Model Building</a>
+      </li>
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/assessment">Assessment</a>
+      </li>
+      <li role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/challenge">Challenge</a>
+      </li>
+    </ul>
+  </div>
+  <!-- SideNav component -->
+  <div class="row">
+    <mat-sidenav-container class="example-container">
+      <!--sidenav content-->
+      <mat-sidenav #sidenav mode="side" (opened)="opened" (opened)="events.push('open!')"
+                   (closed)="events.push('close!')">
+        <!--exercise navtab inside the sidenav-->
+        <div class="row">
+          <i class="fas fa-arrow-circle-left fa-3x"></i>
+          <mat-tab-group>
+            <mat-tab label="Ex1"> Content 1 </mat-tab>
+            <mat-tab label="Ex2"> Content 2 </mat-tab>
+            <mat-tab label="Ex3"> Content 3 </mat-tab>
+          </mat-tab-group>
+          <i class="fas fa-arrow-circle-right fa-3x d-flex justify-content-end"></i>
+        </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <img src="assets/checkin_1.2.3a.jpg" alt="..." class="img-rounded">
+        <form [formGroup]="instructionForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="input-field col s12">
+              <label>b. What is the sprite’s speed while in motion?</label>
+              <input #box1
+                     id="box1"
+                     class="form-control"
+                     formControlName="box1"
+                     (keyup.enter) ="update(box1.value)"
+                     (blur)="update(box1.value)">
+            </div>
+          </div>
+          <button mdbBtn class="h-50 d-inline-block" type="button" color="primary" rounded="true" outline="true"(click)="basicModal.show()" mdbWavesEffect>Read More</button>
+        </form>
+      </mat-sidenav>
+      <!--sidenav contianer-->
+      <mat-sidenav-content>
+        <iframe id="iframe" src="https://editor.c2stem.org/?editMode=true&action=present&Username=Naveed&ProjectName=DiceTest" height="100%" width="100%" frameborder="0"></iframe>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
 </div>
+
+<!--popup modal implementation for the buttons(exercises)-->
+<div mdbModal #basicModal="mdbModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myBasicModalLabel" aria-hidden="true" style="overflow-y: auto">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="basicModal.hide()">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title w-100" id="myModalLabel">Exercise</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <p>Lorem ipsum dolor sit amet, dicunt scripserit delicatissimi eos an, sea prima rebum principes ei, quando nonumes legendos ad usu. Et mel agam dictas expetenda. In pri magna suscipit voluptua. Audire apeirian eam ad, ea omnes accusata accommodare nam. Assum aeque choro in usu, per summo mentitum ea. Quod tota moderatius no ius, in sit modo probatus instructior.
+
+            Vidit democritum cum cu, an epicurei electram dissentias vis. Natum tantas repudiandae no has, an est diam partem intellegebat, no sed philosophia conclusionemque. Posse docendi lucilius te cum, vidisse blandit commune per ne, pro at autem petentium consetetur. Cu sensibus mediocrem adversarium vis. Ne mutat solum illud sit, an atomorum partiendo vix, no elitr quaeque platonem eos. Erat velit vim ex.
+
+            Eum stet quidam ornatus an, dicant consetetur te his. Mei in saperet admodum. Ea nec ceteros deterruisset. Cetero voluptua percipitur pro ne, liber maiestatis definiebas te quo. At vis solet munere lucilius. Cum ut molestiae pertinacia, te vim delectus menandri.
+
+            In mollis quaeque ius, sonet volumus scriptorem in ius, ex sed accommodare deterruisset. Eu stet labore prompta eos. Ceteros facilisis consequuntur vis ex, ad vidisse disputando dissentiunt cum, quo dicam percipit oporteat te. Id usu harum voluptatibus, stet bonorum persequeris his no. Recteque temporibus est ut. Te dicant sensibus eam, mea autem temporibus in, an mel idque lucilius. Et vis veri aperiri aliquando, placerat tractatos ea his. </p>
+          <img src="assets/checkin_1.2.3a.jpg" alt="..." class="img-rounded">
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" mdbBtn color="secondary" class="waves-light" aria-label="Close" (click)="basicModal.hide()" mdbWavesEffect>Close</button>
+        <button type="button" mdbBtn color="primary" class="relative waves-light" (click)="basicModal.hide();" mdbWavesEffect>Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

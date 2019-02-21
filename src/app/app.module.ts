@@ -3,6 +3,10 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 import {MDBBootstrapModule} from 'angular-bootstrap-md';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatNativeDateModule} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import {UserComponent} from './user/user.component';
@@ -15,8 +19,9 @@ import { PlaygroundComponent } from './playground/playground.component';
 import { HomeComponent } from './home/home.component';
 import { ResourcesComponent } from './resources/resources.component';
 import { IframeComponent } from './iframe/iframe.component';
+import { ChallengeComponent } from './challenge/challenge.component';
 
-const appRoutes: Routes =[
+const appRoutes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'user', component: UserComponent},
   { path: 'instruction', component: InstructionComponent, children:[
@@ -28,7 +33,8 @@ const appRoutes: Routes =[
   { path: 'inquiry', component: InquiryComponent},
   { path: 'modelbuild', component: ModelbuildComponent},
   { path: 'assessment', component: AssessmentComponent},
-  { path: 'playground', component: PlaygroundComponent}
+  { path: 'playground', component: PlaygroundComponent},
+  {path: 'challenge', component: ChallengeComponent}
 ];
 
 @NgModule({
@@ -42,7 +48,8 @@ const appRoutes: Routes =[
     PlaygroundComponent,
     HomeComponent,
     ResourcesComponent,
-    IframeComponent
+    IframeComponent,
+    ChallengeComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +57,11 @@ const appRoutes: Routes =[
     ReactiveFormsModule,
     /*RouterModule.forRoot(appRoutes, { enableTracing: true}),*/
     RouterModule.forRoot(appRoutes),
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    MatTabsModule,
+    MatSidenavModule,
+    MatNativeDateModule,
+    BrowserAnimationsModule
   ],
   schemas: [ NO_ERRORS_SCHEMA ],
   providers: [],
