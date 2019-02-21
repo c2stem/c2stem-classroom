@@ -21,6 +21,10 @@ import { ResourcesComponent } from './resources/resources.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ChallengeComponent } from './challenge/challenge.component';
 
+
+import { DraggableDirective } from './draggale-modal/draggable.directive';
+import { MovableDirective } from './draggale-modal/movable.directive';
+
 const appRoutes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'user', component: UserComponent},
@@ -49,7 +53,9 @@ const appRoutes: Routes = [
     HomeComponent,
     ResourcesComponent,
     IframeComponent,
-    ChallengeComponent
+    ChallengeComponent,
+    DraggableDirective,
+    MovableDirective
   ],
   imports: [
     BrowserModule,
