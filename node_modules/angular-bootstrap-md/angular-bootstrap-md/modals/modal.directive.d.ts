@@ -8,12 +8,16 @@ export declare class ModalDirective implements AfterViewInit, OnDestroy {
     config: ModalOptions | any;
     /** This event fires immediately when the `show` instance method is called. */
     onShow: EventEmitter<ModalDirective>;
+    open: EventEmitter<ModalDirective>;
     /** This event is fired when the modal has been made visible to the user (will wait for CSS transitions to complete) */
     onShown: EventEmitter<ModalDirective>;
+    opened: EventEmitter<ModalDirective>;
     /** This event is fired immediately when the hide instance method has been called. */
     onHide: EventEmitter<ModalDirective>;
+    close: EventEmitter<ModalDirective>;
     /** This event is fired when the modal has finished being hidden from the user (will wait for CSS transitions to complete). */
     onHidden: EventEmitter<ModalDirective>;
+    closed: EventEmitter<ModalDirective>;
     isAnimated: boolean;
     /** This field contains last dismiss reason.
     Possible values: `backdrop-click`, `esc` and `null` (if modal was closed by direct call of `.hide()`). */

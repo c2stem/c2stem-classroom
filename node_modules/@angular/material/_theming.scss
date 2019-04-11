@@ -1562,6 +1562,10 @@ $mat-ripple-color-opacity: 0.1;
     }
   }
 
+  .mat-pseudo-checkbox-disabled {
+    color: $disabled-color;
+  }
+
   // Default to the accent color. Note that the pseudo checkboxes are meant to inherit the
   // theme from their parent, rather than implementing their own theming, which is why we
   // don't attach to the `mat-*` classes.
@@ -3059,7 +3063,8 @@ $mat-calendar-weekday-table-font-size: 11px !default;
   }
 
   .mat-list-option,
-  .mat-nav-list .mat-list-item {
+  .mat-nav-list .mat-list-item,
+  .mat-action-list .mat-list-item {
     &:hover, &:focus {
       background: mat-color($background, 'hover');
     }

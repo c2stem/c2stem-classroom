@@ -5,7 +5,7 @@ import { CarouselConfig } from './carousel.config';
 export declare enum Direction {
     UNKNOWN = 0,
     NEXT = 1,
-    PREV = 2,
+    PREV = 2
 }
 /**
 * Base element to create carousel
@@ -100,20 +100,20 @@ export declare class CarouselComponent implements OnDestroy, AfterViewInit {
      * @param force: {boolean} if TRUE - will ignore noWrap flag, else will return undefined if next slide require wrapping
   
      */
-    private findNextSlideIndex(direction, force);
+    private findNextSlideIndex;
     /**
      * Sets a slide, which specified through index, as active
      * @param index
      */
-    private _select(index);
+    private _select;
     /**
      * Starts loop of auto changing of slides
      */
-    private restartTimer();
+    private restartTimer;
     /**
      * Stops loop of auto changing of slides
      */
-    private resetTimer();
+    private resetTimer;
     protected hasClass(el: any, className: any): any;
     protected classAdd(el: any, className: any): void;
     protected removeClass(el: any, className: any): void;

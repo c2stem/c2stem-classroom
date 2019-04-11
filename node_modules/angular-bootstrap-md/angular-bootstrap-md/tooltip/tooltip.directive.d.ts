@@ -34,10 +34,12 @@ export declare class TooltipDirective implements OnInit, OnDestroy, OnChanges {
      * Emits an event when the tooltip is shown
      */
     onShown: EventEmitter<any>;
+    shown: EventEmitter<any>;
     /**
      * Emits an event when the tooltip is hidden
      */
     onHidden: EventEmitter<any>;
+    hidden: EventEmitter<any>;
     delay: number;
     fadeDuration: number;
     protected _delayTimeoutId: any;

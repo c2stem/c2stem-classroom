@@ -40,5 +40,5 @@ export declare class MdbInputDirective implements AfterViewChecked, OnInit, Afte
     resize(): void;
     delayedResize(): void;
     initComponent(): void;
-    private checkValue();
+    private checkValue;
 }

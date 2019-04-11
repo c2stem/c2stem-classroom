@@ -8,6 +8,11 @@ import { NgbDateStruct } from './ngb-date-struct';
  */
 export declare class NgbDatepickerConfig {
     dayTemplate: TemplateRef<DayTemplateContext>;
+    dayTemplateData: (date: NgbDateStruct, current: {
+        year: number;
+        month: number;
+    }) => any;
+    footerTemplate: TemplateRef<any>;
     displayMonths: number;
     firstDayOfWeek: number;
     markDisabled: (date: NgbDateStruct, current: {

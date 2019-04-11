@@ -22,7 +22,7 @@ export declare class BaseChartDirective implements OnDestroy, OnChanges, OnInit,
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): any;
     getChartBuilder(ctx: any): any;
-    private updateChartData(newDataValues);
-    private getDatasets();
-    private refresh();
+    private updateChartData;
+    private getDatasets;
+    private refresh;
 }

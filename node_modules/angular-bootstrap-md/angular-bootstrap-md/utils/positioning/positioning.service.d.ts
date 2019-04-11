@@ -26,5 +26,5 @@ export interface PositioningOptions {
 }
 export declare class PositioningService {
     position(options: PositioningOptions | any): void;
-    private _getHtmlElement(element);
+    private _getHtmlElement;
 }

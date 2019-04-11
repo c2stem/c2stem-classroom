@@ -12,7 +12,7 @@ export declare class CollapseComponent implements OnInit {
     overflow: string;
     onExpandBodyDone(event: any): void;
     toggle(): void;
-    open(): void;
+    show(): void;
     hide(): void;
     initializeCollapseState(): void;
     ngOnInit(): void;

@@ -17,7 +17,7 @@ import {bindArguments, patchClass, patchMacroTask, patchMethod, patchOnPropertie
 import {propertyPatch} from './define-property';
 import {eventTargetPatch, patchEvent} from './event-target';
 import {propertyDescriptorPatch} from './property-descriptor';
-import {registerElementPatch} from './register-element';
+import {patchCustomElements, registerElementPatch} from './register-element';
 
 Zone.__load_patch('util', (global: any, Zone: ZoneType, api: _ZonePrivate) => {
   api.patchOnProperties = patchOnProperties;
@@ -74,7 +74,11 @@ Zone.__load_patch('EventTarget', (global: any, Zone: ZoneType, api: _ZonePrivate
 Zone.__load_patch('on_property', (global: any, Zone: ZoneType, api: _ZonePrivate) => {
   propertyDescriptorPatch(api, global);
   propertyPatch();
+});
+
+Zone.__load_patch('customElements', (global: any, Zone: ZoneType, api: _ZonePrivate) => {
   registerElementPatch(global);
+  patchCustomElements(global);
 });
 
 Zone.__load_patch('canvas', (global: any) => {
@@ -96,6 +100,7 @@ Zone.__load_patch('XHR', (global: any, Zone: ZoneType) => {
   const XHR_LISTENER = zoneSymbol('xhrListener');
   const XHR_SCHEDULED = zoneSymbol('xhrScheduled');
   const XHR_URL = zoneSymbol('xhrURL');
+  const XHR_ERROR_BEFORE_SCHEDULED = zoneSymbol('xhrErrorBeforeScheduled');
 
   interface XHROptions extends TaskData {
     target: any;
@@ -126,9 +131,10 @@ Zone.__load_patch('XHR', (global: any, Zone: ZoneType) => {
     const SCHEDULED = 'scheduled';
 
     function scheduleTask(task: Task) {
-      (XMLHttpRequest as any)[XHR_SCHEDULED] = false;
       const data = <XHROptions>task.data;
       const target = data.target;
+      target[XHR_SCHEDULED] = false;
+      target[XHR_ERROR_BEFORE_SCHEDULED] = false;
       // remove existing event listener
       const listener = target[XHR_LISTENER];
       if (!oriAddListener) {
@@ -143,8 +149,33 @@ Zone.__load_patch('XHR', (global: any, Zone: ZoneType) => {
         if (target.readyState === target.DONE) {
           // sometimes on some browsers XMLHttpRequest will fire onreadystatechange with
           // readyState=4 multiple times, so we need to check task state here
-          if (!data.aborted && (XMLHttpRequest as any)[XHR_SCHEDULED] && task.state === SCHEDULED) {
-            task.invoke();
+          if (!data.aborted && target[XHR_SCHEDULED] && task.state === SCHEDULED) {
+            // check whether the xhr has registered onload listener
+            // if that is the case, the task should invoke after all
+            // onload listeners finish.
+            const loadTasks = target['__zone_symbol__loadfalse'];
+            if (loadTasks && loadTasks.length > 0) {
+              const oriInvoke = task.invoke;
+              task.invoke = function() {
+                // need to load the tasks again, because in other
+                // load listener, they may remove themselves
+                const loadTasks = target['__zone_symbol__loadfalse'];
+                for (let i = 0; i < loadTasks.length; i++) {
+                  if (loadTasks[i] === task) {
+                    loadTasks.splice(i, 1);
+                  }
+                }
+                if (!data.aborted && task.state === SCHEDULED) {
+                  oriInvoke.call(task);
+                }
+              };
+              loadTasks.push(task);
+            } else {
+              task.invoke();
+            }
+          } else if (!data.aborted && target[XHR_SCHEDULED] === false) {
+            // error occurs when xhr.send()
+            target[XHR_ERROR_BEFORE_SCHEDULED] = true;
           }
         }
       };
@@ -154,8 +185,8 @@ Zone.__load_patch('XHR', (global: any, Zone: ZoneType) => {
       if (!storedTask) {
         target[XHR_TASK] = task;
       }
-      sendNative.apply(target, data.args);
-      (XMLHttpRequest as any)[XHR_SCHEDULED] = true;
+      sendNative!.apply(target, data.args);
+      target[XHR_SCHEDULED] = true;
       return task;
     }
 
@@ -166,52 +197,65 @@ Zone.__load_patch('XHR', (global: any, Zone: ZoneType) => {
       // Note - ideally, we would call data.target.removeEventListener here, but it's too late
       // to prevent it from firing. So instead, we store info for the event listener.
       data.aborted = true;
-      return abortNative.apply(data.target, data.args);
+      return abortNative!.apply(data.target, data.args);
     }
 
-    const openNative: Function =
+    const openNative =
         patchMethod(XMLHttpRequestPrototype, 'open', () => function(self: any, args: any[]) {
           self[XHR_SYNC] = args[2] == false;
           self[XHR_URL] = args[1];
-          return openNative.apply(self, args);
+          return openNative!.apply(self, args);
         });
 
     const XMLHTTPREQUEST_SOURCE = 'XMLHttpRequest.send';
-    const sendNative: Function =
+    const fetchTaskAborting = zoneSymbol('fetchTaskAborting');
+    const fetchTaskScheduling = zoneSymbol('fetchTaskScheduling');
+    const sendNative: Function|null =
         patchMethod(XMLHttpRequestPrototype, 'send', () => function(self: any, args: any[]) {
+          if ((Zone.current as any)[fetchTaskScheduling] === true) {
+            // a fetch is scheduling, so we are using xhr to polyfill fetch
+            // and because we already schedule macroTask for fetch, we should
+            // not schedule a macroTask for xhr again
+            return sendNative!.apply(self, args);
+          }
           if (self[XHR_SYNC]) {
             // if the XHR is sync there is no task to schedule, just execute the code.
-            return sendNative.apply(self, args);
+            return sendNative!.apply(self, args);
           } else {
-            const options: XHROptions = {
-              target: self,
-              url: self[XHR_URL],
-              isPeriodic: false,
-              delay: null,
-              args: args,
-              aborted: false
-            };
-            return scheduleMacroTaskWithCurrentZone(
+            const options: XHROptions =
+                {target: self, url: self[XHR_URL], isPeriodic: false, args: args, aborted: false};
+            const task = scheduleMacroTaskWithCurrentZone(
                 XMLHTTPREQUEST_SOURCE, placeholderCallback, options, scheduleTask, clearTask);
+            if (self && self[XHR_ERROR_BEFORE_SCHEDULED] === true && !options.aborted &&
+                task.state === SCHEDULED) {
+              // xhr request throw error when send
+              // we should invoke task instead of leaving a scheduled
+              // pending macroTask
+              task.invoke();
+            }
           }
         });
 
-    const abortNative = patchMethod(XMLHttpRequestPrototype, 'abort', () => function(self: any) {
-      const task: Task = findPendingTask(self);
-      if (task && typeof task.type == 'string') {
-        // If the XHR has already completed, do nothing.
-        // If the XHR has already been aborted, do nothing.
-        // Fix #569, call abort multiple times before done will cause
-        // macroTask task count be negative number
-        if (task.cancelFn == null || (task.data && (<XHROptions>task.data).aborted)) {
-          return;
-        }
-        task.zone.cancelTask(task);
-      }
-      // Otherwise, we are trying to abort an XHR which has not yet been sent, so there is no
-      // task
-      // to cancel. Do nothing.
-    });
+    const abortNative =
+        patchMethod(XMLHttpRequestPrototype, 'abort', () => function(self: any, args: any[]) {
+          const task: Task = findPendingTask(self);
+          if (task && typeof task.type == 'string') {
+            // If the XHR has already completed, do nothing.
+            // If the XHR has already been aborted, do nothing.
+            // Fix #569, call abort multiple times before done will cause
+            // macroTask task count be negative number
+            if (task.cancelFn == null || (task.data && (<XHROptions>task.data).aborted)) {
+              return;
+            }
+            task.zone.cancelTask(task);
+          } else if ((Zone.current as any)[fetchTaskAborting] === true) {
+            // the abort is called from fetch polyfill, we need to call native abort of XHR.
+            return abortNative!.apply(self, args);
+          }
+          // Otherwise, we are trying to abort an XHR which has not yet been sent, so there is no
+          // task
+          // to cancel. Do nothing.
+        });
   }
 });
 

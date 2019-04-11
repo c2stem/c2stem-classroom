@@ -36,9 +36,9 @@ export declare class MDBModalService {
     /** @internal */
     checkScrollbar(): void;
     setScrollbar(): void;
-    private resetScrollbar();
-    private getScrollbarWidth();
-    private _createLoaders();
-    private removeLoaders(level);
-    private copyEvent(from, to);
+    private resetScrollbar;
+    private getScrollbarWidth;
+    private _createLoaders;
+    private removeLoaders;
+    private copyEvent;
 }

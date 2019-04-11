@@ -36,10 +36,12 @@ export declare class PopoverDirective implements OnInit, OnDestroy {
      * Emits an event when the popover is shown
      */
     onShown: EventEmitter<any>;
+    shown: EventEmitter<any>;
     /**
      * Emits an event when the popover is hidden
      */
     onHidden: EventEmitter<any>;
+    hidden: EventEmitter<any>;
     private _popover;
     constructor(_elementRef: ElementRef, _renderer: Renderer2, _viewContainerRef: ViewContainerRef, _config: PopoverConfig, cis: ComponentLoaderFactory);
     /**
