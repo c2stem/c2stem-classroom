@@ -1,0 +1,40 @@
+<div class="container mx-auto">
+  <div class="row">
+    <div class="card introCard bg-light mb-3 w-80 mx-auto" style="max-width: 300rem;">
+      <div class="card-header">Introduction</div>
+      <div class="card-body">
+        <p class="card-text">There are many variations of passages of Lorem Ipsum available,
+          but the majority have suffered alteration in some form, by injected humour,
+          or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum,
+          you need to be sure there isn't anything embarrassing hidden in the middle of text.
+          All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary,
+          making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words,
+          combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable.
+          The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</p>
+        <a href="#" class="btn btn-primary" style ="float: right;">Read More</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="card text-center mx-auto">
+      <div class="card-header">
+        Please login to your C2STEM account
+      </div>
+      <div class="card-body">
+        <form class="form-signin text-center">
+          <div class="form-group">
+            <label for="loginUserName">Username</label>
+            <input name ="username" type="text" [(ngModel)]="user.username" class="form-control" id="loginUserName" placeholder="Enter Username" required autofocus>
+          </div>
+          <div class="form-group">
+            <label for="LoginPassword">Password</label>
+            <input name = "password" type="password" [(ngModel)]="user.password" class="form-control" id="LoginPassword" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn btn-primary" (click)="validateLogin()">Sign In</button>
+          <p>Not a member?</p>
+          <a href="/register" class="btn btn-primary">Register</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

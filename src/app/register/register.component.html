@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="row">
+    <div class="card text-center mx-auto">
+      <div class="card-header">
+        Please register for a C2STEM account
+      </div>
+      <div class="card-body">
+        <form class="form-signin text-center">
+          <div class="form-group">
+            <label for="registerEmail">Email</label>
+            <input name ="email" type="email" [(ngModel)]="email" class="form-control" id="registerEmail" placeholder="Enter Email" required autofocus>
+          </div>
+          <div class="form-group">
+            <label for="registerUserName">Username</label>
+            <input name ="username" type="text" [(ngModel)]="username" class="form-control" id="registerUserName" placeholder="Enter Username" required >
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Password</label>
+            <input name = "password" type="password" [(ngModel)]="password" class="form-control" id="registerPassword" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn btn-primary" (click)="register()">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

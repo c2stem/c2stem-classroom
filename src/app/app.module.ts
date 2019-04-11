@@ -24,9 +24,14 @@ import { ChallengeComponent } from './challenge/challenge.component';
 
 import { DraggableDirective } from './draggale-modal/draggable.directive';
 import { MovableDirective } from './draggale-modal/movable.directive';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 const appRoutes: Routes = [
-  { path: '', component: HomeComponent},
+
+  {path: '', component: LoginComponent},
+  {path: 'register', component: RegisterComponent},
+  { path: 'home', component: HomeComponent},
   { path: 'user', component: UserComponent},
   { path: 'instruction', component: InstructionComponent, children:[
       {path: 'exercise1', component: InstructionComponent},
@@ -55,7 +60,9 @@ const appRoutes: Routes = [
     IframeComponent,
     ChallengeComponent,
     DraggableDirective,
-    MovableDirective
+    MovableDirective,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
