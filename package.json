@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "api": "cd api && meteor run",
-    "client-bundle": "meteor-client bundle -s api",
+    "client-bundle": "meteor-client bundle -s api -c meteor-client.config.json",
     "postinstall": "npm run client-bundle"
   },
   "private": true,
@@ -27,7 +27,7 @@
     "@angular/router": "^6.1.10",
     "@ng-bootstrap/ng-bootstrap": "^3.3.1",
     "@types/chart.js": "^2.7.50",
-    "@types/meteor": "^1.4.27",
+    "@types/meteor": "1.4.14",
     "angular-bootstrap-md": "^6.3.0",
     "angular5-csv": "^0.2.11",
     "babel-runtime": "^6.26.0",

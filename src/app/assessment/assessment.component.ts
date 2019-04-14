@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, FormBuilder} from '@angular/forms';
 import {LoggingService} from '../logging.service';
+import {Actions} from '../../../api/server/collections/actionLog';
+import {MeteorObservable} from 'meteor-rxjs';
 
 @Component({
   selector: 'app-assessment',
@@ -12,7 +14,7 @@ export class AssessmentComponent implements OnInit {
   assessForm: FormGroup;
   value = '';
   id = '';
-
+  submitted: string;
   constructor(private loggingService: LoggingService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
@@ -40,7 +42,15 @@ export class AssessmentComponent implements OnInit {
 
   onSubmit() {
     this.loggingService.logToConsole(this.assessForm.value);
+    this.submitted = "SubmitAction";
+    MeteorObservable.call('addAction', this.submitted).subscribe(
+      res => console.log(res),
+      err => console.log(err)
+    );
+    console.log("This is the result data.")
+    console.log(Actions.find().fetch());
   }
+
 
   update(value: string) {
     this.value = value;

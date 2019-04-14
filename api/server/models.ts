@@ -3,3 +3,7 @@ export class User {
   password: string;
   email?: string;
 }
+
+export class Action{
+  name: string;
+}
