@@ -1,10 +1,17 @@
-import {Actions} from './collections/actionLog';
+import {Action} from './models';
+import {Actions} from './collections/actions';
+
 
 Meteor.methods({
 
-  addAction(name: string) {
+  addAction(action: Action) {
      return Actions.insert({
-       name
+       actionID: action.actionID,
+       timestamp: action.timestamp,
+       actionType: action.actionType,
+       actionName: action.actionName,
+       value: action.value,
+       view: action.view
      });
   }
 });

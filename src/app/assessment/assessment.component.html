@@ -48,25 +48,25 @@
             <p>
               <input class="with-gap" type="radio"
                      formControlName="radio1_2_3_a"
-                     id="radio1_2_3_a" #radio1_2_3_a (click)="getRadio(radio1_2_3_a.id, radio1_2_3_a.value)" />
+                     id="radio1_2_3_a" value ='Left' #radio1_2_3_a (click)="getRadio(radio1_2_3_a.id, radio1_2_3_a.value)" />
               <label for="radio1_2_3_a">Left</label>
             </p>
             <p>
               <input class="with-gap" type="radio"
                      formControlName="radio1_2_3_b"
-                     id="radio1_2_3_b" #radio1_2_3_b (click)="getRadio(radio1_2_3_b.id, radio1_2_3_b.value)"  />
+                     id="radio1_2_3_b" value ='Right' #radio1_2_3_b (click)="getRadio(radio1_2_3_b.id, radio1_2_3_b.value)"  />
               <label for="radio1_2_3_b">Right</label>
             </p>
             <p>
               <input class="with-gap" type="radio"
                      formControlName="radio1_2_3_c"
-                     id="radio1_2_3_c" #radio1_2_3_c (click)="getRadio(radio1_2_3_c.id, radio1_2_3_c.value)" />
+                     id="radio1_2_3_c" value ='Up' #radio1_2_3_c (click)="getRadio(radio1_2_3_c.id, radio1_2_3_c.value)" />
               <label for="radio1_2_3_c">Up</label>
             </p>
             <p>
               <input class="with-gap"type="radio"
                      formControlName="radio1_2_3_d"
-                     id="radio1_2_3_d" #radio1_2_3_d (click)="getRadio(radio1_2_3_d.id, radio1_2_3_d.value)" />
+                     id="radio1_2_3_d" value ='Down' #radio1_2_3_d (click)="getRadio(radio1_2_3_d.id, radio1_2_3_d.value)" />
               <label for="radio1_2_3_d">Down</label>
             </p>
             <!--</form>-->
@@ -81,24 +81,24 @@
                          id="box1"
                          class="form-control"
                          formControlName="box1"
-                         (keyup.enter) ="update(box1.value)"
-                         (blur)="update(box1.value)">
+                         (keyup.enter) ="update(id, box1.value)"
+                         (blur)="update(id, box1.value)">
                 </div>
                 <div class="input-field col s12">
                   <label>c. What is the total distance traveled that the sprite will have traveled when the simulation ends?</label>
                   <input #box2
                          id="box2"
                          formControlName="box2"
-                         (keyup.enter) ="update(box2.value)"
-                         (blur)="update(box2.value)">
+                         (keyup.enter) ="update(id, box2.value)"
+                         (blur)="update(id, box2.value)">
                 </div>
                 <div class="input-field col s12">
                   <label>d. For how much time will the sprite have traveled when the simulation ends?</label>
                   <input #box3
                          id="box3"
                          formControlName="box3"
-                         (keyup.enter) ="update(box3.value)"
-                         (blur)="update(box3.value)">
+                         (keyup.enter) ="update(id, box3.value)"
+                         (blur)="update(id, box3.value)">
                 </div>
               </div>
               <!-- </form>-->

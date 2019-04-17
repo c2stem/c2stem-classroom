@@ -4,6 +4,17 @@ export class User {
   email?: string;
 }
 
-export class Action{
-  name: string;
+export class Action {
+  actionID: string;
+  timestamp: any;
+  actionType?: string;
+  actionName?: string;
+  value?: string;
+  view?: View;
+
+}
+
+export class View {
+  currentview?: string;
+  subview?: string;
 }
