@@ -1,9 +1,26 @@
 ### Running the framework:
-- Install dependencies.
+Install dependencies.
 ```sh
 $ npm install
 ```
-- Start Angular client framework and meteor server.
+Install meteor.
+[Link to meteor installation](https://www.npmjs.com/package/meteor)
+windows meteor installation
+```sh
+$ choco install meteor 1.8.0.2
+$ cd api
+$ meteor npm install
+```
+Test if meteor is running. This should start the meteor server and can be listned on localhost:3001.
+```sh
+$ cd api
+$ meteor run
+```
+Create meteor-client bundle for angular environment.
+```sh
+npm run postinstall
+```
+Start Angular client framework and meteor server.
 ```sh
 $ npm run start
 ```

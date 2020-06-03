@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e00c2d43-ab2c-47b1-82d2-0007b05c5af4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/server/methods.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/server/methods.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/app.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/app.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/app.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/challenge/challenge.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/challenge/challenge.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/inquiry/inquiry.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/inquiry/inquiry.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/instruction/instruction.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/instruction/instruction.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/logging.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/logging.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/login/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/login/login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/playground/playground.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/playground/playground.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/register/register.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/register/register.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/user/user.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/user/user.component.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/user/user.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/user/user.component.html" afterDir="false" />
-    </list>
+    <list default="true" id="e00c2d43-ab2c-47b1-82d2-0007b05c5af4" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -116,11 +100,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/app/inquiry/inquiry.component.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="183">
-              <caret line="101" column="12" lean-forward="true" selection-start-line="101" selection-start-column="12" selection-end-line="101" selection-end-column="12" />
+              <caret line="101" column="12" selection-start-line="101" selection-start-column="12" selection-end-line="101" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -134,25 +118,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/SnapClient/actions.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-29546">
-              <caret line="454" selection-start-line="454" selection-end-line="454" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/SnapClient/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="16" column="41" selection-start-line="16" selection-start-column="41" selection-end-line="16" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="306">
@@ -208,7 +174,14 @@
       <find>save</find>
       <find>logingservice</find>
       <find>import</find>
+      <find>SnapClient</find>
     </findStrings>
+    <replaceStrings>
+      <replace>Snap_Client</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>C:\C2stem projects\c2stem-classroom</dir>
+    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -318,13 +291,6 @@
               <item name="c2stem-classroom" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="assets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="c2stem-classroom" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c2stem-classroom" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="SnapClient" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -446,16 +412,15 @@
       <workItem from="1589217518770" duration="592000" />
       <workItem from="1590501440952" duration="597000" />
       <workItem from="1591097811323" duration="2842000" />
-      <workItem from="1591125647655" duration="9305000" />
+      <workItem from="1591125647655" duration="12189000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="222630000" />
+    <option name="totallyTimeSpent" value="225514000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4982699" visible="true" weight="0.2409396" />
       <window_info id="Structure" order="1" sideWeight="0.5017301" side_tool="true" weight="0.14937212" />
@@ -471,7 +436,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50052685" side_tool="true" weight="0.2665975" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49947312" visible="true" weight="0.28470254" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49947312" visible="true" weight="0.28470254" />
       <window_info anchor="bottom" id="TypeScript" order="11" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -784,13 +749,6 @@
     <entry file="file://$PROJECT_DIR$/package-lock.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="33" selection-start-line="18" selection-start-column="33" selection-end-line="18" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/app/home/home.component.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1309">
@@ -801,7 +759,14 @@
     <entry file="file://$PROJECT_DIR$/src/app/inquiry/inquiry.component.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="183">
-          <caret line="101" column="12" lean-forward="true" selection-start-line="101" selection-start-column="12" selection-end-line="101" selection-end-column="12" />
+          <caret line="101" column="12" selection-start-line="101" selection-start-column="12" selection-end-line="101" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="33" selection-start-line="18" selection-start-column="33" selection-end-line="18" selection-end-column="33" />
         </state>
       </provider>
     </entry>
