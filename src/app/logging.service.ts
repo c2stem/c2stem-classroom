@@ -8,6 +8,8 @@ export class LoggingService {
   action = new Action();
   view = new View();
 
+  constructor() { }
+
   logToConsole(logMessage: string) {
     console.log(logMessage);
   }

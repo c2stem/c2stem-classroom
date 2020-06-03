@@ -13,16 +13,19 @@
         <a class="nav-link"(click)="basicModal.show()">Resources</a>
       </li>
       <li class="nav-item waves-light" mdbWavesEffect>
-        <a class="nav-link" href="/user">Dashboard</a>
+        <a class="nav-link" *ngIf="authService.loggedIn()" href="/user">Dashboard</a>
       </li>
       <li class="nav-item waves-light" mdbWavesEffect>
         <a class="nav-link" href="/playground">Playground</a>
       </li>
       <li class="nav-item waves-light" mdbWavesEffect>
-        <a class="nav-link"  href="/">Login</a>
+        <a class="nav-link" *ngIf="!authService.loggedIn()" href="/">Login</a>
       </li>
       <li class="nav-item waves-light" mdbWavesEffect>
-        <a class="nav-link" href="/register">Register</a>
+        <a class="nav-link" *ngIf="!authService.loggedIn()" href="/register">Register</a>
+      </li>
+      <li class="nav-item waves-light" mdbWavesEffect>
+        <a class="nav-link" style="cursor:pointer" *ngIf="authService.loggedIn()" href="/" (click)="authService.logoutUser()">Logout</a>
       </li>
     </ul>
   </links>

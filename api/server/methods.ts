@@ -1,5 +1,6 @@
-import {Action} from './models';
+import {Action, User} from './models';
 import {Actions} from './collections/actions';
+import {Users} from './collections';
 
 
 Meteor.methods({
@@ -13,6 +14,10 @@ Meteor.methods({
        value: action.value,
        view: action.view
      });
+  },
+
+  validateUser(user: User) {
+    return Users.find().fetch();
   }
 });
 

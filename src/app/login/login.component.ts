@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import {AuthService} from '../auth.service';
 import {User} from '../models/user.model';
+import {MeteorObservable} from 'meteor-rxjs';
 
 @Component({
   selector: 'app-login',
@@ -9,12 +12,37 @@ import {User} from '../models/user.model';
 export class LoginComponent implements OnInit {
 
   public user: User
-  constructor() {
+  res: {};
+  constructor(private authservice: AuthService, private router: Router) {
     this.user = new User();
   }
 
   validateLogin() {
-    console.log(this.user.username, this.user.password);
+    if (this.user.username && this.user.password) {
+      /*this.authservice.validateLogin(this.user).subscribe(result => {
+        console.log('result is ', result);
+        /!*if(result['status'] === 'success') {*!/
+        localStorage.setItem('token', result['token'])
+        this.router.navigate(['/home']);
+        /!*} else {
+          alert('Wrong username password');
+        }*!/
+
+      }, error => {
+        console.log('error is ', error);
+      });*/
+      /*this.res = this.authservice.validateLogin(this.user);
+      console.log(this.res);*/
+      MeteorObservable.call('validateUser', this.user).subscribe(
+        res => {
+          localStorage.setItem('token', res['token'])
+          this.router.navigate(['/home']);
+        },
+        err => console.log(err)
+      );
+    } else {
+      alert('enter user name and password');
+    }
   }
   ngOnInit() {
   }
