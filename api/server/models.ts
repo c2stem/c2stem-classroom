@@ -1,6 +1,7 @@
 export class User {
   username: string;
   password: string;
+  role: Role;
   email?: string;
 }
 
@@ -17,4 +18,9 @@ export class Action {
 export class View {
   currentview?: string;
   subview?: string;
+}
+
+export enum Role {
+  User = 'User',
+  Admin = 'ADmin'
 }

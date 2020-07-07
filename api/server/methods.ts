@@ -16,8 +16,24 @@ Meteor.methods({
      });
   },
 
+  addUser(user: User) {
+    return Users.insert({
+      username: user.username,
+      password: user.password,
+      email: user.email,
+      role: user.role
+    });
+  },
   validateUser(user: User) {
-    return Users.find().fetch();
+    // return Users.find().fetch();
+    return Users.findOne({'username': user.username});
+  },
+  getUsers() {
+    const usernames = [];
+    const data = Users.find();
+    data.forEach( function(datadoc) { usernames.push(datadoc); } );
+    return usernames;
+
   }
 });
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import {AuthService} from '../auth.service';
 import {User} from '../models/user.model';
 import {MeteorObservable} from 'meteor-rxjs';
+import {Meteor} from 'meteor/meteor';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,12 @@ export class LoginComponent implements OnInit {
       console.log(this.res);*/
       MeteorObservable.call('validateUser', this.user).subscribe(
         res => {
-          localStorage.setItem('token', res['token'])
+          // console.log(res)
+          this.user.role = res['role']
+          this.user.email = res['email']
+          // localStorage.setItem('token', res['token'])
+          localStorage.setItem('currentUser', JSON.stringify(this.user))
+          // console.log(JSON.parse(localStorage.getItem('currentUser')))
           this.router.navigate(['/home']);
         },
         err => console.log(err)

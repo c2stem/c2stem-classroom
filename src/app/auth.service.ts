@@ -23,16 +23,24 @@ export class AuthService {
   }
 
   loggedIn () {
-    return !!localStorage.getItem('token');
+    // return !!localStorage.getItem('token');
+    return !!localStorage.getItem('currentUser');
   }
 
   getToken() {
-    return localStorage.getItem('token');
-
+    // return localStorage.getItem('token');
+    return !!localStorage.getItem('currentUser');
   }
 
   logoutUser() {
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
     this.router.navigate(['/']);
+  }
+
+  isAdmin() {
+    if (JSON.parse(localStorage.getItem('currentUser'))['role'] === 'admin') {
+      return true;
+    }
   }
 }

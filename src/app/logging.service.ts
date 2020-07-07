@@ -1,6 +1,7 @@
 import {Action, View} from '../../api/server/models';
 import {UUID} from 'angular2-uuid';
 import {MeteorObservable} from 'meteor-rxjs';
+import {AssessmentAction} from './models/actionLogger.models';
 
 const now = new Date();
 
@@ -33,6 +34,17 @@ export class LoggingService {
       err => console.log(err)
     );
     return this.action;
+  }
+
+  assessmentAction(actionType: string, actionName: string, value: string, view: View) {
+    const actionID = UUID.UUID();
+    const timestamp = now;
+    const assessment_action = new AssessmentAction(actionID, timestamp, actionType, actionName, value, view)
+    MeteorObservable.call('addAction', assessment_action).subscribe(
+      res => console.log(res),
+      err => console.log(err)
+    );
+    return assessment_action;
   }
 }
 

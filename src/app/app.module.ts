@@ -26,6 +26,7 @@ import { DraggableDirective } from './draggale-modal/draggable.directive';
 import { MovableDirective } from './draggale-modal/movable.directive';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const appRoutes: Routes = [
 
@@ -43,7 +44,8 @@ const appRoutes: Routes = [
   { path: 'modelbuild', component: ModelbuildComponent},
   { path: 'assessment', component: AssessmentComponent},
   { path: 'playground', component: PlaygroundComponent},
-  {path: 'challenge', component: ChallengeComponent}
+  {path: 'challenge', component: ChallengeComponent},
+  {path: 'dashboard', component: DashboardComponent}
 ];
 
 @NgModule({
@@ -62,7 +64,8 @@ const appRoutes: Routes = [
     DraggableDirective,
     MovableDirective,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

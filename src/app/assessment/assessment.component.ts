@@ -4,6 +4,7 @@ import {LoggingService} from '../logging.service';
 import {MeteorObservable} from 'meteor-rxjs';
 import {Actions} from '../../../api/server/collections/actions';
 import {Action, View} from '../../../api/server/models';
+import {AssessmentAction} from '../models/actionLogger.models';
 
 @Component({
   selector: 'app-assessment',
@@ -11,6 +12,7 @@ import {Action, View} from '../../../api/server/models';
   styleUrls: ['./assessment.component.css'],
   providers: [LoggingService]
 })
+
 export class AssessmentComponent implements OnInit {
   assessForm: FormGroup;
   view: View;
@@ -48,8 +50,8 @@ export class AssessmentComponent implements OnInit {
     this.loggingService.logToConsole(this.assessForm.value);
     this.submitted = 'SubmitAction';
     this.view = this.loggingService.generateView('AssessmentView', 'none');
-    this.action = this.loggingService.generateAction('SubmitAction', 'Aseessment1submit', 'submitted', this.view);
-    console.log('action logged', this.action);
+    const act = this.loggingService.assessmentAction('SubmitAction', 'Aseessment1submit', 'submitted', this.view);
+    console.log('action logged', act);
     /*console.log('This is the result data.');
     console.log(Actions.find().fetch());*/
   }
