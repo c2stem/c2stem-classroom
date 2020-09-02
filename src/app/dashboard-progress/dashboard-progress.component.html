@@ -1,3 +1,38 @@
-<p>
-  dashboard-progress works!
-</p>
+<div class="row">
+  <div class="col-8 user-col">
+    <mdb-card><!--Card content-->
+      <mdb-card-body>
+
+        <!--Title-->
+        <mdb-card-title>
+          <h4>Web Speech API</h4>
+        </mdb-card-title>
+        <div class="content">
+          <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+              <div class="form-group">
+                <label></label>
+                <input type="text" class="form-control border-input" name="txtSpeechSearch" id="txtSpeechSearch" value=""
+                       placeholder="Click below button and then say something!!!" [(ngModel)]="speechData">
+              </div>
+            </div>
+            <div class="col-md-2"></div>
+          </div>
+          <br />
+          <div class="text-center">
+            <button class="btn btn-info btn-fill btn-wd" name="btnActivateSpeechSearch" id="btnActivateSpeechSearch" (click)="activateSpeechSearch()"
+                    [disabled]="!showSearchButton">
+              Enable Speech Search
+            </button>
+            <button class="btn btn-info btn-fill btn-wd" name="btnDeactivateSpeechSearch" id="btnDeactivateSpeechSearch" (click)="deactivateSpeechSearch()"
+            [disabled]= "showSearchButton">
+              Disable Speech Search
+            </button>
+          </div>
+          <br />
+        </div>
+      </mdb-card-body>
+    </mdb-card>
+  </div>
+</div>

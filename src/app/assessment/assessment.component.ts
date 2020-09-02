@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, FormBuilder} from '@angular/forms';
 import {LoggingService} from '../logging.service';
 import {MeteorObservable} from 'meteor-rxjs';
 import {Actions} from '../../../api/server/collections/actions';
 import {Action, View} from '../../../api/server/models';
 import {AssessmentAction} from '../models/actionLogger.models';
+import {SpeechRecognitionService} from '../speech-recognition.service';
 
 @Component({
   selector: 'app-assessment',
@@ -13,7 +14,7 @@ import {AssessmentAction} from '../models/actionLogger.models';
   providers: [LoggingService]
 })
 
-export class AssessmentComponent implements OnInit {
+export class AssessmentComponent implements OnInit, OnDestroy {
   assessForm: FormGroup;
   view: View;
   action: Action;
@@ -21,7 +22,13 @@ export class AssessmentComponent implements OnInit {
   id = '';
   boxId = '';
   submitted: string;
-  constructor(private loggingService: LoggingService, private formBuilder: FormBuilder) { }
+  constructor(private loggingService: LoggingService, private formBuilder: FormBuilder,
+              private speechRecognitionService: SpeechRecognitionService) {
+    this.speechData = '';
+  }
+
+  showSearchButton: boolean;
+  speechData: string;
 
   ngOnInit() {
     this.assessForm = new FormGroup({
@@ -44,6 +51,38 @@ export class AssessmentComponent implements OnInit {
     subscribe( assessForm => {
       sessionStorage.setItem('assessForm', JSON.stringify(assessForm));
     });
+    this.activateSpeechSearch();
+  }
+
+  ngOnDestroy() {
+    this.speechRecognitionService.DestroySpeechObject();
+  }
+  activateSpeechSearch(): void {
+    this.showSearchButton = false;
+
+    this.speechRecognitionService.record()
+      .subscribe(
+        // listener
+        (value) => {
+          this.speechData = value;
+          console.log(value);
+          this.view = this.loggingService.generateView('AssessmentView', 'none');
+          this.action = this.loggingService.generateAction('SpeechToText', 'Text', value, this.view);
+        },
+        // errror
+        (err) => {
+          console.log(err);
+          if (err.error === 'no-speech') {
+            console.log('--restatring service--');
+            this.activateSpeechSearch();
+          }
+        },
+        // completion
+        () => {
+          this.showSearchButton = true;
+          console.log('--complete--');
+          this.activateSpeechSearch();
+        });
   }
 
   onSubmit() {

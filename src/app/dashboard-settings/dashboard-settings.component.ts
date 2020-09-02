@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import {MeteorObservable} from 'meteor-rxjs';
 import {Router} from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MeteorObservable, MongoObservable} from 'meteor-rxjs';
+import {Action, View} from '../../../api/server/models';
+import {LoggingService} from '../logging.service';
 
 @Component({
   selector: 'app-dashboard-settings',
   templateUrl: './dashboard-settings.component.html',
-  styleUrls: ['./dashboard-settings.component.scss']
+  styleUrls: ['./dashboard-settings.component.scss'],
+  providers: [LoggingService]
 })
-export class DashboardSettingsComponent implements OnInit {
+export class DashboardSettingsComponent implements OnInit  {
   users = [];
   roles = [];
-  constructor( private router: Router) { }
+  constructor( private router: Router) {}
 
   getUsers() {
     MeteorObservable.call('getUsers').subscribe(
@@ -35,5 +38,5 @@ export class DashboardSettingsComponent implements OnInit {
   ngOnInit() {
     this.getUsers();
   }
-
 }
+
