@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e00c2d43-ab2c-47b1-82d2-0007b05c5af4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/assessment/assessment.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/assessment/assessment.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard-settings/dashboard-settings.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/dashboard-settings/dashboard-settings.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/dashboard/dashboard.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReadMEforTesting.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/ReadMEforTesting.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/dist/" />
@@ -119,7 +114,7 @@
         <counts>
           <entry key="css" value="7" />
           <entry key="html" value="11" />
-          <entry key="md" value="2" />
+          <entry key="md" value="4" />
           <entry key="scss" value="6" />
           <entry key="ts" value="18" />
         </counts>
@@ -128,7 +123,7 @@
         <counts>
           <entry key="CSS" value="7" />
           <entry key="HTML" value="11" />
-          <entry key="Markdown" value="1" />
+          <entry key="Markdown" value="3" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="SCSS" value="6" />
           <entry key="TypeScript" value="18" />
@@ -138,6 +133,7 @@
         <counts>
           <entry key="css" value="46" />
           <entry key="html" value="569" />
+          <entry key="md" value="906" />
           <entry key="scss" value="122" />
           <entry key="ts" value="400" />
         </counts>
@@ -146,6 +142,7 @@
         <counts>
           <entry key="CSS" value="46" />
           <entry key="HTML" value="569" />
+          <entry key="Markdown" value="906" />
           <entry key="SCSS" value="122" />
           <entry key="TypeScript" value="400" />
         </counts>
@@ -157,11 +154,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="457">
-              <caret line="47" column="10" lean-forward="true" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+            <state relative-caret-position="765">
+              <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
               </folding>
@@ -172,8 +169,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="132" selection-start-line="27" selection-start-column="132" selection-end-line="27" selection-end-column="132" />
+            <state relative-caret-position="493">
+              <caret line="29" column="35" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/docs/SpeechRecognition.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="94">
+                <caret line="23" column="14" lean-forward="true" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -183,18 +192,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="68">
               <caret line="4" selection-start-line="4" selection-end-line="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/app/dashboard/dashboard.component.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#59#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -223,7 +220,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/app/assessment/assessment.component.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
+            <state relative-caret-position="1411">
               <caret line="83" column="35" selection-start-line="83" selection-start-column="35" selection-end-line="83" selection-end-column="35" />
               <folding>
                 <element signature="e#0#60#0" expanded="true" />
@@ -256,6 +253,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
+        <option value="Markdown file" />
       </list>
     </option>
   </component>
@@ -282,7 +280,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/app/login/login.component.html" />
         <option value="$PROJECT_DIR$/src/tsconfig.app.json" />
         <option value="$PROJECT_DIR$/api/server/collections/index.ts" />
         <option value="$PROJECT_DIR$/angular.json" />
@@ -333,6 +330,7 @@
         <option value="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html" />
         <option value="$PROJECT_DIR$/src/app/assessment/assessment.component.ts" />
         <option value="$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.ts" />
+        <option value="$PROJECT_DIR$/docs/SpeechRecognition.md" />
       </list>
     </option>
   </component>
@@ -377,7 +375,7 @@
             <path>
               <item name="c2stem-classroom-main" type="b2602c69:ProjectViewProjectNode" />
               <item name="c2stem-classroom-main" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="c2stem-classroom-main" type="b2602c69:ProjectViewProjectNode" />
@@ -402,21 +400,7 @@
               <item name="c2stem-classroom-main" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="dashboard" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="c2stem-classroom-main" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c2stem-classroom-main" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="dashboard-progress" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="c2stem-classroom-main" type="b2602c69:ProjectViewProjectNode" />
-              <item name="c2stem-classroom-main" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="dashboard-settings" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -442,6 +426,11 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\C2stem projects\main_branch\c2stem-classroom-main\node_modules\typescript\lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\C2stem projects\main_branch\c2stem-classroom-main\docs" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -551,18 +540,18 @@
       <workItem from="1598895811404" duration="17558000" />
       <workItem from="1599046564348" duration="1501000" />
       <workItem from="1599051547880" duration="1770000" />
-      <workItem from="1599053415570" duration="926000" />
+      <workItem from="1599053415570" duration="4134000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="302315000" />
+    <option name="totallyTimeSpent" value="305523000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4982699" visible="true" weight="0.19178082" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4982699" visible="true" weight="0.19178082" />
       <window_info id="Structure" order="1" sideWeight="0.5017301" side_tool="true" weight="0.14937212" />
       <window_info id="npm" order="2" sideWeight="0.5017301" side_tool="true" weight="0.14937212" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -576,7 +565,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50105375" side_tool="true" weight="0.21776815" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49894625" visible="true" weight="0.21776815" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49894625" visible="true" weight="0.21776815" />
       <window_info anchor="bottom" id="TypeScript" order="11" weight="0.3286119" />
       <window_info anchor="bottom" id="Log Viewer" order="12" />
       <window_info anchor="bottom" id="SOQL Query" order="13" />
@@ -614,9 +603,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/package-lock.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/app/challenge/challenge.component.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1224">
@@ -826,17 +812,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ReadMEforTesting.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="272">
-            <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/app/dashboard/dashboard.component.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -885,23 +860,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/app/assessment/assessment.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="83" column="35" selection-start-line="83" selection-start-column="35" selection-end-line="83" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#60#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="132" selection-start-line="27" selection-start-column="132" selection-end-line="27" selection-end-column="132" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/app/speech-recognition.service.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="661">
@@ -921,11 +879,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="457">
-          <caret line="47" column="10" lean-forward="true" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+        <state relative-caret-position="765">
+          <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
           <folding>
             <element signature="e#0#59#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/app/assessment/assessment.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1411">
+          <caret line="83" column="35" selection-start-line="83" selection-start-column="35" selection-end-line="83" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/ReadMEforTesting.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="-144">
+            <caret selection-end-column="26" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/app/dashboard-progress/dashboard-progress.component.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="29" column="35" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/SpeechRecognition.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="94">
+            <caret line="23" column="14" lean-forward="true" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
