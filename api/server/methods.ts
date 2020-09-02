@@ -34,6 +34,14 @@ Meteor.methods({
     data.forEach( function(datadoc) { usernames.push(datadoc); } );
     return usernames;
 
+  },
+  getAction(id: string) {
+    let d = [] ;
+    const actiondata = Actions.find({'actionName' : {$regex: '\id\*'}}, { sort: {$natural: -1}, limit: 1 });
+    actiondata.forEach((action_result) => {
+      d = action_result;
+    });
+    return d;
   }
 });
 

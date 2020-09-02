@@ -20,20 +20,6 @@ export class LoginComponent implements OnInit {
 
   validateLogin() {
     if (this.user.username && this.user.password) {
-      /*this.authservice.validateLogin(this.user).subscribe(result => {
-        console.log('result is ', result);
-        /!*if(result['status'] === 'success') {*!/
-        localStorage.setItem('token', result['token'])
-        this.router.navigate(['/home']);
-        /!*} else {
-          alert('Wrong username password');
-        }*!/
-
-      }, error => {
-        console.log('error is ', error);
-      });*/
-      /*this.res = this.authservice.validateLogin(this.user);
-      console.log(this.res);*/
       MeteorObservable.call('validateUser', this.user).subscribe(
         res => {
           // console.log(res)

@@ -27,6 +27,8 @@ import { MovableDirective } from './draggale-modal/movable.directive';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardProgressComponent } from './dashboard-progress/dashboard-progress.component';
+import { DashboardSettingsComponent } from './dashboard-settings/dashboard-settings.component';
 
 const appRoutes: Routes = [
 
@@ -45,7 +47,12 @@ const appRoutes: Routes = [
   { path: 'assessment', component: AssessmentComponent},
   { path: 'playground', component: PlaygroundComponent},
   {path: 'challenge', component: ChallengeComponent},
-  {path: 'dashboard', component: DashboardComponent}
+  {path: 'dashboard', component: DashboardComponent, children : [
+      {path: '', component: DashboardProgressComponent},
+      {path: 'progress', component: DashboardProgressComponent},
+      {path: 'settings', component: DashboardSettingsComponent}
+    ]
+  }
 ];
 
 @NgModule({
@@ -65,7 +72,9 @@ const appRoutes: Routes = [
     MovableDirective,
     LoginComponent,
     RegisterComponent,
-    DashboardComponent
+    DashboardComponent,
+    DashboardProgressComponent,
+    DashboardSettingsComponent
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MeteorObservable, MongoObservable} from 'meteor-rxjs';
 import {Users} from '../../../api/server/collections';
 import {ObservableCursor} from 'meteor-rxjs';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,8 @@ import {ObservableCursor} from 'meteor-rxjs';
 
 
 export class DashboardComponent implements OnInit {
-  constructor() {
+  constructor(private route: ActivatedRoute) {
+
   }
   title = 'Users'
   getUsers() {

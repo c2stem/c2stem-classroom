@@ -1,3 +1,13 @@
-<p>
-  Dashboard
-</p>
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}">
+    <a routerLink="./progress">Progress</a>
+  </li>
+  <li role="presentation"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}">
+    <a routerLink="./settings">Settings</a>
+  </li>
+</ul>
+<router-outlet></router-outlet>
