@@ -10,7 +10,7 @@
 </template>
 <script>
 export default {
-  name: "Home",
+  name: "BuildEnv",
   mounted() {
     var ifr_window = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(ifr_window);
