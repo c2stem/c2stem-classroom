@@ -115,7 +115,7 @@ const actionListener = (action) => {
     rawType: action.type,
     rawAction: action,
     type: undefined,
-    group: undefined
+    group: undefined,
   };
 
   // Make decision based on action type
@@ -293,7 +293,7 @@ const actionListener = (action) => {
     case "setBlockPosition": {
       actionRep.type = "modify";
       actionRep.group = "adjust";
-      
+
       if (typeof action.args[3][1] == "object") {
         // If the block is a normal block, this branch is taken.
 
@@ -371,7 +371,7 @@ export default {
   },
   unmounted() {
     this.api.removeActionListener(actionListener);
-  }
+  },
 };
 </script>
 
