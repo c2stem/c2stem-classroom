@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from "../views/Dashboard.vue";
-import PageNotFound from '../views/PageNotFound.vue'
+import PageNotFound from "../views/PageNotFound.vue"
+
+import AST from "../views/visualize/AST.vue";
+import List from "../views/visualize/List.vue";
 
 const routes = [
   {
@@ -13,6 +16,16 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+  },
+  {
+    path: "/visualize/ast",
+    name: "AST",
+    component: AST,
+  },
+  {
+    path: "/visualize/list",
+    name: "Action View Representation",
+    component: List,
   },
   {
     path: "/:NotFound(.*)",

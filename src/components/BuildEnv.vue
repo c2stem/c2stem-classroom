@@ -109,11 +109,17 @@ const actionListener = (action) => {
 
   let id = action.args[0];
   let actionRep = {
+    // Is this a valid action (not a duplicate or unsupported action)?
     valid: true,
+    // Action ID
     id: action.id,
+    // Action Timestamp
     timestamp: action.time,
+    // Action Type (raw, from embedded API)
     rawType: action.type,
+    // Action object
     rawAction: action,
+    // Type (third layer of action )
     type: undefined,
     group: undefined,
   };
@@ -358,6 +364,7 @@ const actionListener = (action) => {
   console.log(treeRoots);
   window.localStorage.setItem("blocks", JSON.stringify(blocks));
   window.localStorage.setItem("treeRoots", JSON.stringify(treeRoots));
+  window.localStorage.setItem("actionList", JSON.stringify(actions));
 };
 
 export default {
@@ -367,10 +374,11 @@ export default {
     this.api = new window.EmbeddedNetsBloxAPI(ifr_window);
     ifr_window.onload = () => {
       this.api.addActionListener(actionListener);
+      this.api.addEventListener("startScript", console.log);
     };
   },
   unmounted() {
-    this.api.removeActionListener(actionListener);
+    //this.api.removeActionListener(actionListener);
   },
 };
 </script>
