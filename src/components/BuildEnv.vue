@@ -28,6 +28,10 @@ const actionListener = (action) => {
       // Block name (from C2STEM)
       // Displayed in graph
       this.name = name;
+      // Has this block been modified before? (for epemeral blocks only)
+      this.modifiedBefore = false;
+      // Has this block been connected before?
+      this.connectedBefore = false;
       // Next block (connections)
       this.next = {
         // Next block in linear sequence
@@ -143,7 +147,12 @@ const actionListener = (action) => {
         actionRep.group = "build";
         id = addBlock(action);
       } else {
-        actionRep.group = "adjust";
+        if (!blocks[id].connectedBefore) {
+          actionRep.group = "build";
+          blocks[id].connectedBefore = true;
+        } else {
+          actionRep.group = "adjust";
+        }
       }
 
       if (typeof action.args[1] == "string") {
@@ -326,7 +335,12 @@ const actionListener = (action) => {
         actionRep.group = "build";
         block[t[1]] = new Block(undefined, "", []);
       } else {
-        actionRep.group = "adjust";
+        if (!block[t[1]].modifiedBefore) {
+          actionRep.group = "build";
+          block[t[1]].modifiedBefore = true;
+        } else {
+          actionRep.group = "adjust";
+        }
       }
 
       block = block[t[1]];
