@@ -123,7 +123,7 @@ const actionListener = (action) => {
     rawType: action.type,
     // Action object
     rawAction: action,
-    // Type (third layer of action )
+    // Type (third layer of action)
     type: undefined,
     group: undefined,
   };
@@ -146,6 +146,7 @@ const actionListener = (action) => {
       if (action.args[0].startsWith("<")) {
         actionRep.group = "build";
         id = addBlock(action);
+        blocks[id].connectedBefore = true;
       } else {
         if (!blocks[id].connectedBefore) {
           actionRep.group = "build";
@@ -371,6 +372,7 @@ const actionListener = (action) => {
     }
   }
 
+  actionRep.currentTree = JSON.stringify(treeRoots);
   if (actionRep.valid) actions.push(actionRep);
 
   console.log(actions);
