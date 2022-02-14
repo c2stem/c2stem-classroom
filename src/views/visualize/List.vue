@@ -1,6 +1,6 @@
 <template>
     <div id="action-list">
-        <p v-bind:key="pt.timestamp" v-for="pt in data"> | {{ pt.group }} - {{ pt.type }} | </p>
+        <p v-bind:key="pt.timestamp" v-for="pt in data">{{ pt.type }} - {{ pt.group }} - {{ pt.action }} | </p>
     </div>
 </template>
 

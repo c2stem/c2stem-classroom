@@ -53,7 +53,8 @@ const actionListener = (action) => {
     // Parse XML and get block and id
     const parser = new DOMParser();
     const data = parser.parseFromString(action.args[0], "text/xml");
-    const blockEl = data.getElementsByTagName("block")[0];
+    console.log(data);
+    const blockEl = data.querySelector("block,custom-block");
     const id = blockEl.getAttribute("collabId");
 
     // Get all blocks "contained" within block
@@ -124,22 +125,25 @@ const actionListener = (action) => {
     // Action object
     rawAction: action,
     // Type (third layer of action)
-    type: undefined,
+    action: undefined,
+    // Group (second layer of action)
     group: undefined,
+    // Type (first, top layer of action)
+    type: "construction"
   };
 
   // Make decision based on action type
   switch (action.type) {
     // Drag block into window without connecting
     case "addBlock": {
-      actionRep.type = "add";
+      actionRep.action = "add";
       actionRep.group = "build";
       addBlock(action);
       break;
     }
     // Connect block to other block (or drag block into window + immediately connect)
     case "moveBlock": {
-      actionRep.type = "connect";
+      actionRep.action = "connect";
 
       // If this block is being connected straight from the block pallete,
       // add it to the window first
@@ -266,7 +270,7 @@ const actionListener = (action) => {
     }
     // Remove block from canvas
     case "removeBlock": {
-      actionRep.type = "remove";
+      actionRep.action = "remove";
       actionRep.group = "adjust";
 
       if (typeof action.args[2] == "object") {
@@ -307,7 +311,7 @@ const actionListener = (action) => {
     // or when the block is simply moved from one place to another on the canvas with no connection changes.
     // We only care about the former case.
     case "setBlockPosition": {
-      actionRep.type = "modify";
+      actionRep.action = "modify";
       actionRep.group = "adjust";
 
       if (typeof action.args[3][1] == "object") {
@@ -328,41 +332,72 @@ const actionListener = (action) => {
     }
     // Set numberical field to another number on a block.
     case "setField": {
-      actionRep.type = "edit";
+      actionRep.action = "edit";
       const t = action.args[0].split("/");
+      const v = t[2] ? t[2] : t[1];
       let block = blocks[t[0]].next.contained;
-      // If field does not currently exist, create it.
-      if (!block[t[1]]) {
+
+      if (!block[v]) {
+        // If field does not currently exist, create it.
         actionRep.group = "build";
-        block[t[1]] = new Block(undefined, "", []);
+        block[v] = new Block(undefined, "", []);
       } else {
-        if (!block[t[1]].modifiedBefore) {
+        if (!block[v].modifiedBefore) {
           actionRep.group = "build";
-          block[t[1]].modifiedBefore = true;
+          block[v].modifiedBefore = true;
         } else {
           actionRep.group = "adjust";
         }
       }
 
-      block = block[t[1]];
+      block = block[v];
       // Arguments come in either arrays or strings, so assign accordingly.
       if (typeof action.args[1] == "string") {
         if (action.args[1] === action.args[2]) {
           actionRep.valid = false;
         }
-        blocks[t[0]].next.contained[t[1]].name = action.args[1];
+        blocks[t[0]].next.contained[v].name = action.args[1];
       } else {
-        blocks[t[0]].next.contained[t[1]].name = action.args[1][0];
+        blocks[t[0]].next.contained[v].name = action.args[1][0];
       }
 
       break;
     }
     // Toggle boolean field on boolean block.
     case "toggleBoolean": {
-      actionRep.type = "edit";
+      actionRep.action = "edit";
       actionRep.group = "adjust";
       const t = action.args[0].split("/");
       blocks[t[0]].next.contained[0].name = String(action.args[2]);
+      break;
+    }
+    // ASSESSMENT (USER) ACTIONS
+    case "openProject": {
+      actionRep.type = "assessment";
+      actionRep.group = "analysis";
+      actionRep.action = "open";
+      break;
+    }
+    case "pressStart": {
+      actionRep.type = "assessment";
+      actionRep.group = "visual";
+      actionRep.action = "play";
+      break;
+    }
+    case "startScript": {
+      actionRep.type = "assessment";
+      actionRep.group = "visual";
+      actionRep.action = "block";
+      break;
+    }
+    case "addListInput": {
+      actionRep.group = "build";
+      blocks[id.split("/")[0]].next.contained.push(new Block(undefined, "", []));
+      break;
+    }
+    case "removeListInput": {
+      actionRep.group = "adjust";
+      blocks[id.split("/")[0]].next.contained.pop();
       break;
     }
     default: {
