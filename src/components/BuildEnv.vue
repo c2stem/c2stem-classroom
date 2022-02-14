@@ -129,7 +129,9 @@ const actionListener = (action) => {
     // Group (second layer of action)
     group: undefined,
     // Type (first, top layer of action)
-    type: "construction"
+    type: "construction",
+    // Nearest affected block ID (if relevant)
+    block: id,
   };
 
   // Make decision based on action type
@@ -138,7 +140,8 @@ const actionListener = (action) => {
     case "addBlock": {
       actionRep.action = "add";
       actionRep.group = "build";
-      addBlock(action);
+      const id = addBlock(action);
+      actionRep.block = id;
       break;
     }
     // Connect block to other block (or drag block into window + immediately connect)
@@ -159,6 +162,8 @@ const actionListener = (action) => {
           actionRep.group = "adjust";
         }
       }
+
+      actionRep.block = id;
 
       if (typeof action.args[1] == "string") {
         if (typeof action.args[3][1] == "string") {
@@ -337,6 +342,8 @@ const actionListener = (action) => {
       const v = t[2] ? t[2] : t[1];
       let block = blocks[t[0]].next.contained;
 
+      actionRep.block = t[0];
+
       if (!block[v]) {
         // If field does not currently exist, create it.
         actionRep.group = "build";
@@ -368,6 +375,7 @@ const actionListener = (action) => {
       actionRep.action = "edit";
       actionRep.group = "adjust";
       const t = action.args[0].split("/");
+      actionRep.block = t[0];
       blocks[t[0]].next.contained[0].name = String(action.args[2]);
       break;
     }
@@ -391,13 +399,17 @@ const actionListener = (action) => {
       break;
     }
     case "addListInput": {
+      const t = id.split("/");
       actionRep.group = "build";
-      blocks[id.split("/")[0]].next.contained.push(new Block(undefined, "", []));
+      actionRep.block = t[0];
+      blocks[t[0]].next.contained.push(new Block(undefined, "", []));
       break;
     }
     case "removeListInput": {
+      const t = id.split("/")
       actionRep.group = "adjust";
-      blocks[id.split("/")[0]].next.contained.pop();
+      actionRep.block = t[0];
+      blocks[t[0]].next.contained.pop();
       break;
     }
     default: {
