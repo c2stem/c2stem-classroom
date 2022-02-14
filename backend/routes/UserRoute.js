@@ -8,6 +8,7 @@ router.post('/register', catchAsync(async (req, res, _next) => {
     const user = new User();
     user.email = req.body.email;
     user.username = req.body.username;
+    user.role = req.body.role;
     user.setPassword(req.body.password);
     await user.save();
     const token = user.generateJwt();

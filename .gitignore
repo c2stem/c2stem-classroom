@@ -7,6 +7,8 @@ node_modules
 # local env files
 .env.local
 .env.*.local
+/backend/.env.local
+/backend/.env.*.local
 
 # Log files
 npm-debug.log*

@@ -9,6 +9,10 @@ const userSchema = new Schema ({
         unique: true,
         required: true
     },
+    role: {
+        type: String,
+        required: true
+    },
     username: {
         type: String,
         unique: true,
@@ -39,6 +43,7 @@ userSchema.methods.generateJwt = function () {
         _id: this._id,
         email: this.email,
         username: this.username,
+        role: this.role,
         exp: parseInt(expiry.getTime() / 1000)
     }, process.env.JWT_SECRET_KEY);
 };
