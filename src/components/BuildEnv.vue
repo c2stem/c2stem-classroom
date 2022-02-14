@@ -98,10 +98,7 @@ const actionListener = (action) => {
       treeRoots.push(blocks[t[0]].next.contained[t[1]]);
       // If there's an underlay, restore it, otherwise just remove it from the parent
       if (blocks[t[0]].next.underlay[t[1]]) {
-        blocks[t[0]].next.contained[t[1]] = blocks[t[0]].next.underlay.splice(
-          t[1],
-          1
-        )[0];
+        blocks[t[0]].next.contained[t[1]] = blocks[t[0]].next.underlay.splice(t[1], 1)[0];
       } else {
         blocks[t[0]].next.contained.splice(Number(t[1]), 1)[0];
       }
@@ -124,12 +121,12 @@ const actionListener = (action) => {
     rawType: action.type,
     // Action object
     rawAction: action,
-    // Type (third layer of action)
-    action: undefined,
-    // Group (second layer of action)
-    group: undefined,
     // Type (first, top layer of action)
     type: "construction",
+    // Group (second layer of action)
+    group: undefined,
+    // Type (third layer of action)
+    action: undefined,
     // Nearest affected block ID (if relevant)
     block: id,
   };
