@@ -11,7 +11,6 @@
           <input v-model="password" type="password" name="password" value />
 
           <button type="submit" name="button">Login</button>
-          
         </form>
       </div>
     </div>
@@ -20,17 +19,24 @@
 
 <script>
 export default {
-  data(){
-    return{
-      username: '',
-      password: '',
-    }
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
   },
   methods: {
     login() {
-
-    }
-  }
+      this.$store
+        .dispatch("login", {
+          username: this.username,
+          password: this.password,
+        })
+        .then(() => {
+          this.$router.push({ name: "Home" });
+        });
+    },
+  },
 };
 </script>
 
@@ -42,8 +48,8 @@ form {
   width: 15em;
   margin-bottom: 2em;
 }
-.container{
-    display: flex;
-    justify-content: center;
+.container {
+  display: flex;
+  justify-content: center;
 }
 </style>

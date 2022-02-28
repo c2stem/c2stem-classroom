@@ -19,6 +19,9 @@
             <option value="teacher">Teacher</option>
           </select>
           <button type="submit" name="button">Register</button>
+          <router-link to="/login">
+            Already have an account? Login.
+          </router-link>
         </form>
       </div>
     </div>
@@ -32,29 +35,27 @@ export default {
       email: "",
       username: "",
       password: "",
-      role: ""
+      role: "",
     };
   },
   methods: {
     register() {
-        this.$store
-            .dispatch('register', {
-              username: this.username,
-              email: this.email,
-              role: this.role,
-              password: this.password
-            })
-            .then(() => {
-              this.$router.push({ name: 'Login' })
-            })
-
+      this.$store
+        .dispatch("register", {
+          username: this.username,
+          email: this.email,
+          role: this.role,
+          password: this.password,
+        })
+        .then(() => {
+          this.$router.push({ name: "Login" });
+        });
     },
   },
 };
 </script>
 
 <style>
-
 form {
   display: flex;
   align-items: center;
@@ -62,8 +63,8 @@ form {
   width: 15em;
   margin-bottom: 2em;
 }
-.container{
-    display: flex;
-    justify-content: center;
+.container {
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -10,12 +10,12 @@ import List from "../views/visualize/List.vue";
 
 const routes = [
   {
-    path: "/login",
+    path: "/",
     name: "Login",
     component: Login,
   },
   {
-    path: "/",
+    path: "/register",
     name: "Register",
     component: Register,
   },
@@ -23,21 +23,25 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
+    meta: { requiresAuth : true}
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    meta: { requiresAuth : true}
   },
   {
     path: "/visualize/ast",
     name: "AST",
     component: AST,
+    meta: { requiresAuth : true}
   },
   {
     path: "/visualize/list",
     name: "Action View Representation",
     component: List,
+    meta: { requiresAuth : true}
   },
   {
     path: "/:NotFound(.*)",
@@ -50,5 +54,14 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const loggedIn = localStorage.getItem('user')
+
+  if(to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
+    next('/')
+  }
+  next()
+})
 
 export default router;
