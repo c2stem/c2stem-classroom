@@ -417,6 +417,7 @@ const actionListener = (action) => {
   }
 
   actionRep.currentTree = JSON.stringify(treeRoots);
+  actionRep.blockMap = JSON.stringify(blocks);
   if (actionRep.valid) actions.push(actionRep);
 
   console.log(actions);
