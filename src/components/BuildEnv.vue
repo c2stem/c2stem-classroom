@@ -10,12 +10,26 @@
 </template>
 
 <script>
+const ed = require("edit-distance");
+
+const correctTree = JSON.parse('{"id":"item_0","name":"receiveGo","modifiedBefore":false,"connectedBefore":false,"next":{"next":{"id":"item_1","name":"forward","modifiedBefore":false,"connectedBefore":true,"next":{"next":{"id":"item_2","name":"turn","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"15","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},"contained":[{"name":"10","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},"contained":[],"underlay":[]}}');
+
 // Map of blocks (id -> block object)
 let blocks = {};
 // Array of root blocks
 let treeRoots = [];
 // List of actions for action sequence
 let actions = [];
+
+// Tree understanding functions
+let insert, remove, update, children;
+insert = remove = () => { return 1; };
+update = (nodeA, nodeB) => { return nodeA.name !== nodeB.name ? 1 : 0; };
+children = (node) => { 
+  let ret = [];
+  if (node.next.next) ret.push(node.next.next);
+  return [...ret, ...node.next.contained]; 
+};
 
 const actionListener = (action) => {
   // Block class -- used to create standardized objects
@@ -418,11 +432,24 @@ const actionListener = (action) => {
 
   actionRep.currentTree = JSON.stringify(treeRoots);
   actionRep.blockMap = JSON.stringify(blocks);
+  // TODO: are we only expecting one tree? how should we choose which one to use for edit distance?
+  if (treeRoots[0] && actionRep.type !== "assessment") {
+    const ted = ed.ted(treeRoots[0], correctTree, children, insert, remove, update);
+    actionRep.ted = ted.distance;
+    let lastEditDistance = Infinity;
+    for (let i = actions.length - 1; i >= 0; --i) {
+      if ("ted" in actions[i]) {
+        lastEditDistance = actions[i].ted;
+        break;
+      }
+    }
+
+    actionRep.effective = ted.distance < lastEditDistance;
+  }
+
   if (actionRep.valid) actions.push(actionRep);
 
   console.log(actions);
-  console.log(blocks);
-  console.log(treeRoots);
   window.localStorage.setItem("blocks", JSON.stringify(blocks));
   window.localStorage.setItem("treeRoots", JSON.stringify(treeRoots));
   window.localStorage.setItem("actionList", JSON.stringify(actions));
