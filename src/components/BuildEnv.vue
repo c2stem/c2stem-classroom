@@ -24,11 +24,11 @@ let actions = [];
 // Tree understanding functions
 let insert, remove, update, children;
 insert = remove = () => { return 1; };
-update = (nodeA, nodeB) => { return nodeA.name !== nodeB.name ? 1 : 0; };
+update = (nodeA, nodeB) => { return (nodeA.name !== nodeB.name ? 1 : 0); };
 children = (node) => { 
   let ret = [];
   if (node.next.next) ret.push(node.next.next);
-  return [...ret, ...node.next.contained]; 
+  return [...ret, ...node.next.contained];
 };
 
 const actionListener = (action) => {
@@ -430,8 +430,12 @@ const actionListener = (action) => {
     }
   }
 
+  // Attach relevant information to action
   actionRep.currentTree = JSON.stringify(treeRoots);
   actionRep.blockMap = JSON.stringify(blocks);
+
+  // Is this a non-assessment action? If so, let's see how close it is to the correct
+  // tree, and see if that's better than before (effective/non-effective action).
   // TODO: are we only expecting one tree? how should we choose which one to use for edit distance?
   if (treeRoots[0] && actionRep.type !== "assessment") {
     const ted = ed.ted(treeRoots[0], correctTree, children, insert, remove, update);
@@ -450,6 +454,7 @@ const actionListener = (action) => {
   if (actionRep.valid) actions.push(actionRep);
 
   console.log(actions);
+  console.log(treeRoots);
   window.localStorage.setItem("blocks", JSON.stringify(blocks));
   window.localStorage.setItem("treeRoots", JSON.stringify(treeRoots));
   window.localStorage.setItem("actionList", JSON.stringify(actions));
