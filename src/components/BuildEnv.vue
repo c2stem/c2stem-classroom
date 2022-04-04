@@ -10,9 +10,28 @@
 </template>
 
 <script>
-const ed = require("edit-distance");
+function normalizeTree(root) {
+  if (root.name === "reportGreaterThan") {
+    root.name = "reportLessThan";
+    root.next.contained.reverse();
+  }
 
-const correctTree = JSON.parse('{"id":"item_0","name":"receiveGo","modifiedBefore":false,"connectedBefore":false,"next":{"next":{"id":"item_1","name":"forward","modifiedBefore":false,"connectedBefore":true,"next":{"next":{"id":"item_2","name":"turn","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"15","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},"contained":[{"name":"10","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},"contained":[],"underlay":[]}}');
+  if (root.name === "reportEquals") {
+    root.next.contained.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+  for (var i = 0; i < root.next.contained.length; i++) {
+    if (root.next.contained[i]) normalizeTree(root.next.contained[i]);
+  }
+  if (root.next.next) normalizeTree(root.next.next);
+
+  return root;
+}
+
+const ed = require("edit-distance");
+const correctTree = normalizeTree(JSON.parse('{"id":"item_9","name":"receiveGo","modifiedBefore":false,"connectedBefore":false,"next":{"next":{"id":"item_10","name":"doIf","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"id":"item_11","name":"reportEquals","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"2","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}},{"name":"3","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},{"id":"item_16","name":"forward","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"10","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}}],"underlay":[{"name":"","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}]}},"contained":[],"underlay":[]}}'));
 
 // Map of blocks (id -> block object)
 let blocks = {};
@@ -438,7 +457,7 @@ const actionListener = (action) => {
   // tree, and see if that's better than before (effective/non-effective action).
   // TODO: are we only expecting one tree? how should we choose which one to use for edit distance?
   if (treeRoots[0] && actionRep.type !== "assessment") {
-    const ted = ed.ted(treeRoots[0], correctTree, children, insert, remove, update);
+    const ted = ed.ted(normalizeTree(JSON.parse(JSON.stringify(treeRoots[0]))), correctTree, children, insert, remove, update);
     actionRep.ted = ted.distance;
     let lastEditDistance = Infinity;
     for (let i = actions.length - 1; i >= 0; --i) {
