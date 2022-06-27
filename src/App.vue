@@ -1,12 +1,16 @@
 <template>
+  <class-header></class-header>
   <router-view/>
 </template>
 
 <script>
 
+import ClassHeader from './components/ClassHeader.vue';
+
 export default {
   name: "App",
   components: {
+    ClassHeader
   }
 };
 </script>
