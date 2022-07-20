@@ -54,7 +54,8 @@
       aria-labelledby="test-model-tab"
       tabindex="0"
     >
-      ...
+      <h5>Press 'Test Model' to start simulation</h5>
+      <h3></h3>
     </div>
     <div
       class="tab-pane fade"
