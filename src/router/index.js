@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from "../views/Dashboard.vue";
-import PageNotFound from "../views/PageNotFound.vue"
+import PageNotFound from "../views/PageNotFound.vue";
+import Construct from "../views/Construct.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -26,6 +27,11 @@ const routes = [
     path: "/visualize/list",
     name: "Action View Representation",
     component: List,
+  },
+  {
+    path: "/construct",
+    name: "Construct View",
+    component: Construct,
   },
   {
     path: "/:NotFound(.*)",

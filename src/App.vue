@@ -18,8 +18,8 @@ export default {
 <style>
 html,
 body {
-  min-height: 100%;
-  height: 100%;
   margin: 0;
+  height: 100%;
+  width: 100%;
 }
 </style>
