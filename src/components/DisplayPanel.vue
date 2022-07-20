@@ -25,6 +25,7 @@
         role="tab"
         aria-controls="test-history"
         aria-selected="false"
+        @click="generateTable"
       >
         Get Test History
       </button>
@@ -39,6 +40,7 @@
         role="tab"
         aria-controls="visualize"
         aria-selected="false"
+        @click="generateChart"
       >
         Visualize
       </button>
@@ -61,7 +63,7 @@
       aria-labelledby="test-history-tab"
       tabindex="0"
     >
-      ...
+      <div id="table"></div>
     </div>
     <div
       class="tab-pane fade"
@@ -70,20 +72,37 @@
       aria-labelledby="visualize-tab"
       tabindex="0"
     >
-      ...
+      <div id="chart"></div>>
     </div>
   </div>
 </template>
 
 <script>
-import simulation from "../services/Simulation"
+import simulation from "../services/Simulation";
+import visualize from "../services/Visualize";
 
 export default {
-    name: "DisplayPanel",
-    methods:{
-      runModel(event){
-        simulation.runProject(event);
-      }
+  name: "DisplayPanel",
+  data(){
+    return{
+      designHistory_content: []
     }
-}
+  },
+  methods: {
+    runModel(event) {
+      simulation.runProject(event);
+    },
+    generateTable(){
+      this.designHistory_content = visualize.getData();
+      visualize.drawTable(this.designHistory_content);
+    },
+    generateChart(){
+      this.designHistory_content = visualize.getData();
+      visualize.drawChart(this.designHistory_content);
+    }
+  },
+  mounted(){
+    window.google.charts.load("current", { packages: ["table","corechart","line"] });
+  }
+};
 </script>

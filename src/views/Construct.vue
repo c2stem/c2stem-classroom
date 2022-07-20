@@ -7,7 +7,7 @@
             source="https://physdev.c2stem.org"
             iframeid="iframe-id"
             username="naveed"
-            projectname="1d sloth"
+            projectname="spice-template"
             :embed="true"
           ></iframe-loader>
         </div>
