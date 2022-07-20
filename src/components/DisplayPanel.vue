@@ -3,13 +3,14 @@
     <li class="nav-item" role="presentation">
       <button
         class="nav-link active"
-        id="pills-home-tab"
+        id="test-model-tab"
         data-bs-toggle="pill"
-        data-bs-target="#pills-home"
+        data-bs-target="#test-model"
         type="button"
         role="tab"
-        aria-controls="pills-home"
+        aria-controls="test-model"
         aria-selected="true"
+        @click="runModel"
       >
         Test Model
       </button>
@@ -17,12 +18,12 @@
     <li class="nav-item" role="presentation">
       <button
         class="nav-link"
-        id="pills-profile-tab"
+        id="test-history-tab"
         data-bs-toggle="pill"
-        data-bs-target="#pills-profile"
+        data-bs-target="#test-history"
         type="button"
         role="tab"
-        aria-controls="pills-profile"
+        aria-controls="test-history"
         aria-selected="false"
       >
         Get Test History
@@ -31,12 +32,12 @@
     <li class="nav-item" role="presentation">
       <button
         class="nav-link"
-        id="pills-contact-tab"
+        id="visualize-tab"
         data-bs-toggle="pill"
-        data-bs-target="#pills-contact"
+        data-bs-target="#visualize"
         type="button"
         role="tab"
-        aria-controls="pills-contact"
+        aria-controls="visualize"
         aria-selected="false"
       >
         Visualize
@@ -46,39 +47,43 @@
   <div class="tab-content border border-3" id="pills-tabContent">
     <div
       class="tab-pane fade show active"
-      id="pills-home"
+      id="test-model"
       role="tabpanel"
-      aria-labelledby="pills-home-tab"
+      aria-labelledby="test-model-tab"
       tabindex="0"
     >
       ...
     </div>
     <div
       class="tab-pane fade"
-      id="pills-profile"
+      id="test-history"
       role="tabpanel"
-      aria-labelledby="pills-profile-tab"
+      aria-labelledby="test-history-tab"
       tabindex="0"
     >
       ...
     </div>
     <div
       class="tab-pane fade"
-      id="pills-contact"
+      id="visualize"
       role="tabpanel"
-      aria-labelledby="pills-contact-tab"
-      tabindex="0"
-    >
-      ...
-    </div>
-    <div
-      class="tab-pane fade"
-      id="pills-disabled"
-      role="tabpanel"
-      aria-labelledby="pills-disabled-tab"
+      aria-labelledby="visualize-tab"
       tabindex="0"
     >
       ...
     </div>
   </div>
 </template>
+
+<script>
+import simulation from "../services/Simulation"
+
+export default {
+    name: "DisplayPanel",
+    methods:{
+      runModel(event){
+        simulation.runProject(event);
+      }
+    }
+}
+</script>
