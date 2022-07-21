@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <button type="button" class="btn btn-success" @click="runModel">
-      Test Model
+      <i class="bi bi-flag-fill"> Run Simuation</i>
     </button>
     <button
       type="button"
