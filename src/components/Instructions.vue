@@ -18,7 +18,7 @@
         data-bs-toggle="modal"
         data-bs-target="#instructionModal"
       >
-        Launch demo modal
+        Read More..
       </button>
       <!-- Modal -->
       <div
