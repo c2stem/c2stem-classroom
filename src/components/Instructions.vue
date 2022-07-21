@@ -69,4 +69,7 @@ div.modal-content {
   height: auto;
   min-height: 0;
 }
+.card{
+  border: 3px inset #615195;
+}
 </style>

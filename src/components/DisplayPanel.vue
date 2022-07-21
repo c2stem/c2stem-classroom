@@ -1,23 +1,8 @@
 <template>
-  <ul class="nav nav-pills border border-3" id="pills-tab" role="tablist">
-    <li class="nav-item" role="presentation">
+  <ul class="nav nav-pills" id="pills-tab" role="tablist">
+    <li class="nav-item me-3" role="presentation">
       <button
-        class="nav-link active"
-        id="test-model-tab"
-        data-bs-toggle="pill"
-        data-bs-target="#test-model"
-        type="button"
-        role="tab"
-        aria-controls="test-model"
-        aria-selected="true"
-        @click="runModel"
-      >
-        Test Model
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button
-        class="nav-link"
+        class="nav-link bg-info bg-gradient"
         id="test-history-tab"
         data-bs-toggle="pill"
         data-bs-target="#test-history"
@@ -32,7 +17,7 @@
     </li>
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link"
+        class="nav-link bg-info bg-gradient"
         id="visualize-tab"
         data-bs-toggle="pill"
         data-bs-target="#visualize"
@@ -46,16 +31,13 @@
       </button>
     </li>
   </ul>
-  <div class="tab-content border border-3" id="pills-tabContent">
-    <div
-      class="tab-pane fade show active"
-      id="test-model"
+  <div class="tab-content" id="pills-tabContent">
+        <div
+      class="tab-pane show"
       role="tabpanel"
-      aria-labelledby="test-model-tab"
       tabindex="0"
     >
-      <h5>Press 'Test Model' to start simulation</h5>
-      <h3></h3>
+      Display Panel
     </div>
     <div
       class="tab-pane fade"
@@ -107,3 +89,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+ul, div{
+  border: 3px inset #615195;
+}
+</style>
