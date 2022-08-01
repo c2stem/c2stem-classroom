@@ -32,13 +32,7 @@
     </li>
   </ul>
   <div class="tab-content" id="pills-tabContent">
-        <div
-      class="tab-pane show"
-      role="tabpanel"
-      tabindex="0"
-    >
-      Display Panel
-    </div>
+    <div class="tab-pane show" role="tabpanel" tabindex="0">Display Panel</div>
     <div
       class="tab-pane fade"
       id="test-history"
@@ -55,7 +49,8 @@
       aria-labelledby="visualize-tab"
       tabindex="0"
     >
-      <div id="chart"></div>>
+      <div id="chart"></div>
+      >
     </div>
   </div>
 </template>
@@ -66,32 +61,86 @@ import visualize from "../services/Visualize";
 
 export default {
   name: "DisplayPanel",
-  data(){
-    return{
-      designHistory_content: []
+  data() {
+    return {
+      designHistoryContent: [],
+      designHistoryHeader: [
+        "design",
+        "date",
+        "cost",
+        "rainfall",
+        "runoff",
+        "accessible squares",
+        "concrete",
+        "permeable concrete",
+        "grass",
+        "wood chips",
+        "artificial turf",
+        "poured rubber",
+        "compare"
+      ],
+    };
+  },
+  computed: {
+    historyLength() {
+      return this.$store.getters.getdhLength;
+    },
+    designHistory(){
+      return this.$store.getters.getDesignHistory;
     }
   },
   methods: {
     runModel(event) {
       simulation.runProject(event);
     },
-    generateTable(){
+    generateTable() {
       this.designHistory_content = visualize.getData();
-      visualize.drawTable(this.designHistory_content);
+      let dhLength = this.designHistory_content.length;
+      let statedhLength = this.historyLength;
+      if (dhLength > statedhLength) {
+        const dhList = [];
+        this.designHistory_content.map((element, index) => {
+          if (index === 0) {
+            if (dhLength < 2) {
+              visualize.drawTable(this.designHistoryHeader, dhList);
+            }else{
+              return;
+            }
+          } else if (index >= statedhLength && index < dhLength) {
+            dhList.push(element.contents);
+          }
+        });
+        this.$store.dispatch("addDesignHistory", dhList);
+        visualize.drawTable(
+          this.designHistoryHeader,
+          this.designHistory
+        );
+        //save to store and generate an updated map.
+        // update design history length.
+      } else {
+        // send old data to load the table.
+        visualize.drawTable(
+          this.designHistoryHeader,
+          this.designHistory
+        );
+      }
     },
-    generateChart(){
+    generateChart() {
       this.designHistory_content = visualize.getData();
       visualize.drawChart(this.designHistory_content);
-    }
+    },
   },
-  mounted(){
-    window.google.charts.load("current", { packages: ["table","corechart","line"] });
-  }
+  mounted() {
+    window.google.charts.load("current", {
+      packages: ["table", "corechart", "line"],
+    });
+  },
 };
 </script>
 
 <style scoped>
-ul, div{
+ul,
+div {
   border: 3px inset #615195;
 }
 </style>

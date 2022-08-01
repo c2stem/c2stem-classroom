@@ -1,40 +1,36 @@
 export default {
   getData() {
     try {
-      // var dhButtn = document.getElementById("designHistory");
       var iframe = document.getElementById("iframe-id"),
         ide = iframe.contentWindow.world.children[0];
       var gb = ide.globalVariables;
       var designHistory = gb.getVar("design history");
       var dhContents = designHistory.contents;
-      // if (!document.getElementById("closeTable")) {
-      //   createCloseBttn();
-      // }
-      // dhButtn.innerHTML = "Refresh Table";
-      //   this.drawTable(dhContents);
       return dhContents;
     } catch (error) {
       alert(error.message);
     }
   },
 
-  drawTable(contents) {
+  drawTable(header, contents) {
     // this.google.charts.load("current", { packages: ["table"] });
     var data = new window.google.visualization.DataTable();
-    var dhHeaders = contents[0].contents;
+    var dhHeaders = header;
 
     for (let i = 0; i < dhHeaders.length; i++) {
-      if (i == 1) {
+      if (i == 1 || i == dhHeaders.length -1) {
         data.addColumn("string", dhHeaders[i]);
       } else {
         data.addColumn("number", dhHeaders[i]);
       }
     }
-    for (let j = 1; j < contents.length; j++) {
-      let contentArray = contents[j].asArray();
+    for (let j = 1; j < (Object.keys(contents).length) + 1; j++) {
+      let contentArray = Object.values(contents[j]);
       for (let k = 0; k < contentArray.length; k++) {
-        if (k !== 1) {
+        if (k !== 1 && k!== contentArray.length - 1) {
           contentArray[k] = Number(contentArray[k]);
+        }else{
+          contentArray[k] = String(contentArray[k]);
         }
       }
       data.addRow(contentArray);
