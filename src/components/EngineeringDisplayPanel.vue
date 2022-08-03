@@ -62,6 +62,12 @@
           ></button>
         </div>
         <div class="modal-body">
+          <compare
+            :header="compareHeader"
+            :contents="designHistory"
+            :checked="getCheckedDesigns"
+            :images="getSimulationImages"
+          ></compare>
         </div>
         <div class="modal-footer">
           <button
@@ -80,11 +86,13 @@
 <script>
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+import Compare from "./Compare.vue";
 
 export default {
   name: "EngineeringDisplayPanel",
   components: {
     DesignTable,
+    Compare,
   },
   data() {
     return {
@@ -104,6 +112,21 @@ export default {
         "poured rubber",
         "compare",
       ],
+      compareHeader: [
+        "Stage",
+        "design",
+        "date",
+        "cost",
+        "rainfall",
+        "runoff",
+        "accessible squares",
+        "concrete",
+        "permeable concrete",
+        "grass",
+        "wood chips",
+        "artificial turf",
+        "poured rubber",
+      ],
       checkedDesignStatus: [],
     };
   },
@@ -116,6 +139,9 @@ export default {
     },
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
+    },
+    getSimulationImages() {
+      return this.$store.getters.getStageImages;
     },
   },
   methods: {
@@ -136,7 +162,7 @@ export default {
         this.$store.dispatch("addDesignHistory", dhList);
         this.$store.dispatch("addCheckedDesigns", checkList);
       }
-    }
+    },
   },
   mounted() {
     window.google.charts.load("current", {
@@ -150,5 +176,8 @@ export default {
 ul,
 div {
   border: 3px inset #615195;
+}
+.modal-dialog{
+    --bs-modal-width:100%;
 }
 </style>

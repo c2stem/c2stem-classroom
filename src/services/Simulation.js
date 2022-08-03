@@ -19,4 +19,15 @@ export default {
       alert(error.message);
     }
   },
+
+  getImage() {
+    var iframe = document.getElementById("iframe-id"),
+      world = iframe.contentWindow.world,
+      ide = world.children[0],
+      stage = ide.children[4],
+      imgCanvas = stage.fullImage();
+    let image = new Image();
+    image.src = imgCanvas.toDataURL();
+    return image;
+  },
 };

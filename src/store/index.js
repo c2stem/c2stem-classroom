@@ -5,6 +5,7 @@ export default createStore({
     design_history: {},
     design_history_length: 0,
     checkedStatus: [],
+    simulationStageImages: [], 
   },
   mutations: {
     addDesignHistory(state, design) {
@@ -24,6 +25,9 @@ export default createStore({
     updateCheckedDesigns(state, data) {
       state.checkedStatus[data.index] = data.status;
     },
+    addStageImage(state, image) {
+      state.simulationStageImages.push(image);
+    },
   },
   getters: {
     getdhLength(state) {
@@ -35,6 +39,9 @@ export default createStore({
     getCheckedDesigns(state) {
       return state.checkedStatus;
     },
+    getStageImages(state){
+      return state.simulationStageImages;
+    }
   },
   actions: {
     addDesignHistory(context, design) {
@@ -45,6 +52,9 @@ export default createStore({
     },
     updateCheckedDesigns(context, data) {
       context.commit("updateCheckedDesigns", data);
+    },
+    addStageImage(context, image) {
+      context.commit("addStageImage", image);
     },
   },
   modules: {},

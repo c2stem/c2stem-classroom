@@ -13,6 +13,8 @@ export default {
     methods:{
         runModel(event){
             simulation.runProject(event);
+            let stageImg = simulation.getImage();
+            this.$store.dispatch("addStageImage", stageImg);
         }
     }
 }
