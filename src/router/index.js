@@ -7,6 +7,7 @@ import Construct from "../views/Construct.vue";
 import Manipulate from "../views/Manipulate.vue";
 import ManipulateCode from "../views/ManipulateCode.vue";
 import Landing from "../views/LandingPage.vue";
+import EngineeringDesign from "../views/EngineeringDesign.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -56,6 +57,11 @@ const routes = [
     path: "/manipulate/code",
     name: "Manipulate Code View",
     component: ManipulateCode,
+  },
+  {
+    path: "/engineering",
+    name: "Engineering Design View",
+    component: EngineeringDesign,
   },
   {
     path: "/:NotFound(.*)",
