@@ -14,9 +14,10 @@
         </div>
         <div class="left-group">
           <instructions></instructions>
-          <button type="button" class="btn btn-primary codeBttn" @click="seeCode">
+          <!-- <button type="button" class="btn btn-primary codeBttn" @click="seeCode">
             See Code
-          </button>
+          </button> -->
+          <see-code></see-code>
         </div>
       </div>
       <div class="col">
@@ -33,6 +34,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import Instructions from "../components/Instructions.vue";
 import SimulationPanel from "../components/SimulationPanel.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
+import SeeCode from "../components/SeeCode.vue";
 
 export default {
   name: "Engineering Design View",
@@ -40,7 +42,8 @@ export default {
     IframeLoader,
     Instructions,
     EngineeringDisplayPanel,
-    SimulationPanel
+    SimulationPanel,
+    SeeCode,
   },
   methods: {
     seeCode() {
