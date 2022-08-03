@@ -6,7 +6,7 @@ export default {
       var gb = ide.globalVariables;
       var designHistory = gb.getVar("design history");
       var dhContents = designHistory.contents;
-      return dhContents;
+      return this.getObject(dhContents);
     } catch (error) {
       alert(error.message);
     }
@@ -18,18 +18,18 @@ export default {
     var dhHeaders = header;
 
     for (let i = 0; i < dhHeaders.length; i++) {
-      if (i == 1 || i == dhHeaders.length -1) {
+      if (i == 1 || i == dhHeaders.length - 1) {
         data.addColumn("string", dhHeaders[i]);
       } else {
         data.addColumn("number", dhHeaders[i]);
       }
     }
-    for (let j = 1; j < (Object.keys(contents).length) + 1; j++) {
+    for (let j = 1; j < Object.keys(contents).length + 1; j++) {
       let contentArray = Object.values(contents[j]);
       for (let k = 0; k < contentArray.length; k++) {
-        if (k !== 1 && k!== contentArray.length - 1) {
+        if (k !== 1 && k !== contentArray.length - 1) {
           contentArray[k] = Number(contentArray[k]);
-        }else{
+        } else {
           contentArray[k] = String(contentArray[k]);
         }
       }
@@ -48,18 +48,15 @@ export default {
     var dhHeaders = contents[0].contents;
 
     for (let i = 0; i < dhHeaders.length; i++) {
-
-        data.addColumn("number", dhHeaders[i]);
-      
+      data.addColumn("number", dhHeaders[i]);
     }
     for (let j = 1; j < contents.length; j++) {
       let contentArray = contents[j].asArray();
       for (let k = 0; k < contentArray.length; k++) {
         if (k !== 1) {
           contentArray[k] = Number(contentArray[k]);
-        }
-        else{
-            contentArray[k] = 0;
+        } else {
+          contentArray[k] = 0;
         }
       }
       data.addRow(contentArray);
@@ -80,5 +77,19 @@ export default {
     );
 
     chart.draw(data, options);
+  },
+  
+  getObject(content) {
+    let obj = {};
+    let header = content[0].contents;
+    for (let i = 1; i < Object.keys(content).length; i++) {
+      let childObj = {};
+      let childContent = content[i].contents;
+      for (let j = 0; j < childContent.length; j++) {
+        childObj[header[j]] = childContent[j];
+      }
+      obj[i] = childObj;
+    }
+    return obj;
   },
 };

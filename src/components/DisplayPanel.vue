@@ -40,7 +40,11 @@
       aria-labelledby="test-history-tab"
       tabindex="0"
     >
-      <div id="table"></div>
+      <design-table
+        :header="designHistoryHeader"
+        :contents="designHistory"
+        :checked="getCheckedDesigns"
+      ></design-table>
     </div>
     <div
       class="tab-pane fade"
@@ -56,11 +60,14 @@
 </template>
 
 <script>
-import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
+import DesignTable from "./DesignTable.vue";
 
 export default {
   name: "DisplayPanel",
+  components: {
+    DesignTable,
+  },
   data() {
     return {
       designHistoryContent: [],
@@ -77,52 +84,39 @@ export default {
         "wood chips",
         "artificial turf",
         "poured rubber",
-        "compare"
+        "compare",
       ],
+      checkedDesignStatus: [],
     };
   },
   computed: {
     historyLength() {
       return this.$store.getters.getdhLength;
     },
-    designHistory(){
+    designHistory() {
       return this.$store.getters.getDesignHistory;
-    }
+    },
+    getCheckedDesigns() {
+      return this.$store.getters.getCheckedDesigns;
+    },
   },
   methods: {
-    runModel(event) {
-      simulation.runProject(event);
-    },
     generateTable() {
       this.designHistory_content = visualize.getData();
-      let dhLength = this.designHistory_content.length;
-      let statedhLength = this.historyLength;
-      if (dhLength > statedhLength) {
+      this.checkedDesignStatus = this.getCheckedDesigns;
+      let dhLength = Object.keys(this.designHistory_content).length;
+      let stateDhLength = this.historyLength;
+      if (dhLength > stateDhLength) {
         const dhList = [];
-        this.designHistory_content.map((element, index) => {
-          if (index === 0) {
-            if (dhLength < 2) {
-              visualize.drawTable(this.designHistoryHeader, dhList);
-            }else{
-              return;
-            }
-          } else if (index >= statedhLength && index < dhLength) {
-            dhList.push(element.contents);
+        const checkList = [];
+        Object.values(this.designHistory_content).forEach((element, index) => {
+          if (index >= stateDhLength && index < dhLength) {
+            dhList.push(element);
+            checkList.push(false);
           }
         });
         this.$store.dispatch("addDesignHistory", dhList);
-        visualize.drawTable(
-          this.designHistoryHeader,
-          this.designHistory
-        );
-        //save to store and generate an updated map.
-        // update design history length.
-      } else {
-        // send old data to load the table.
-        visualize.drawTable(
-          this.designHistoryHeader,
-          this.designHistory
-        );
+        this.$store.dispatch("addCheckedDesigns", checkList);
       }
     },
     generateChart() {
