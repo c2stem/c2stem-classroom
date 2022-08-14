@@ -1,4 +1,13 @@
+/**
+ * Simulation Service.
+ * Methods related to C2STEM GUI and C2STEM simulation. 
+ */
 export default {
+  /**
+   * Green flag run method.
+   * Accesses the NetsBloxMorph of C2STEM and runs scripts. 
+   * @param {Event} event Capturing keyevents to act on SHIFT presses.
+   */
   runProject(event) {
     try {
       var iframe = document.getElementById("iframe-id"),
@@ -20,6 +29,10 @@ export default {
     }
   },
 
+  /**
+   * Accesses the NetsBloxMorph of C2STEM and capture the Stage image.  
+   * @returns current stage image 
+   */
   getImage() {
     var iframe = document.getElementById("iframe-id"),
       world = iframe.contentWindow.world,

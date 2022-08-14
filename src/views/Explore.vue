@@ -1,4 +1,5 @@
 <template>
+<!-- Explore view for CMISE -->
   <div class="container">
     <div class="row">
       <div class="col">
@@ -25,6 +26,17 @@
 </template>
 
 <script>
+/**
+ * Explore view.
+ * In this view user will have access to a C2STEM project in an iframe. 
+ * Instruction panel is available with resources.
+ * Display panel has data visualization from C2STEM data.
+ * The green flag is availble to run scripts from outside of iframe.
+ * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
+ * @requires ../components/Instructions.vue to present resources to users.
+ * @requires ../components/DisplayPanel.vue for data visualization.
+ * @requires ../components/SimulationPanel.vue for the green flag.
+ */
 import IframeLoader from "../components/IframeLoader.vue";
 import Instructions from "../components/Instructions.vue";
 import DisplayPanel from "../components/DisplayPanel.vue";

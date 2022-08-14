@@ -1,4 +1,6 @@
 <template>
+<!-- Instructions component -->
+<!-- Instructions in a card with ability to add additional details in a modal -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
@@ -11,7 +13,6 @@
         occaecat cupidatat non proident, sunt in culpa qui officia deserunt
         mollit anim id est laborum.
       </p>
-      <!-- <a href="#exampleModal" data-bs-toggle="modal" class="card-link float-end">Read more</a> -->
       <button
         type="button"
         class="btn btn-link float-end"

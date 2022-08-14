@@ -1,4 +1,7 @@
 <template>
+  <!-- Engineering Display Panel Component -->
+  <!-- A component based on Display Panel Component modified for CMISE engineering design -->
+  <!-- Navigation pills -->
   <ul class="nav nav-pills" id="pills-tab" role="tablist">
     <li class="nav-item me-3" role="presentation">
       <button
@@ -27,6 +30,7 @@
       </button>
     </li>
   </ul>
+  <!-- Tab content for the pills -->
   <div class="tab-content" id="pills-tabContent">
     <div class="tab-pane show" role="tabpanel" tabindex="0">Display Panel</div>
     <div
@@ -50,7 +54,7 @@
     aria-labelledby="compareLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="compareLabel">Compare</h5>
@@ -84,6 +88,13 @@
 </template>
 
 <script>
+/**
+ * Display Panel Component
+ * Can be integrated with any component that requires design history visualization.
+ * @requires ./DesignTable.vue Component to generate a table
+ * @requires ../services/Visualize.js currently using Google library to generate charts.
+ * @requires ./Compare.vue Component to generate a table of selected designs for comparison.
+ */
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
@@ -131,20 +142,49 @@ export default {
     };
   },
   computed: {
+    /**
+     * Get the number of tests run by the user from store.
+     */
     historyLength() {
       return this.$store.getters.getdhLength;
     },
+    /**
+     * Get the entire design history from the store.
+     */
     designHistory() {
       return this.$store.getters.getDesignHistory;
     },
+    /**
+     * Get a list of checkbox status in the design history table from the store.
+     */
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
+    /**
+     * Get a list of Stage images from the store.
+     */
     getSimulationImages() {
       return this.$store.getters.getStageImages;
     },
+    /**
+     * Get the status of green flag from store.
+     */
+    getRunStatus() {
+      return this.$store.getters.getSimulationStatus;
+    },
   },
+  // watch: {
+  //   getRunStatus() {
+  //     this.generateTable();
+  //     this.$store.dispatch("updateSimulationStatus", false);
+  //   },
+  // },
   methods: {
+    /**
+     * Generates a table by accessing design history content from c2stem environemnt.
+     * The method gets design history from c2stem and compares the results with the history in the store.
+     * The history in the store is updated with new design history from c2stem.
+     */
     generateTable() {
       this.designHistory_content = visualize.getData();
       this.checkedDesignStatus = this.getCheckedDesigns;
@@ -165,6 +205,9 @@ export default {
     },
   },
   mounted() {
+    /**
+     * Load google visualization library
+     */
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
@@ -177,7 +220,7 @@ ul,
 div {
   border: 3px inset #615195;
 }
-.modal-dialog{
-    --bs-modal-width:100%;
+.modal-dialog {
+  --bs-modal-width: 100%;
 }
 </style>

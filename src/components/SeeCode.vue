@@ -1,4 +1,6 @@
 <template>
+<!-- See Code component -->
+<!-- Display static images of code in a modal based on the project -->
   <button type="button" class="btn btn-primary codeBttn" data-bs-toggle="modal" data-bs-target="#seeCode">
     See Code
   </button>

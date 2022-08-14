@@ -1,4 +1,5 @@
 <template>
+<!-- Engineering Design View -->
   <div class="container">
     <div class="row">
       <div class="col">
@@ -14,9 +15,6 @@
         </div>
         <div class="left-group">
           <instructions></instructions>
-          <!-- <button type="button" class="btn btn-primary codeBttn" @click="seeCode">
-            See Code
-          </button> -->
           <see-code></see-code>
         </div>
       </div>
@@ -30,6 +28,20 @@
 </template>
 
 <script>
+/**
+ * Engineering Design view.
+ * Similar to manipulate view customized for engineering design with compare feature.
+ * In this view user will have access to a C2STEM project in an iframe. 
+ * Instruction panel is available with resources.
+ * Display panel has data visualization from C2STEM data.
+ * The green flag is availble to run scripts from outside of iframe.
+ * A See code button to access the code of the project.
+ * A compare tabs allows for design comparison.
+ * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
+ * @requires ../components/Instructions.vue to present resources to users.
+ * @requires ../components/EngineeringDisplayPanel.vue for data visualization and comparison.
+ * @requires ../components/SimulationPanel.vue for the green flag.
+ */
 import IframeLoader from "../components/IframeLoader.vue";
 import Instructions from "../components/Instructions.vue";
 import SimulationPanel from "../components/SimulationPanel.vue";
@@ -44,11 +56,6 @@ export default {
     EngineeringDisplayPanel,
     SimulationPanel,
     SeeCode,
-  },
-  methods: {
-    seeCode() {
-      this.$router.push("/manipulate/code");
-    },
   },
 };
 </script>

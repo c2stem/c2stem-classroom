@@ -1,4 +1,5 @@
 <template>
+<!-- Manipulate Coe view -->
   <div class="container">
     <button type="button" class="btn btn-success" @click="runModel">
       Test Model
@@ -108,6 +109,15 @@
 </template>
 
 <script>
+/**
+ * Manipulate code view.
+ * It is based on the construct view with an ability to switch between 2 differnt views.
+ * In this view User will have access to a C2STEM project in an iframe. 
+ * Data visualization is available on a button click in modals. 
+ * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
+ * @requires ../services/Simulation.js for c2stem Simulation methods.
+ * @requires ../services/Visualize.js for data visualization.
+ */
 import IframeLoader from "../components/IframeLoader.vue";
 import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
@@ -125,22 +135,37 @@ export default {
     };
   },
   methods: {
+    /**
+     * Run green flag
+     */
     runModel(event) {
       simulation.runProject(event);
     },
+    /**
+     * Get data from C2STEM and generate a table using google library.
+     */
     generateTable() {
       this.designHistory_content = visualize.getData();
       visualize.drawTable(this.designHistory_content);
     },
+    /**
+     * Get data from C2STEM and generate a chart using google library.
+     */
     generateChart() {
       this.designHistory_content = visualize.getData();
       visualize.drawChart(this.designHistory_content);
     },
+    /**
+     * route back to manipulate view.
+     */
     closeCode() {
         this.$router.push("/manipulate");
     }
   },
   mounted() {
+    /**
+     * import google visualization library.
+     */
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });

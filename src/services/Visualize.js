@@ -1,4 +1,12 @@
+/**
+ * Visualize service.
+ * Methods related to data visualization.
+ */
 export default {
+  /**
+   * Accesses the NetsBloxMorph of C2STEM and extract design history contents. 
+   * @returns Object representation of Design History from C2STEM.
+   */
   getData() {
     try {
       var iframe = document.getElementById("iframe-id"),
@@ -12,8 +20,12 @@ export default {
     }
   },
 
+  /**
+   * Generate a table using Google library based on the header and content provided.
+   * @param {*} header Array consisting the names of attributes from Design History.
+   * @param {*} contents List of designs run by the user.
+   */
   drawTable(header, contents) {
-    // this.google.charts.load("current", { packages: ["table"] });
     var data = new window.google.visualization.DataTable();
     var dhHeaders = header;
 
@@ -42,8 +54,11 @@ export default {
     table.draw(data, { showRowNumber: true, width: "100%", height: "100%" });
   },
 
+  /**
+   * Generate a chart using Google library based on the design content provided.
+   * @param {*} contents List of designs run by the user.
+   */
   drawChart(contents) {
-    // this.google.charts.load("current", { packages: ["table"] });
     var data = new window.google.visualization.DataTable();
     var dhHeaders = contents[0].contents;
 
@@ -79,6 +94,11 @@ export default {
     chart.draw(data, options);
   },
   
+  /**
+   * Converts the existing design history format into an object representation.
+   * @param {*} content Design history.
+   * @returns An Object representation of the design contents.
+   */
   getObject(content) {
     let obj = {};
     let header = content[0].contents;

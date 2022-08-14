@@ -1,4 +1,5 @@
 <template>
+<!-- An example landing page for demo -->
   <div class="row">
     <div class="col">
       <div class="card">

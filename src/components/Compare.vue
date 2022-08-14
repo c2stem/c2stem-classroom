@@ -1,5 +1,7 @@
 <template>
+<!-- Comapre component  -->
   <div class="container overflow-scroll">
+    <!-- Table to present selected designs with their respective parameters for comparison -->
     <table class="table table-hover table-bordered">
       <thead>
         <tr>
@@ -27,32 +29,48 @@
 </template>
 
 <script>
+/**
+ * Compare component.
+ * Contains a table of the selected designs with stage images.
+ * @example <compare >
+        header=[designHistory Header names list]
+        contents=[Design History contents List]
+        checked=[checked list]
+        images=[Stage Images List]
+      </compare>
+ */
 export default {
   name: "Table",
   props: {
+    /**
+     * The Array list of header names 
+     */
     header: {
       type: Array,
       required: true,
     },
+    /**
+     * Dictionary of arrays. Each array consists of
+     * contents from a design.
+     */
     contents: {
       type: Object,
       required: true,
     },
+    /**
+     * Status of the comparison checkbox in the table.
+     * @values [true, false]
+     */
     checked: {
       type: Array,
       required: true,
     },
+    /**
+     * Array List of Stage images of all the designs. 
+     */
     images: {
       type: Array,
       required: true,
-    },
-  },
-  methods: {
-    check(i, e) {
-      this.$store.dispatch("updateCheckedDesigns", {
-        index: i - 2,
-        status: e.target.checked,
-      });
     },
   },
 };

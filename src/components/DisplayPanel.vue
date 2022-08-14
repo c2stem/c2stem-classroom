@@ -1,4 +1,6 @@
 <template>
+  <!-- Display Panel Component -->
+  <!-- Navigation pills -->
   <ul class="nav nav-pills" id="pills-tab" role="tablist">
     <li class="nav-item me-3" role="presentation">
       <button
@@ -31,6 +33,7 @@
       </button>
     </li>
   </ul>
+  <!-- Tab content for the pills -->
   <div class="tab-content" id="pills-tabContent">
     <div class="tab-pane show" role="tabpanel" tabindex="0">Display Panel</div>
     <div
@@ -60,6 +63,12 @@
 </template>
 
 <script>
+/**
+ * Display Panel Component
+ * Can be integrated with any component that requires design history visualization.
+ * @requires ./DesignTable.vue Component to generate a table
+ * @requires ../services/Visualize.js currently using Google library to generate charts.
+ */
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 
@@ -90,17 +99,31 @@ export default {
     };
   },
   computed: {
+    /**
+     * Get the number of tests run by the user from store.
+     */
     historyLength() {
       return this.$store.getters.getdhLength;
     },
+    /**
+     * Get the entire design history from the store.
+     */
     designHistory() {
       return this.$store.getters.getDesignHistory;
     },
+    /**
+     * Get a list of checkbox status in the design history table from the store.
+     */
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
   },
   methods: {
+    /**
+     * Generates a table by accessing design history content from c2stem environemnt.
+     * The method gets design history from c2stem and compares the results with the history in the store.
+     * The history in the store is updated with new design history from c2stem.
+     */
     generateTable() {
       this.designHistory_content = visualize.getData();
       this.checkedDesignStatus = this.getCheckedDesigns;
@@ -119,12 +142,19 @@ export default {
         this.$store.dispatch("addCheckedDesigns", checkList);
       }
     },
+    /**
+     * Generates a chart by accessing design history content from c2stem environemnt.
+     * Passes the design history contents to the google library. 
+     */
     generateChart() {
       this.designHistory_content = visualize.getData();
       visualize.drawChart(this.designHistory_content);
     },
   },
   mounted() {
+    /**
+     * Load google visualization library
+     */
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });

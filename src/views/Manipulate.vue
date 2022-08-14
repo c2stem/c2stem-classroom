@@ -1,4 +1,5 @@
 <template>
+<!-- Manipulate view for CMISE-->
   <div class="container">
     <div class="row">
       <div class="col">
@@ -30,6 +31,19 @@
 </template>
 
 <script>
+/**
+ * Manipulate view.
+ * Similar to explore except a ability to see code.
+ * In this view user will have access to a C2STEM project in an iframe. 
+ * Instruction panel is available with resources.
+ * Display panel has data visualization from C2STEM data.
+ * The green flag is availble to run scripts from outside of iframe.
+ * A See code button to access the code of the project.
+ * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
+ * @requires ../components/Instructions.vue to present resources to users.
+ * @requires ../components/DisplayPanel.vue for data visualization.
+ * @requires ../components/SimulationPanel.vue for the green flag.
+ */
 import IframeLoader from "../components/IframeLoader.vue";
 import Instructions from "../components/Instructions.vue";
 import Displaypanel from "../components/DisplayPanel.vue";
@@ -46,6 +60,9 @@ export default {
     SimulationPanel
   },
   methods: {
+    /**
+     * link to manipulate code view to display a full C2STEM environment.
+     */
     seeCode() {
       this.$router.push("/manipulate/code");
     },
