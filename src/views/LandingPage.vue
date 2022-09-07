@@ -34,6 +34,17 @@
         </div>
       </div>
     </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Engineering Design</h5>
+          <p class="card-text">
+            Engineering Design Environment
+          </p>
+          <a href="/engineering" class="btn btn-primary">Continue</a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

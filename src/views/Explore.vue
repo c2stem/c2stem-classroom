@@ -6,10 +6,10 @@
         <simulation-panel></simulation-panel>
         <div class="iframe-panel">
           <iframe-loader
-            source="https://physdev.c2stem.org"
+            source="https://editor.c2stem.org"
             iframeid="iframe-id"
-            username="naveed"
-            projectname="spice-template"
+            username="oele"
+            projectname="cmise-project-computational-explore"
             :embed="true"
           ></iframe-loader>
         </div>

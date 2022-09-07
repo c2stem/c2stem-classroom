@@ -37,7 +37,8 @@ export default {
     var iframe = document.getElementById("iframe-id"),
       world = iframe.contentWindow.world,
       ide = world.children[0],
-      stage = ide.children[4],
+      // stage = ide.children[4], // stage location for physdev
+      stage = ide.children[3],
       imgCanvas = stage.fullImage();
     let image = new Image();
     image.src = imgCanvas.toDataURL();

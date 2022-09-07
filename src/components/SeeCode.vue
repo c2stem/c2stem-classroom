@@ -14,7 +14,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-body">
-            <img src="../assets/script.png" class="img-fluid" alt="...">
+            <img src="../assets/cmise-code.png" class="img-fluid" alt="...">
         </div>
       </div>
     </div>

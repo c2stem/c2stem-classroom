@@ -20,7 +20,7 @@
           <td v-for="(items, i) in content" :key="i">
             <p>{{ items }}</p>
           </td>
-          <td>
+          <td v-if="checked.length">
             <input
               v-if="checked[index]"
               class="form-check-input mt-0"
@@ -75,7 +75,7 @@ export default {
      */
     checked: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
      */
     check(i, e) {
       this.$store.dispatch("updateCheckedDesigns", {
-        index: i - 2,
+        index: i - 1,
         status: e.target.checked,
       });
     },

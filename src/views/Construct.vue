@@ -96,10 +96,10 @@
     </div>
 
     <iframe-loader
-      source="https://physdev.c2stem.org"
+      source="https://editor.c2stem.org"
       iframeid="iframe-id"
-      username="naveed"
-      projectname="spice-template"
+      username="oele"
+      projectname="cmise-project-computational"
       :embed="false"
     ></iframe-loader>
   </div>
@@ -128,6 +128,20 @@ export default {
   data() {
     return {
       designHistory_content: [],
+      designHistoryHeader: [
+        "design",
+        "date",
+        "cost",
+        "rainfall",
+        "runoff",
+        "accessible squares",
+        "concrete",
+        "permeable concrete",
+        "grass",
+        "wood chips",
+        "artificial turf",
+        "poured rubber",
+      ],
     };
   },
   methods: {
@@ -142,14 +156,14 @@ export default {
      */
     generateTable() {
       this.designHistory_content = visualize.getData();
-      visualize.drawTable(this.designHistory_content);
+      visualize.drawTable(this.designHistoryHeader, this.designHistory_content);
     },
     /**
      * Get data from C2STEM and generate a chart using google library.
      */
     generateChart() {
       this.designHistory_content = visualize.getData();
-      visualize.drawChart(this.designHistory_content);
+      visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
     },
   },
   mounted() {

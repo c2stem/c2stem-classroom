@@ -58,9 +58,9 @@ export default {
    * Generate a chart using Google library based on the design content provided.
    * @param {*} contents List of designs run by the user.
    */
-  drawChart(contents) {
+  drawChart(header, contents) {
     var data = new window.google.visualization.DataTable();
-    var dhHeaders = contents[0].contents;
+    var dhHeaders = header;
 
     for (let i = 0; i < dhHeaders.length; i++) {
       data.addColumn("number", dhHeaders[i]);
@@ -106,10 +106,27 @@ export default {
       let childObj = {};
       let childContent = content[i].contents;
       for (let j = 0; j < childContent.length; j++) {
-        childObj[header[j]] = childContent[j];
+        if(j ==1){
+          var updatedContent = this.formatDate(childContent[j])
+          childObj[header[j]] = updatedContent;
+        }else{
+          childObj[header[j]] = childContent[j];
+        }
       }
       obj[i] = childObj;
     }
     return obj;
   },
+
+  /**
+   * Changing date format from 'day mon dd yyyy hh:mm:ss GMT-0500 (Central Daylight Time)'
+   * to 'mon dd yyyy hh:mm:ss'
+   * @param {*} content Design History
+   * @returns date
+   */
+  formatDate(content){
+    var splitContent = content.split(' ');
+    var updatedDate = splitContent[1]+' '+splitContent[2]+' '+splitContent[3]+ ' '+splitContent[4]
+    return updatedDate;
+  }
 };

@@ -46,7 +46,6 @@
       <design-table
         :header="designHistoryHeader"
         :contents="designHistory"
-        :checked="getCheckedDesigns"
       ></design-table>
     </div>
     <div
@@ -93,7 +92,6 @@ export default {
         "wood chips",
         "artificial turf",
         "poured rubber",
-        "compare",
       ],
       checkedDesignStatus: [],
     };
@@ -148,7 +146,7 @@ export default {
      */
     generateChart() {
       this.designHistory_content = visualize.getData();
-      visualize.drawChart(this.designHistory_content);
+      visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
     },
   },
   mounted() {

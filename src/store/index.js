@@ -17,7 +17,7 @@ export default createStore({
     addDesignHistory(state, design) {
       let dh = {};
       design.forEach((element) => {
-        dh[element["design"] - 2] = element;
+        dh[element["design"] - 1] = element;
       });
       state.design_history = {
         ...state.design_history,
