@@ -2,7 +2,7 @@
 <!-- Construct View for CMISE -->
   <div class="container">
     <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Simuation</i>
+      <i class="bi bi-flag-fill"> Run Simulation</i>
     </button>
     <button
       type="button"
