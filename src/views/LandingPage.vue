@@ -8,7 +8,7 @@
           <p class="card-text">
             Explore group Environment
           </p>
-          <a href="/explore" class="btn btn-primary">Continue</a>
+          <a href="/explore-menu" class="btn btn-primary" @click="changeGroup('explore')">Continue</a>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
           <p class="card-text">
             Construct Group Environment
           </p>
-          <a href="/construct" class="btn btn-primary">Continue</a>
+          <a href="/construct-menu" class="btn btn-primary" @click="changeGroup('construct')">Continue</a>
         </div>
       </div>
     </div>
@@ -30,11 +30,11 @@
           <p class="card-text">
             Manipulate Group Environment
           </p>
-          <a href="/manipulate" class="btn btn-primary">Continue</a>
+          <a href="/manipulate-menu" class="btn btn-primary" @click="changeGroup('manipulate')">Continue</a>
         </div>
       </div>
     </div>
-    <div class="col">
+    <!-- <div class="col">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Engineering Design</h5>
@@ -44,9 +44,29 @@
           <a href="/engineering" class="btn btn-primary">Continue</a>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
+
+<script>
+import { mapState, mapMutations } from 'vuex';
+
+export default {
+  data() { 
+    return{
+      ...mapState(['cmise_groups']),
+     }
+  },
+  methods: {
+    ...mapMutations(['changeGroup']),
+    changeGroup(newGroup) {
+      this.$store.commit('changeGroup', {
+        newGroup,
+      });
+    }
+  }
+};
+</script>
 
 <style scoped>
 .card{

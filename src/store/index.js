@@ -7,6 +7,7 @@ export default createStore({
     checkedStatus: [],
     simulationStageImages: [],
     runSimulation: false,
+    cmise_group: '',
   },
   mutations: {
     /**
@@ -56,6 +57,15 @@ export default createStore({
      */
     updateSimulationStatus(state, status){
       state.runSimulation = status;
+    },
+    /**
+     * Status of green flag.
+     * @param {state} state Current state of the store. 
+     * @param {Boolean} newGroup CMISE group selected for view. 
+     */
+    changeGroup(state, { newGroup }) {
+      state.cmise_group = newGroup;
+      console.log(state.cmise_group);
     }
   },
   getters: {

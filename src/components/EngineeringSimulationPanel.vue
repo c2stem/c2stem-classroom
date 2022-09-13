@@ -4,6 +4,7 @@
     <button type="button" class="btn btn-success" @click="runModel">
       <i class="bi bi-flag-fill"> Run Model</i>
     </button>
+    <see-code />
   </div>
 </template>
 
@@ -14,8 +15,13 @@
  * Currently only has green flag to run scripts.
  */
 import simulation from "../services/Simulation";
+import SeeCode from "./SeeCode.vue";
+
 export default {
   name: "Simulation Panel",
+  components: {
+    SeeCode,
+  },
   methods: {
     /**
      * Run scripts when green flag is pressed.

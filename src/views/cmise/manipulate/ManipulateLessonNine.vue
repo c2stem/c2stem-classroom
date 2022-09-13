@@ -1,12 +1,12 @@
 <template>
-<!-- Manipulate Coe view -->
+<!-- Manipulate Nine view -->
   <div class="container">
     <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Simuation</i>
+      <i class="bi bi-flag-fill"> Run Simulation</i>
     </button>
-    <button type="button" class="btn btn-danger" @click="closeCode">
+    <!-- <button type="button" class="btn btn-danger" @click="closeCode">
       Close Code
-    </button>
+    </button> -->
     <button
       type="button"
       class="btn btn-primary"
@@ -102,7 +102,7 @@
       source="https://editor.c2stem.org"
       iframeid="iframe-id"
       username="oele"
-      projectname="cmise-project-computational"
+      projectname="cmise-project-lesson9-manipulate"
       :embed="false"
     ></iframe-loader>
   </div>
@@ -118,10 +118,10 @@
  * @requires ../services/Simulation.js for c2stem Simulation methods.
  * @requires ../services/Visualize.js for data visualization.
  */
-import IframeLoader from "../components/IframeLoader.vue";
-import simulation from "../services/Simulation";
-import visualize from "../services/Visualize";
-import Notes from "../components/Notes.vue";
+import IframeLoader from "../../../components/IframeLoader.vue";
+import simulation from "../../../services/Simulation";
+import visualize from "../../../services/Visualize";
+import Notes from "../../../components/Notes.vue";
 
 export default {
   name: "Manipulate Code View",
@@ -133,18 +133,13 @@ export default {
     return {
       designHistory_content: [],
       designHistoryHeader: [
-        "design",
+        "test",
         "date",
-        "cost",
         "rainfall",
+        "material",
+        "absorption",
         "runoff",
-        "accessible squares",
-        "concrete",
-        "permeable concrete",
-        "grass",
-        "wood chips",
-        "artificial turf",
-        "poured rubber",
+        "cost",
       ],
     };
   },
@@ -172,9 +167,9 @@ export default {
     /**
      * route back to manipulate view.
      */
-    closeCode() {
-        this.$router.push("/manipulate");
-    }
+    // closeCode() {
+    //     this.$router.push("/manipulate");
+    // }
   },
   mounted() {
     /**

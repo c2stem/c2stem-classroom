@@ -1,5 +1,5 @@
 <template>
-<!-- Manipulate view for CMISE-->
+<!-- Explore view for CMISE -->
   <div class="container">
     <div class="row">
       <div class="col">
@@ -9,21 +9,16 @@
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="cmise-project-computational"
+            projectname="cmise-project-lesson8-explore"
             :embed="true"
           ></iframe-loader>
         </div>
-        <div class="left-group">
-          <instructions></instructions>
-          <button type="button" class="btn btn-primary codeBttn" @click="seeCode">
-            See Code
-          </button>
-        </div>
+        <!-- <instructions></instructions> -->
       </div>
       <div class="col">
-        <div class="right-panel mt-5">
-          <displaypanel></displaypanel>
-          <notes></notes>
+        <div class="right-panel mt-4">
+          <display-panel></display-panel>
+          <!-- <notes></notes> -->
         </div>
       </div>
     </div>
@@ -32,40 +27,29 @@
 
 <script>
 /**
- * Manipulate view.
- * Similar to explore except a ability to see code.
+ * Explore view.
  * In this view user will have access to a C2STEM project in an iframe. 
  * Instruction panel is available with resources.
  * Display panel has data visualization from C2STEM data.
  * The green flag is availble to run scripts from outside of iframe.
- * A See code button to access the code of the project.
  * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
  * @requires ../components/Instructions.vue to present resources to users.
  * @requires ../components/DisplayPanel.vue for data visualization.
  * @requires ../components/SimulationPanel.vue for the green flag.
  */
-import IframeLoader from "../components/IframeLoader.vue";
-import Instructions from "../components/Instructions.vue";
-import Displaypanel from "../components/DisplayPanel.vue";
-import Notes from "../components/Notes.vue";
-import SimulationPanel from "../components/SimulationPanel.vue";
+import IframeLoader from "../../../components/IframeLoader.vue";
+// import Instructions from "../../../components/Instructions.vue";
+import DisplayPanel from "../../../components/DisplayPanel.vue";
+// import Notes from "../../../components/Notes.vue";
+import SimulationPanel from "../../../components/SimulationPanel.vue";
 
 export default {
-  name: "Manipulate View",
   components: {
     IframeLoader,
-    Instructions,
-    Displaypanel,
-    Notes,
-    SimulationPanel
-  },
-  methods: {
-    /**
-     * link to manipulate code view to display a full C2STEM environment.
-     */
-    seeCode() {
-      this.$router.push("/manipulate/code");
-    },
+    // Instructions,
+    DisplayPanel,
+    // Notes,
+    SimulationPanel,
   },
 };
 </script>
@@ -85,7 +69,7 @@ div {
   border: 3px inset #615195;
 }
 .card {
-  margin: 10px;
+  margin: 1px 10px 10px 10px;
 }
 .right-panel {
   height: 70%;
@@ -93,14 +77,5 @@ div {
 .notes-panel {
   height: 30%;
   display: flex;
-}
-
-.left-group{
-    height: auto;
-    display: inline-flex;
-    align-items: center;
-}
-.codeBttn{
-    height: fit-content;
 }
 </style>

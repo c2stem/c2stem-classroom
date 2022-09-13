@@ -1,9 +1,12 @@
 <template>
-<!-- Construct View for CMISE -->
+<!-- Manipulate Eight view -->
   <div class="container">
     <button type="button" class="btn btn-success" @click="runModel">
       <i class="bi bi-flag-fill"> Run Simulation</i>
     </button>
+    <!-- <button type="button" class="btn btn-danger" @click="closeCode">
+      Close Code
+    </button> -->
     <button
       type="button"
       class="btn btn-primary"
@@ -99,7 +102,7 @@
       source="https://editor.c2stem.org"
       iframeid="iframe-id"
       username="oele"
-      projectname="cmise-project-computational"
+      projectname="cmise-project-lesson8-manipulate"
       :embed="false"
     ></iframe-loader>
   </div>
@@ -107,40 +110,36 @@
 
 <script>
 /**
- * Construct view.
+ * Manipulate code view.
+ * It is based on the construct view with an ability to switch between 2 differnt views.
  * In this view User will have access to a C2STEM project in an iframe. 
  * Data visualization is available on a button click in modals. 
  * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
  * @requires ../services/Simulation.js for c2stem Simulation methods.
  * @requires ../services/Visualize.js for data visualization.
  */
-import IframeLoader from "../components/IframeLoader.vue";
-import simulation from "../services/Simulation";
-import visualize from "../services/Visualize";
-import Notes from "../components/Notes.vue"
+import IframeLoader from "../../../components/IframeLoader.vue";
+import simulation from "../../../services/Simulation";
+import visualize from "../../../services/Visualize";
+import Notes from "../../../components/Notes.vue";
 
 export default {
-  name: "Construct View",
+  name: "Manipulate Code View",
   components: {
     IframeLoader,
-    Notes
+    Notes,
   },
   data() {
     return {
       designHistory_content: [],
       designHistoryHeader: [
-        "design",
+        "test",
         "date",
-        "cost",
         "rainfall",
+        "material",
+        "absorption",
         "runoff",
-        "accessible squares",
-        "concrete",
-        "permeable concrete",
-        "grass",
-        "wood chips",
-        "artificial turf",
-        "poured rubber",
+        "cost",
       ],
     };
   },
@@ -165,10 +164,16 @@ export default {
       this.designHistory_content = visualize.getData();
       visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
     },
+    /**
+     * route back to manipulate view.
+     */
+    // closeCode() {
+    //     this.$router.push("/manipulate");
+    // }
   },
   mounted() {
     /**
-     * Import Google Library.
+     * import google visualization library.
      */
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],

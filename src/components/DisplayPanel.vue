@@ -5,6 +5,20 @@
     <li class="nav-item me-3" role="presentation">
       <button
         class="nav-link bg-info bg-gradient"
+        id="instructions-tab"
+        data-bs-toggle="pill"
+        data-bs-target="#instructions"
+        type="button"
+        role="tab"
+        aria-controls="instructions"
+        aria-selected="false"
+      >
+        Instructions
+      </button>
+    </li>
+    <li class="nav-item me-3" role="presentation">
+      <button
+        class="nav-link bg-info bg-gradient"
         id="test-history-tab"
         data-bs-toggle="pill"
         data-bs-target="#test-history"
@@ -38,10 +52,19 @@
     <div class="tab-pane show" role="tabpanel" tabindex="0">Display Panel</div>
     <div
       class="tab-pane fade"
+      id="instructions"
+      role="tabpanel"
+      aria-labelledby="instructions-tab"
+      tabindex="0"
+    >
+      <instructions />
+    </div>
+    <div
+      class="tab-pane fade"
       id="test-history"
       role="tabpanel"
       aria-labelledby="test-history-tab"
-      tabindex="0"
+      tabindex="1"
     >
       <design-table
         :header="designHistoryHeader"
@@ -53,7 +76,7 @@
       id="visualize"
       role="tabpanel"
       aria-labelledby="visualize-tab"
-      tabindex="0"
+      tabindex="2"
     >
       <div id="chart"></div>
       >
@@ -70,28 +93,25 @@
  */
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+import Instructions from "./Instructions.vue"
 
 export default {
   name: "DisplayPanel",
   components: {
     DesignTable,
+    Instructions,
   },
   data() {
     return {
       designHistoryContent: [],
       designHistoryHeader: [
-        "design",
+        "test",
         "date",
-        "cost",
         "rainfall",
+        "material",
+        "absorption",
         "runoff",
-        "accessible squares",
-        "concrete",
-        "permeable concrete",
-        "grass",
-        "wood chips",
-        "artificial turf",
-        "poured rubber",
+        "cost",
       ],
       checkedDesignStatus: [],
     };
