@@ -185,8 +185,8 @@ export default {
      * The method gets design history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new design history from c2stem.
      */
-    generateTable() {
-      this.designHistory_content = visualize.getData();
+    async generateTable() {
+      this.designHistory_content = await visualize.getData();
       this.checkedDesignStatus = this.getCheckedDesigns;
       let dhLength = Object.keys(this.designHistory_content).length;
       let stateDhLength = this.historyLength;

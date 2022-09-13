@@ -21,9 +21,9 @@ export default {
      * Run scripts when green flag is pressed.
      * Extract a stage image after finishing running the script. 
      */
-    runModel(event) {
+    async runModel(event) {
       simulation.runProject(event);
-      let stageImg = simulation.getImage();
+      let stageImg = await simulation.getImage();
       this.$store.dispatch("addStageImage", stageImg);
       // this.$store.dispatch("updateSimulationStatus", true);
     },
