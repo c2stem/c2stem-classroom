@@ -3,11 +3,24 @@
  * Methods related to data visualization.
  */
 export default {
+
+  async getData(){
+    try {
+      const iframe = document.getElementById('iframe-id');
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      const gb = await api.getGlobalVariables();
+      var designHistory = gb.vars["design history"];
+      var dhContents = designHistory.value.contents;
+      return this.getObject(dhContents);
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   /**
    * Accesses the NetsBloxMorph of C2STEM and extract design history contents. 
    * @returns Object representation of Design History from C2STEM.
    */
-  getData() {
+  getDataOnDomain() {
     try {
       var iframe = document.getElementById("iframe-id"),
         ide = iframe.contentWindow.world.children[0];
