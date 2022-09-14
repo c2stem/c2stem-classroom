@@ -72,7 +72,7 @@ export default {
         this.username +
         "&ProjectName=" +
         this.projectname +
-        "&embedMode&noExitWarning&noRun";
+        "&embedModeNoFlag&noExitWarning&noRun";
     } else {
       this.iframeSource =
         this.source +
