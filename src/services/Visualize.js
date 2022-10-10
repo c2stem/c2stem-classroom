@@ -16,6 +16,19 @@ export default {
       alert(error.message);
     }
   },
+  async getTestData(){
+    try {
+      const iframe = document.getElementById('iframe-id');
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      const gb = await api.getGlobalVariables();
+      var testHistory = gb.vars["test history"];
+      var thContents = testHistory.value.contents;
+      console.log(thContents);
+      return this.getObject(thContents);
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   /**
    * Accesses the NetsBloxMorph of C2STEM and extract design history contents. 
    * @returns Object representation of Design History from C2STEM.
@@ -101,6 +114,46 @@ export default {
       height: 400,
     };
     var chart = new window.google.visualization.LineChart(
+      document.getElementById("chart")
+    );
+
+    chart.draw(data, options);
+  },
+
+  /**
+   * Generate a chart using Google library based on the design content provided.
+   * @param {*} contents List of designs run by the user.
+   */
+   drawGraph(header, contents) {
+    var data = new window.google.visualization.DataTable();
+    var dhHeaders = header;
+
+    for (let i = 0; i < dhHeaders.length; i++) {
+      data.addColumn("number", dhHeaders[i]);
+    }
+    for (let j = 1; j < contents.length; j++) {
+      let contentArray = contents[j].asArray();
+      for (let k = 0; k < contentArray.length; k++) {
+        if (k !== 1) {
+          contentArray[k] = Number(contentArray[k]);
+        } else {
+          contentArray[k] = 0;
+        }
+      }
+      data.addRow(contentArray);
+    }
+    var options = {
+      title: "Test History",
+      hAxis: {
+        title: "Test Number",
+      },
+      vAxis: {
+        title: "Test Values",
+      },
+      width: 550,
+      height: 400,
+    };
+    var chart = new window.google.visualization.ColumnChart(
       document.getElementById("chart")
     );
 

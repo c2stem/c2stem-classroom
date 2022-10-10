@@ -8,8 +8,26 @@ export default createStore({
     simulationStageImages: [],
     runSimulation: false,
     cmise_group: '',
+    test_history: {},
+    test_history_length: 0,
   },
   mutations: {
+    /**
+     * Adds new tests to the test_history in the state. 
+     * @param {state} state Current state of the store.
+     * @param {*} test updated test from  C2STEM.
+     */
+     addTestHistory(state, test) {
+      let th = {};
+      test.forEach((element) => {
+        th[element["test"] - 1] = element;
+      });
+      state.test_history = {
+        ...state.test_history,
+        ...th,
+      };
+      state.test_history_length = test.length;
+    },
     /**
      * Adds new designs to the design_history in the state. 
      * @param {state} state Current state of the store.
@@ -72,6 +90,22 @@ export default createStore({
     /**
      * Get the number of test run by users.
      * @param {state} state 
+     * @returns test_history_length
+     */
+     getthLength(state) {
+      return state.test_history_length;
+    },
+    /**
+     * Gets an array of all the tests run by the user.
+     * @param {state} state 
+     * @returns test_history
+     */
+    getTestHistory(state) {
+      return state.test_history;
+    },
+    /**
+     * Get the number of test run by users.
+     * @param {state} state 
      * @returns design_history_length
      */
     getdhLength(state) {
@@ -111,6 +145,9 @@ export default createStore({
     }
   },
   actions: {
+    addTestHistory(context, test) {
+      context.commit("addTestHistory", test);
+    },
     addDesignHistory(context, design) {
       context.commit("addDesignHistory", design);
     },

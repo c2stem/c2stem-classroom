@@ -31,7 +31,7 @@
         Get Test History
       </button>
     </li>
-    <li class="nav-item" role="presentation">
+    <!-- <li class="nav-item" role="presentation">
       <button
         class="nav-link bg-info bg-gradient"
         id="visualize-tab"
@@ -41,11 +41,11 @@
         role="tab"
         aria-controls="visualize"
         aria-selected="false"
-        @click="generateChart"
+        @click="generateGraph"
       >
         Visualize
       </button>
-    </li>
+    </li> -->
   </ul>
   <!-- Tab content for the pills -->
   <div class="tab-content" id="pills-tabContent">
@@ -66,12 +66,12 @@
       aria-labelledby="test-history-tab"
       tabindex="1"
     >
-      <design-table
-        :header="designHistoryHeader"
-        :contents="designHistory"
-      ></design-table>
+      <test-table
+        :header="testHistoryHeader"
+        :contents="testHistory"
+      ></test-table>
     </div>
-    <div
+    <!-- <div
       class="tab-pane fade"
       id="visualize"
       role="tabpanel"
@@ -79,8 +79,8 @@
       tabindex="2"
     >
       <div id="chart"></div>
-      >
-    </div>
+      
+    </div> -->
   </div>
 </template>
 
@@ -92,19 +92,19 @@
  * @requires ../services/Visualize.js currently using Google library to generate charts.
  */
 import visualize from "../services/Visualize";
-import DesignTable from "./DesignTable.vue";
+import TestTable from "./TestTable.vue";
 import Instructions from "./Instructions.vue"
 
 export default {
   name: "DisplayPanel",
   components: {
-    DesignTable,
+    TestTable,
     Instructions,
   },
   data() {
     return {
-      designHistoryContent: [],
-      designHistoryHeader: [
+      testHistoryContent: [],
+      testHistoryHeader: [
         "test",
         "date",
         "rainfall",
@@ -113,27 +113,26 @@ export default {
         "runoff",
         "cost",
       ],
-      checkedDesignStatus: [],
+      // testHistoryChartHeader: [
+      //   "material",
+      //   "rainfall",
+      //   "absorption",
+      //   "runoff",
+      // ],
     };
   },
   computed: {
     /**
      * Get the number of tests run by the user from store.
      */
-    historyLength() {
-      return this.$store.getters.getdhLength;
+    testHistoryLength() {
+      return this.$store.getters.getthLength;
     },
     /**
-     * Get the entire design history from the store.
+     * Get the entire test history from the store.
      */
-    designHistory() {
-      return this.$store.getters.getDesignHistory;
-    },
-    /**
-     * Get a list of checkbox status in the design history table from the store.
-     */
-    getCheckedDesigns() {
-      return this.$store.getters.getCheckedDesigns;
+    testHistory() {
+      return this.$store.getters.getTestHistory;
     },
   },
   methods: {
@@ -142,32 +141,57 @@ export default {
      * The method gets design history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new design history from c2stem.
      */
-    generateTable() {
-      this.designHistory_content = visualize.getData();
-      this.checkedDesignStatus = this.getCheckedDesigns;
-      let dhLength = Object.keys(this.designHistory_content).length;
-      let stateDhLength = this.historyLength;
-      if (dhLength > stateDhLength) {
-        const dhList = [];
-        const checkList = [];
-        Object.values(this.designHistory_content).forEach((element, index) => {
-          if (index >= stateDhLength && index < dhLength) {
-            dhList.push(element);
-            checkList.push(false);
+    async generateTable() {
+      this.testHistory_content = await visualize.getTestData();
+      console.log(this.designHistory_content)
+      // this.checkedDesignStatus = this.getCheckedDesigns;
+      let thLength = Object.keys(this.testHistory_content).length;
+      let stateThLength = this.testHistoryLength;
+      if (thLength > stateThLength) {
+        const thList = [];
+        // const checkList = [];
+        Object.values(this.testHistory_content).forEach((element, index) => {
+          if (index >= stateThLength && index < thLength) {
+            thList.push(element);
+            // checkList.push(false);
           }
         });
-        this.$store.dispatch("addDesignHistory", dhList);
-        this.$store.dispatch("addCheckedDesigns", checkList);
+        console.log(thList)
+        this.$store.dispatch("addTestHistory", thList);
+        // this.$store.dispatch("addCheckedDesigns", checkList);
+      // }
+      // this.testHistory_content = await visualize.getTestData();
+      // console.log(this.testHistoryContent)
+
+      // let thLength = Object.keys(this.testHistoryContent).length;
+      // console.log(thLength)
+
+      // let stateThLength = this.testHistoryLength;
+      // console.log(stateThLength)
+
+      // if (thLength > stateThLength) {
+      //   const thList = [];
+
+      //   Object.values(this.testHistoryContent).forEach((element, index) => {
+      //     if (index >= stateThLength && index < thLength) {
+      //       thList.push(element);
+
+      //     }
+      //   });
+      //   console.log(thList)
+      //   this.$store.dispatch("addTestHistory", thList);
+ 
       }
     },
     /**
-     * Generates a chart by accessing design history content from c2stem environemnt.
+     * Generates a chart by accessing test history content from c2stem environemnt.
      * Passes the design history contents to the google library. 
      */
-    generateChart() {
-      this.designHistory_content = visualize.getData();
-      visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
-    },
+    // generateGraph() {
+    //   this.testHistoryContent = visualize.getTestData();
+    //   console.log(this.testHistoryContent)
+    //   visualize.drawGraph(this.testHistoryChartHeader, this.testHistoryContent);
+    // },
   },
   mounted() {
     /**
