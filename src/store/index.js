@@ -36,13 +36,13 @@ export default createStore({
     addDesignHistory(state, design) {
       let dh = {};
       design.forEach((element) => {
-        dh[element["design"] - 1] = element;
+        dh[state.design_history_length] = element;
       });
       state.design_history = {
         ...state.design_history,
         ...dh,
       };
-      state.design_history_length = design.length;
+      state.design_history_length += design.length;
     },
     /**
      * Add a boolean checkbox status to the checkedStatus List.  
