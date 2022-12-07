@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import axios from "axios";
 
 export default createStore({
   state: {
@@ -7,6 +8,7 @@ export default createStore({
     checkedStatus: [],
     simulationStageImages: [],
     runSimulation: false,
+    user: ''
   },
   mutations: {
     /**
@@ -54,9 +56,19 @@ export default createStore({
      * @param {state} state Current state of the store. 
      * @param {Boolean} status Boolean value of press green flag. 
      */
-    updateSimulationStatus(state, status){
+    updateSimulationStatus(state, status) {
       state.runSimulation = status;
-    }
+    },
+    saveCredentials(state, data) {
+      state.user = data;
+      localStorage.setItem("user", JSON.stringify(data));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    },
+    removeCredentials(state) {
+      state.user = null;
+      localStorage.removeItem("user")
+      location.reload()
+    },
   },
   getters: {
     /**
@@ -96,8 +108,11 @@ export default createStore({
      * @param {state} state 
      * @returns runSimulation
      */
-    getSimulationStatus(state){
+    getSimulationStatus(state) {
       return state.runSimulation;
+    },
+    loggedIn(state) {
+      return !!state.user;
     }
   },
   actions: {
@@ -113,8 +128,14 @@ export default createStore({
     addStageImage(context, image) {
       context.commit("addStageImage", image);
     },
-    updateSimulationStatus(context, status){
+    updateSimulationStatus(context, status) {
       context.commit("updateSimulationStatus", status);
+    },
+    saveCredentials(context, data) {
+      context.commit("saveCredentials", data);
+    },
+    removeCredentials(context) {
+      context.commit("removeCredentials");
     }
   },
   modules: {},
