@@ -1,5 +1,5 @@
 <template>
-<!-- Login View -->
+  <!-- Login View -->
   <div class="login-card">
     <div class="card">
       <div class="card-body">
@@ -57,7 +57,11 @@ export default {
         .login({ username: this.username, password: this.password })
         .then(({ data }) => {
           this.$store.dispatch("saveCredentials", data).then(() => {
-            this.$router.push({ name: "Landing" });
+            if (data.class.includes("CMISE")) {
+              this.$router.push({ name: "Landing" });
+            } else if (data.class.includes("SPICE")) {
+              this.$router.push({ name: "Home" });
+            }
           });
         });
     },

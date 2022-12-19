@@ -29,61 +29,61 @@ const routes = [
     path: "/land",
     name: "Landing",
     component: Landing,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/home",
     name: "Home",
     component: Home,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'SPICE'}
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, role: 'Admin'}
   },
   {
     path: "/visualize/ast",
     name: "AST",
     component: AST,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'SPICE'}
   },
   {
     path: "/visualize/list",
     name: "Action View Representation",
     component: List,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'SPICE'}
   },
   {
     path: "/explore",
     name: "Explore View",
     component: Explore,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/construct",
     name: "Construct View",
     component: Construct,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/manipulate",
     name: "Manipulate View",
     component: Manipulate,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/manipulate/code",
     name: "Manipulate Code View",
     component: ManipulateCode,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/engineering",
     name: "Engineering Design View",
     component: EngineeringDesign,
-    meta: { requiresAuth : true}
+    meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
     path: "/:NotFound(.*)",
@@ -99,9 +99,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user');
+  // const userRole = localStorage.getItem('userRole');
+  const userClass = localStorage.getItem('userClass');
 
   if(to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
+  }
+  if(userClass && !userClass.includes(to.meta.class)){
+    router.back();
   }
   next()
   

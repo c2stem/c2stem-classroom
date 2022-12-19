@@ -60,13 +60,17 @@ export default createStore({
       state.runSimulation = status;
     },
     saveCredentials(state, data) {
-      state.user = data;
-      localStorage.setItem("user", JSON.stringify(data));
+      state.user = data.token;
+      localStorage.setItem("user", JSON.stringify(data.token));
+      localStorage.setItem("userRole", JSON.stringify(data.role));
+      localStorage.setItem("userClass", JSON.stringify(data.class));
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     },
     removeCredentials(state) {
       state.user = null;
       localStorage.removeItem("user")
+      localStorage.removeItem("userRole")
+      localStorage.removeItem("userClass")
       location.reload()
     },
   },
