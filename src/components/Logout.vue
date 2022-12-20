@@ -1,5 +1,5 @@
 <template>
-<!-- Logout Component -->
+  <!-- Logout Component -->
   <button
     v-if="loggedIn"
     type="button"
@@ -17,6 +17,7 @@
  * Toggles visibility based on the existence of user token  in the local storage.
  * When clicked removes credentials of current user.
  */
+import authService from "../services/Auth.js";
 export default {
   name: "Logout",
   computed: {
@@ -26,9 +27,8 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch("removeCredentials").then(() => {
-        this.$router.push({ name: "Login" });
-      });
+      authService.netsbloxLogout();
+      this.$store.dispatch("removeCredentials");
     },
   },
 };

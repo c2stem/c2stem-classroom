@@ -43,6 +43,7 @@ export default {
     return {
       username: "",
       password: "",
+      ServerURL: "https://editor.c2stem.org",
     };
   },
   methods: {
@@ -56,13 +57,21 @@ export default {
       auth
         .login({ username: this.username, password: this.password })
         .then(({ data }) => {
-          this.$store.dispatch("saveCredentials", data).then(() => {
-            if (data.class.includes("CMISE")) {
-              this.$router.push({ name: "Landing" });
-            } else if (data.class.includes("SPICE")) {
-              this.$router.push({ name: "Home" });
-            }
-          });
+          auth
+            .netsbloxLogin({
+              username: this.username,
+              password: this.password,
+              ServerURL: this.ServerURL,
+            })
+            .then(
+              this.$store.dispatch("saveCredentials", data).then(() => {
+                if (data.class.includes("CMISE")) {
+                  this.$router.push({ name: "Landing" });
+                } else if (data.class.includes("SPICE")) {
+                  this.$router.push({ name: "Home" });
+                }
+              })
+            );
         });
     },
   },
