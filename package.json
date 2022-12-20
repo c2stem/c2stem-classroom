@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",
+    "@types/crypto-js": "^4.1.1",
     "axios": "^1.2.1",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
     "core-js": "^3.6.5",
+    "crypto-js": "^4.1.1",
     "edit-distance": "^1.0.5",
     "vue": "^3.0.0",
     "vue-router": "^4.0.12",
