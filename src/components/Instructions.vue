@@ -1,17 +1,18 @@
 <template>
-<!-- Instructions component -->
-<!-- Instructions in a card with ability to add additional details in a modal -->
+  <!-- Instructions component -->
+  <!-- Instructions in a card with ability to add additional details in a modal -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
       <p class="card-text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
+        Complete your design prototype by selecting materials for all
+        non-building squares. To do so, click on a square and select the
+        material for that square from the options that pop-up.<br />
+        When you are ready to test your design, click on "Run Model." You will
+        be asked to "how much did it rain (in inches)?" In the textbox, inserts
+        a value for rainfall in inches (such as 1, 1.2, 2, or another number
+        value).<br />
+        Click the checkmark next to the textbox to check your design.
       </p>
       <button
         type="button"
@@ -32,7 +33,9 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="instructionModalLabel">Instructions</h5>
+              <h5 class="modal-title" id="instructionModalLabel">
+                Instructions
+              </h5>
               <button
                 type="button"
                 class="btn-close"
@@ -41,13 +44,14 @@
               ></button>
             </div>
             <div class="modal-body">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
+              Complete your design prototype by selecting materials for all
+              non-building squares. To do so, click on a square and select the
+              material for that square from the options that pop-up.<br />
+              When you are ready to test your design, click on "Run Model." You
+              will be asked to "how much did it rain (in inches)?" In the
+              textbox, inserts a value for rainfall in inches (such as 1, 1.2,
+              2, or another number value).<br />
+              Click the checkmark next to the textbox to check your design.
             </div>
             <div class="modal-footer">
               <button
@@ -70,7 +74,7 @@ div.modal-content {
   height: auto;
   min-height: 0;
 }
-.card{
+.card {
   border: 3px inset #615195;
 }
 </style>

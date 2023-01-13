@@ -25,14 +25,14 @@
               v-if="checked[index]"
               class="form-check-input mt-0"
               type="checkbox"
-              @change="check(content['design'], $event)"
+              @change="check(index, $event)"
               checked
             />
             <input
               v-else
               class="form-check-input mt-0"
               type="checkbox"
-              @change="check(content['design'], $event)"
+              @change="check(index, $event)"
             />
           </td>
         </tr>
@@ -87,7 +87,7 @@ export default {
      */
     check(i, e) {
       this.$store.dispatch("updateCheckedDesigns", {
-        index: i - 1,
+        index: i,
         status: e.target.checked,
       });
     },

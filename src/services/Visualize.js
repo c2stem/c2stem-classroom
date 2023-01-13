@@ -16,6 +16,18 @@ export default {
       alert(error.message);
     }
   },
+  async getTestData(){
+    try {
+      const iframe = document.getElementById('iframe-id');
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      const gb = await api.getGlobalVariables();
+      var testHistory = gb.vars["test history"];
+      var thContents = testHistory.value.contents;
+      return this.getTestObject(thContents);
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   /**
    * Accesses the NetsBloxMorph of C2STEM and extract design history contents. 
    * @returns Object representation of Design History from C2STEM.
@@ -141,5 +153,23 @@ export default {
     var splitContent = content.split(' ');
     var updatedDate = splitContent[1]+' '+splitContent[2]+' '+splitContent[3]+ ' '+splitContent[4]
     return updatedDate;
-  }
+  },
+  getTestObject(content) {
+    let obj = {};
+    let header = content[0].contents;
+    for (let i = 1; i < Object.keys(content).length; i++) {
+      let childObj = {};
+      let childContent = content[i].contents;
+      for (let j = 0; j < childContent.length; j++) {
+        if(j ==1){
+          var updatedContent = this.formatDate(childContent[j])
+          childObj[header[j]] = updatedContent;
+        }else if(j !== childContent.length-1){
+          childObj[header[j]] = childContent[j];
+        }
+      }
+      obj[i] = childObj;
+    }
+    return obj;
+  },
 };

@@ -1,5 +1,5 @@
 <template>
-<!-- Iframe Loader Component -->
+  <!-- Iframe Loader Component -->
   <iframe
     :src="iframeSource"
     :id="iframeid"
@@ -16,6 +16,7 @@
  * Iframe Loader Component
  * Generates an iframe with an embedded c2stem based on the data passed through props.
  */
+import simulationService from "../services/Simulation.js";
 export default {
   name: "IframeLoader",
   props: {
@@ -59,28 +60,48 @@ export default {
   data() {
     return {
       iframeSource: "",
+      userid: "",
     };
+  },
+  computed: {
+    loggedIn() {
+      return localStorage.getItem("user");
+    },
   },
   created() {
     /**
      * Based on the data from props, generate an iframe source url.
      */
-    if (this.embed) {
-      this.iframeSource =
-        this.source +
-        "/?action=present&Username=" +
-        this.username +
-        "&ProjectName=" +
-        this.projectname +
-        "&embedModeNoFlag&noExitWarning&noRun";
-    } else {
-      this.iframeSource =
-        this.source +
-        "/?action=present&Username=" +
-        this.username +
-        "&ProjectName=" +
-        this.projectname +
-        "&noExitWarning&noRun&editMode";
+    if (this.loggedIn) {
+      var projectExist = simulationService.projectExists(this.projectname);
+      projectExist
+        .then((response) => {
+          if (response) {
+            this.userid = this.loggedIn.replace(/["]+/g, "");
+          } else {
+            this.userid = this.username;
+          }
+          if (this.embed) {
+            this.iframeSource =
+              this.source +
+              "/?action=present&Username=" +
+              this.userid +
+              "&ProjectName=" +
+              this.projectname +
+              "&embedModeNoFlag&noExitWarning&noRun";
+          } else {
+            this.iframeSource =
+              this.source +
+              "/?action=present&Username=" +
+              this.userid +
+              "&ProjectName=" +
+              this.projectname +
+              "&noExitWarning&noRun&editMode&noExitWarning";
+          }
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
     }
   },
 };
