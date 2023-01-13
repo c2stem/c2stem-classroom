@@ -1,100 +1,7 @@
 <template>
-<!-- Construct View for CMISE -->
+  <!-- Construct View for CMISE -->
   <div class="container">
-    <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Simuation</i>
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#TestHistoryModal"
-      @click="generateTable"
-    >
-      Get Test History
-    </button>
-
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="TestHistoryModal"
-      tabindex="-1"
-      aria-labelledby="TestHistoryModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="TestHistoryModalLabel">Test History</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div id="table"></div>
-            <notes></notes>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      type="button"
-      class="btn btn-info"
-      data-bs-toggle="modal"
-      data-bs-target="#visualizeModal"
-      @click="generateChart"
-    >
-      Visualize
-    </button>
-
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="visualizeModal"
-      tabindex="-1"
-      aria-labelledby="visualizeModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="visualizeModalLabel">Visualize</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div id="chart"></div>
-            <notes></notes>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <coding-panel></coding-panel>
     <iframe-loader
       source="https://editor.c2stem.org"
       iframeid="iframe-id"
@@ -108,64 +15,43 @@
 <script>
 /**
  * Construct view.
- * In this view User will have access to a C2STEM project in an iframe. 
- * Data visualization is available on a button click in modals. 
+ * In this view User will have access to a C2STEM project in an iframe.
+ * Data visualization is available on a button click in modals.
  * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
- * @requires ../services/Simulation.js for c2stem Simulation methods.
- * @requires ../services/Visualize.js for data visualization.
  */
 import IframeLoader from "../components/IframeLoader.vue";
-import simulation from "../services/Simulation";
-import visualize from "../services/Visualize";
-import Notes from "../components/Notes.vue"
+import CodingPanel from "../components/CodingSimulationPanel.vue";
+// import simulation from "../services/Simulation.js";
 
 export default {
   name: "Construct View",
   components: {
     IframeLoader,
-    Notes
+    CodingPanel,
   },
   data() {
     return {
-      designHistory_content: [],
-      designHistoryHeader: [
-        "design",
-        "date",
-        "cost",
-        "rainfall",
-        "runoff",
-        "accessible squares",
-        "concrete",
-        "permeable concrete",
-        "grass",
-        "wood chips",
-        "artificial turf",
-        "poured rubber",
-      ],
+      projectName: " cmise-project-computational",
+      loading: false,
     };
   },
-  methods: {
-    /**
-     * Run green flag
-     */
-    runModel(event) {
-      simulation.runProject(event);
-    },
-    /**
-     * Get data from C2STEM and generate a table using google library.
-     */
-    generateTable() {
-      this.designHistory_content = visualize.getData();
-      visualize.drawTable(this.designHistoryHeader, this.designHistory_content);
-    },
-    /**
-     * Get data from C2STEM and generate a chart using google library.
-     */
-    generateChart() {
-      this.designHistory_content = visualize.getData();
-      visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
-    },
+  beforeRouteLeave() {
+    const answer = window.confirm(
+      "Do you really want to leave? you have unsaved changes!"
+    );
+    if (!answer) return false;
   },
+  // beforeMount() {
+  //   window.addEventListener("beforeunload", this.confirm_leaving);
+  // },
+  // methods: {
+  //   async confirm_leaving() {
+  //       this.saveProject;
+  //       // e.preventDefault();
+  //       // e.returnValue = "";
+
+  //   },
+  // },
   mounted() {
     /**
      * Import Google Library.
@@ -174,6 +60,9 @@ export default {
       packages: ["table", "corechart", "line"],
     });
   },
+  // beforeUnmount() {
+  //   window.removeEventListener("beforeunload", this.confirm_leaving);
+  // },
 };
 </script>
 

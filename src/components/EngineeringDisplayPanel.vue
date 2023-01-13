@@ -6,6 +6,20 @@
     <li class="nav-item me-3" role="presentation">
       <button
         class="nav-link bg-info bg-gradient"
+        id="instructions-tab"
+        data-bs-toggle="pill"
+        data-bs-target="#instructions"
+        type="button"
+        role="tab"
+        aria-controls="instructions"
+        aria-selected="false"
+      >
+        Instructions
+      </button>
+    </li>
+    <li class="nav-item me-3" role="presentation">
+      <button
+        class="nav-link bg-info bg-gradient"
         id="test-history-tab"
         data-bs-toggle="pill"
         data-bs-target="#test-history"
@@ -45,6 +59,15 @@
         :contents="designHistory"
         :checked="getCheckedDesigns"
       ></design-table>
+    </div>
+    <div
+      class="tab-pane fade"
+      id="instructions"
+      role="tabpanel"
+      aria-labelledby="instructions"
+      tabindex="0"
+    >
+      <instructions />
     </div>
   </div>
   <div
@@ -98,12 +121,14 @@
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
+import Instructions from "./Instructions.vue";
 
 export default {
   name: "EngineeringDisplayPanel",
   components: {
     DesignTable,
     Compare,
+    Instructions,
   },
   data() {
     return {
@@ -175,8 +200,11 @@ export default {
   },
   // watch: {
   //   getRunStatus() {
-  //     this.generateTable();
+  //     if(this.$store.getters.getSimulationStatus){
+  //       this.generateTable();
   //     this.$store.dispatch("updateSimulationStatus", false);
+  //     }
+
   //   },
   // },
   methods: {

@@ -1,11 +1,12 @@
 /**
  * Simulation Service.
- * Methods related to C2STEM GUI and C2STEM simulation. 
+ * Methods related to C2STEM GUI and C2STEM simulation.
  */
+import axios from "axios";
 export default {
-  runProject(){
+  runProject() {
     try {
-      const iframe = document.getElementById('iframe-id');
+      const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
       api.runProject();
     } catch (error) {
@@ -13,7 +14,7 @@ export default {
     }
   },
 
-  async getImage(){
+  async getImage() {
     try {
       var iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
@@ -25,9 +26,61 @@ export default {
       alert(error.message);
     }
   },
+  async getProjectList() {
+    var projects = [];
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        let response = await axios.get(
+          "https://editor.c2stem.org/api/getProjectList",
+          { withCredentials: true }
+        );
+        var pl = response.data.split(" ");
+        pl.forEach((element) => {
+          var project = element.split("&")[0];
+          var projectName = project.split("=")[1];
+          projects.push(projectName);
+        });
+      } catch (error) {
+        console.log("the error is ", error);
+      }
+    }
+    return projects;
+  },
+  async projectExists(projectName) {
+    let projects = await this.getProjectList();
+    if (projects.includes(projectName)) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  async getProject() {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    const xml = await api.getProjectXML();
+    return xml;
+  },
+  saveToCloud(projectName) {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    api.saveToCloud(projectName);
+  },
+  async saveToLocal(projectXML) {
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:attachment/xml," + encodeURI(projectXML)
+    );
+    element.setAttribute("download", "Saved_Project");
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  },
   /**
    * Green flag run method.
-   * Accesses the NetsBloxMorph of C2STEM and runs scripts. 
+   * Accesses the NetsBloxMorph of C2STEM and runs scripts.
    * @param {Event} event Capturing keyevents to act on SHIFT presses.
    */
   runProjectOnDomain(event) {
@@ -52,8 +105,8 @@ export default {
   },
 
   /**
-   * Accesses the NetsBloxMorph of C2STEM and capture the Stage image.  
-   * @returns current stage image 
+   * Accesses the NetsBloxMorph of C2STEM and capture the Stage image.
+   * @returns current stage image
    */
   getImageOnDomain() {
     var iframe = document.getElementById("iframe-id"),

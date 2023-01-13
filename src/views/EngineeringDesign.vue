@@ -3,7 +3,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <simulation-panel></simulation-panel>
+      <engineering-simulation-panel />
         <div class="iframe-panel">
           <iframe-loader
             source="https://editor.c2stem.org"
@@ -13,13 +13,9 @@
             :embed="true"
           ></iframe-loader>
         </div>
-        <div class="left-group">
-          <instructions></instructions>
-          <see-code></see-code>
-        </div>
       </div>
       <div class="col">
-        <div class="right-panel mt-5">
+        <div class="right-panel mt-4">
             <engineering-display-panel></engineering-display-panel>
         </div>
       </div>
@@ -43,20 +39,16 @@
  * @requires ../components/SimulationPanel.vue for the green flag.
  */
 import IframeLoader from "../components/IframeLoader.vue";
-import Instructions from "../components/Instructions.vue";
-import SimulationPanel from "../components/SimulationPanel.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
-import SeeCode from "../components/SeeCode.vue";
+import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 
 export default {
   name: "Engineering Design View",
   components: {
     IframeLoader,
-    Instructions,
     EngineeringDisplayPanel,
-    SimulationPanel,
-    SeeCode,
-  },
+    EngineeringSimulationPanel,
+},
 };
 </script>
 

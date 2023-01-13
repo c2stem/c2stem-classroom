@@ -8,29 +8,47 @@ export default createStore({
     checkedStatus: [],
     simulationStageImages: [],
     runSimulation: false,
-    user: ''
+    user: "",
+    test_history: {},
+    test_history_length: 0,
   },
   mutations: {
     /**
-     * Adds new designs to the design_history in the state. 
+     * Adds new tests to the test_history in the state.
+     * @param {state} state Current state of the store.
+     * @param {*} test updated test from  C2STEM.
+     */
+    addTestHistory(state, test) {
+      let th = {};
+      test.forEach((element) => {
+        th[element["test"] - 1] = element;
+      });
+      state.test_history = {
+        ...state.test_history,
+        ...th,
+      };
+      state.test_history_length = test.length;
+    },
+    /**
+     * Adds new designs to the design_history in the state.
      * @param {state} state Current state of the store.
      * @param {*} design updated designs from the C2STEM.
      */
     addDesignHistory(state, design) {
       let dh = {};
       design.forEach((element) => {
-        dh[element["design"] - 1] = element;
+        dh[state.design_history_length] = element;
       });
       state.design_history = {
         ...state.design_history,
         ...dh,
       };
-      state.design_history_length = design.length;
+      state.design_history_length += design.length;
     },
     /**
-     * Add a boolean checkbox status to the checkedStatus List.  
+     * Add a boolean checkbox status to the checkedStatus List.
      * @param {state} state Current state  of the store.
-     * @param {*} checkList List of new checkbox status. 
+     * @param {*} checkList List of new checkbox status.
      */
     addCheckedDesigns(state, checkList) {
       state.checkedStatus = [...state.checkedStatus, ...checkList];
@@ -46,38 +64,59 @@ export default createStore({
     /**
      * Add a new stage image to the simulationStageImages List
      * @param {state} state Current state of the store.
-     * @param {Image} image stage image after running simulation. 
+     * @param {Image} image stage image after running simulation.
      */
     addStageImage(state, image) {
       state.simulationStageImages.push(image);
     },
     /**
      * Status of green flag.
-     * @param {state} state Current state of the store. 
-     * @param {Boolean} status Boolean value of press green flag. 
+     * @param {state} state Current state of the store.
+     * @param {Boolean} status Boolean value of press green flag.
      */
     updateSimulationStatus(state, status) {
       state.runSimulation = status;
     },
     saveCredentials(state, data) {
       state.user = data.token;
-      localStorage.setItem("user", JSON.stringify(data.token));
+      localStorage.setItem("user", JSON.stringify(data.username));
       localStorage.setItem("userRole", JSON.stringify(data.role));
       localStorage.setItem("userClass", JSON.stringify(data.class));
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     },
     removeCredentials(state) {
       state.user = null;
-      localStorage.removeItem("user")
-      localStorage.removeItem("userRole")
-      localStorage.removeItem("userClass")
-      location.reload()
+      localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("userClass");
+      location.reload();
     },
   },
   getters: {
     /**
      * Get the number of test run by users.
-     * @param {state} state 
+     * @param {state} state
+     * @returns test_history_length
+     */
+    getthLength(state) {
+      return state.test_history_length;
+    },
+    /**
+     * Gets an array of all the tests run by the user.
+     * @param {state} state
+     * @returns test_history
+     */
+    getTestHistory(state) {
+      return state.test_history;
+    },
+    /**
+     * Get the number of test run by users.
+     * @param {state} state
+     * @returns design_history_length
+     */
+    /**
+     * Get the number of test run by users.
+     * @param {state} state
      * @returns design_history_length
      */
     getdhLength(state) {
@@ -85,7 +124,7 @@ export default createStore({
     },
     /**
      * Gets an array of all the designs run by the user.
-     * @param {state} state 
+     * @param {state} state
      * @returns design_history
      */
     getDesignHistory(state) {
@@ -93,7 +132,7 @@ export default createStore({
     },
     /**
      * Get a List of status of all the cehckboxes in the engineering design table.
-     * @param {state} state 
+     * @param {state} state
      * @returns checkedStatus
      */
     getCheckedDesigns(state) {
@@ -101,7 +140,7 @@ export default createStore({
     },
     /**
      * Get a list of all the stage images from each design run by user.
-     * @param {state} state 
+     * @param {state} state
      * @returns simulationStageImages
      */
     getStageImages(state) {
@@ -109,7 +148,7 @@ export default createStore({
     },
     /**
      * Get boolean status of green flag.
-     * @param {state} state 
+     * @param {state} state
      * @returns runSimulation
      */
     getSimulationStatus(state) {
@@ -117,9 +156,12 @@ export default createStore({
     },
     loggedIn(state) {
       return !!state.user;
-    }
+    },
   },
   actions: {
+    addTestHistory(context, test) {
+      context.commit("addTestHistory", test);
+    },
     addDesignHistory(context, design) {
       context.commit("addDesignHistory", design);
     },
@@ -140,7 +182,7 @@ export default createStore({
     },
     removeCredentials(context) {
       context.commit("removeCredentials");
-    }
+    },
   },
   modules: {},
 });

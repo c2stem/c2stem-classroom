@@ -6,9 +6,10 @@ import Explore from "../views/Explore.vue";
 import Construct from "../views/Construct.vue";
 import Manipulate from "../views/Manipulate.vue";
 import ManipulateCode from "../views/ManipulateCode.vue";
-import Landing from "../views/LandingPage.vue";
+// import Landing from "../views/LandingPage.vue";
 import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
+import TempLanding from "../views/tempLandingPage.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -28,7 +29,7 @@ const routes = [
   {
     path: "/land",
     name: "Landing",
-    component: Landing,
+    component: TempLanding,
     meta: { requiresAuth : true, class: 'CMISE'}
   },
   {
@@ -102,6 +103,9 @@ router.beforeEach((to, from, next) => {
   // const userRole = localStorage.getItem('userRole');
   const userClass = localStorage.getItem('userClass');
 
+  if(from.name){
+    console.log("here");
+  }
   if(to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
   }
