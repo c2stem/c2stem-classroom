@@ -239,6 +239,12 @@ export default {
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
+
+    this.emitter.on('update-data', (evt) => {
+      if(evt.status){
+        this.generateTable();
+      }
+    })
   },
 };
 </script>
