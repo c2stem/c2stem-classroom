@@ -16,6 +16,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.1.1",
     "edit-distance": "^1.0.5",
+    "mitt": "^3.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.2"
