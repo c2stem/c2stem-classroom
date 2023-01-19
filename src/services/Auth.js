@@ -4,7 +4,10 @@ import { enc, SHA512 } from "crypto-js";
 export default {
 
     login(credentials) {
-        return axios.post("//localhost:8203/user/login", credentials);
+        return axios.post("https://run.c2stem.org/user/login", credentials);
+    },
+    register(credentials) {
+        return axios.post("https://run.c2stem.org/user/register", credentials);
     },
     netsbloxLogin(credentials) {
         const data = credentials;

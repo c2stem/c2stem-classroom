@@ -10,6 +10,7 @@ import ManipulateCode from "../views/ManipulateCode.vue";
 import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
 import TempLanding from "../views/tempLandingPage.vue";
+import Register from "../views/Register.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -26,6 +27,12 @@ const routes = [
     name: "Login",
     component: Login,
     meta: {title: 'C2STEM | Login'}
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: Register,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Rgister'}
   },
   {
     path: "/land",
