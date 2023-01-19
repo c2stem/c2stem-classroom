@@ -16,9 +16,9 @@ export default {
   },
   data() {
     return {
-      names: ["Lesson one", "Lesson two", "Lesson three" ],
-      description: ["Computational Modeling", "Computational Modeling", "Computational Modeling"],
-      route: ["/construct", "/construct", "/construct"],
+      names: ["Computational Model" ],
+      description: ["Complete your computational model lessons"],
+      route: ["/construct"],
       engineering: true,
     };
   },
