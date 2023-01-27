@@ -1,9 +1,9 @@
 <template>
-<!-- Engineering Design View -->
+  <!-- Engineering Design View -->
   <div class="container">
     <div class="row">
       <div class="col">
-      <engineering-simulation-panel />
+        <engineering-simulation-panel />
         <div class="iframe-panel">
           <iframe-loader
             source="https://editor.c2stem.org"
@@ -16,7 +16,7 @@
       </div>
       <div class="col">
         <div class="right-panel mt-4">
-            <engineering-display-panel></engineering-display-panel>
+          <engineering-display-panel></engineering-display-panel>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
 /**
  * Engineering Design view.
  * Similar to manipulate view customized for engineering design with compare feature.
- * In this view user will have access to a C2STEM project in an iframe. 
+ * In this view user will have access to a C2STEM project in an iframe.
  * Instruction panel is available with resources.
  * Display panel has data visualization from C2STEM data.
  * The green flag is availble to run scripts from outside of iframe.
@@ -43,12 +43,32 @@ import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
 import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 
 export default {
-  name: "Engineering Design View",
+  name: "Engineering",
   components: {
     IframeLoader,
     EngineeringDisplayPanel,
     EngineeringSimulationPanel,
-},
+  },
+  methods: {
+    saveProject() {
+      this.emitter.emit("save-project", { status: true });
+    },
+    getUser(){
+      return localStorage.getItem("user");
+    }
+  },
+  // beforeMount() {
+  //   let user = localStorage.getItem("user");
+  //   // this.$store.dispatch("setupCheckedDesigns", user);
+  //   // this.$store.dispatch("setupStageImages", user);
+  // },
+  mounted() {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    iframe.onload = () => {
+      api.addEventListener("projectSaved", this.saveProject);
+    };
+  },
 };
 </script>
 
@@ -77,12 +97,12 @@ div {
   display: flex;
 }
 
-.left-group{
-    height: auto;
-    display: inline-flex;
-    align-items: center;
+.left-group {
+  height: auto;
+  display: inline-flex;
+  align-items: center;
 }
-.codeBttn{
-    height: fit-content;
+.codeBttn {
+  height: fit-content;
 }
 </style>

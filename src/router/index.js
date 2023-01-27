@@ -72,7 +72,7 @@ const routes = [
   },
   {
     path: "/construct",
-    name: "Construct View",
+    name: "Construct",
     component: Construct,
     meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Construct'}
   },
@@ -90,7 +90,7 @@ const routes = [
   },
   {
     path: "/engineering",
-    name: "Engineering Design View",
+    name: "Engineering",
     component: EngineeringDesign,
     meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Engineering'}
   },

@@ -47,8 +47,37 @@ export default {
     }
     return projects;
   },
+  async getSharedProjectList() {
+    var projects = [];
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        let response = await axios.get(
+          "https://editor.c2stem.org/api/getSharedProjectList",
+          { withCredentials: true }
+        );
+        var pl = response.data.split(" ");
+        pl.forEach((element) => {
+          var project = element.split("&")[0];
+          var projectName = project.split("=")[1];
+          projects.push(projectName);
+        });
+      } catch (error) {
+        console.log("the error is ", error);
+      }
+    }
+    return projects;
+  },
   async projectExists(projectName) {
     let projects = await this.getProjectList();
+    if (projects.includes(projectName)) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  async sharedProjectExists(projectName) {
+    let projects = await this.getSharedProjectList();
     if (projects.includes(projectName)) {
       return true;
     } else {
@@ -61,10 +90,15 @@ export default {
     const xml = await api.getProjectXML();
     return xml;
   },
-  saveToCloud(projectName) {
+  async saveToCloud(projectName) {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     api.saveToCloud(projectName);
+  },
+  async publishProject(projectName, publish) {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    api.publishProject(projectName, publish);
   },
   async saveToLocal(projectXML) {
     var element = document.createElement("a");
@@ -119,4 +153,14 @@ export default {
     image.src = imgCanvas.toDataURL();
     return image;
   },
+
+  async saveHistory(checkList, user){
+    let response = await axios.post("//localhost:8203/history/setChecks", {
+      username: user,
+      checkList: checkList,
+    });
+    if (response) {
+      console.log("successfully saved checklist: ", response);
+    }
+  }
 };

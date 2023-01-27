@@ -24,7 +24,7 @@ import CodingPanel from "../components/CodingSimulationPanel.vue";
 // import simulation from "../services/Simulation.js";
 
 export default {
-  name: "Construct View",
+  name: "Construct",
   components: {
     IframeLoader,
     CodingPanel,
@@ -52,6 +52,15 @@ export default {
 
   //   },
   // },
+  
+  methods:{
+    saveProject() {
+      this.emitter.emit('save-project', { 'status': true });
+    },
+    getUser(){
+      return localStorage.getItem("user");
+    }
+  },
   mounted() {
     /**
      * Import Google Library.
@@ -59,6 +68,11 @@ export default {
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    iframe.onload = () => {
+      api.addEventListener("projectSaved", this.saveProject);
+    };
   },
   // beforeUnmount() {
   //   window.removeEventListener("beforeunload", this.confirm_leaving);

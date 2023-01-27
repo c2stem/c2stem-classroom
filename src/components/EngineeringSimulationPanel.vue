@@ -28,7 +28,7 @@ export default {
       designHistory_content: [],
       dhLength: 0,
       stateDhLength: 0,
-    }
+    };
   },
   computed: {
     historyLength() {
@@ -37,45 +37,35 @@ export default {
   },
   methods: {
     getDesignData() {
-      return new Promise((resolve)=> {
-        Visualize.getData().then((response) => {
+      Visualize.getData().then((response) => {
         this.dhLength = Object.keys(response).length;
         this.stateDhLength = this.historyLength;
-        resolve(true)
-      })
-      })
-
+        return true;
+      });
     },
     async processDesignData() {
-      this.getDesignData().then((response) => {
-        if (this.dhLength > this.stateDhLength && response) {
-          simulation.getImage().then((response) => {
-            this.$store.dispatch("addStageImage", response);
-            this.updateData();
-          });
-
-        } else {
-          this.processDesignData();
-        }
+      // let response = this.getDesignData();
+      simulation.getImage().then((response) => {
+        this.$store.dispatch("addStageImage", response.src);
+        this.updateData();
       });
     },
     /**
      * Run scripts when green flag is pressed.
-     * Extract a stage image after finishing running the script. 
+     * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
       simulation.runProject(event);
       this.sleep(10000).then(() => {
         this.processDesignData();
-      })
-
+      });
     },
     updateData() {
-      this.emitter.emit('update-data', { 'status': true });
+      this.emitter.emit("update-data", { status: true });
     },
     sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
   },
 };
 </script>

@@ -17,7 +17,9 @@
       <tbody>
         <tr v-for="(content, index) in contents" :key="index">
           <td v-if="checked[index]">
-            <img :src=images[index].src class="img-fluid" alt="...">
+            <img v-if="images[index]"  :src=images[index] class="img-fluid" alt="...">
+            <img v-else src="../../public/stage.png" class="img-fluid" alt="...">
+
           </td>
           <td v-for="(items, i) in content" :key="i">
             <p v-if="checked[index]">{{ items }}</p>

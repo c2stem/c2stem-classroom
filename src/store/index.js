@@ -1,5 +1,10 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import VuexPersistence from "vuex-persist";
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+});
 
 export default createStore({
   state: {
@@ -7,6 +12,7 @@ export default createStore({
     design_history_length: 0,
     checkedStatus: [],
     simulationStageImages: [],
+    stageImagesLength: 0,
     runSimulation: false,
     user: "",
     test_history: {},
@@ -38,12 +44,13 @@ export default createStore({
       let dh = {};
       design.forEach((element) => {
         dh[state.design_history_length] = element;
+        state.design_history_length += 1
       });
       state.design_history = {
         ...state.design_history,
         ...dh,
       };
-      state.design_history_length += design.length;
+      // state.design_history_length += design.length;
     },
     /**
      * Add a boolean checkbox status to the checkedStatus List.
@@ -89,6 +96,7 @@ export default createStore({
       localStorage.removeItem("user");
       localStorage.removeItem("userRole");
       localStorage.removeItem("userClass");
+      localStorage.removeItem("vuex");
       location.reload();
     },
   },
@@ -185,4 +193,5 @@ export default createStore({
     },
   },
   modules: {},
+  plugins: [vuexLocal.plugin],
 });

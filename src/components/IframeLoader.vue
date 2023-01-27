@@ -61,11 +61,15 @@ export default {
     return {
       iframeSource: "",
       userid: "",
+      actionType: "present",
     };
   },
   computed: {
     loggedIn() {
       return localStorage.getItem("user");
+    },
+    projectNameExists() {
+      return localStorage.getItem("projectName");
     },
   },
   created() {
@@ -81,10 +85,18 @@ export default {
           } else {
             this.userid = this.username;
           }
+          if (this.projectNameExists) {
+            localStorage.removeItem("projectName");
+            localStorage.setItem("projectName", this.projectname);
+          } else {
+            localStorage.setItem("projectName", this.projectname);
+          }
           if (this.embed) {
             this.iframeSource =
               this.source +
-              "/?action=present&Username=" +
+              "/?action=" +
+              this.actionType +
+              "&Username=" +
               this.userid +
               "&ProjectName=" +
               this.projectname +
@@ -92,7 +104,9 @@ export default {
           } else {
             this.iframeSource =
               this.source +
-              "/?action=present&Username=" +
+              "/?action=" +
+              this.actionType +
+              "&Username=" +
               this.userid +
               "&ProjectName=" +
               this.projectname +

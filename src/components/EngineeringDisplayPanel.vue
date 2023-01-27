@@ -198,15 +198,6 @@ export default {
       return this.$store.getters.getSimulationStatus;
     },
   },
-  // watch: {
-  //   getRunStatus() {
-  //     if(this.$store.getters.getSimulationStatus){
-  //       this.generateTable();
-  //     this.$store.dispatch("updateSimulationStatus", false);
-  //     }
-
-  //   },
-  // },
   methods: {
     /**
      * Generates a table by accessing design history content from c2stem environemnt.
@@ -215,8 +206,8 @@ export default {
      */
     async generateTable() {
       this.designHistory_content = await visualize.getData();
-      this.checkedDesignStatus = this.getCheckedDesigns;
       let dhLength = Object.keys(this.designHistory_content).length;
+      this.checkedDesignStatus = this.getCheckedDesigns;
       let stateDhLength = this.historyLength;
       if (dhLength > stateDhLength) {
         const dhList = [];
