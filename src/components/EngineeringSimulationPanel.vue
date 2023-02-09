@@ -2,7 +2,7 @@
   <!-- Simulation Panel Component -->
   <div class="start-panel">
     <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Model</i>
+      <i class="bi bi-flag-fill"> Test Design</i>
     </button>
     <see-code />
   </div>

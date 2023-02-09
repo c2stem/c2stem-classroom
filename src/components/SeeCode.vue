@@ -32,4 +32,8 @@ export default {
     background-color: rgba(0,0,0,.0001) !important;
     border: 0;
 }
+.modal-dialog{
+  top: 10%;
+  left: 30%;
+}
 </style>

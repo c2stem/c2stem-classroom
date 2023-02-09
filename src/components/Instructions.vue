@@ -5,15 +5,17 @@
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
       <p class="card-text">
-        Complete your design prototype by selecting materials for all
+        <ul>
+          <li>Complete your design prototype by selecting materials for all
         non-building squares. To do so, click on a square and select the
-        material for that square from the options that pop-up.<br />
-        When you are ready to test your design, click on "Run Model." You will
+        material for that square from the options that pop-up.</li>
+          <li>When you are ready to test your design, click on "Run Model." You will
         be asked to "how much did it rain (in inches)?" In the textbox, inserts
         a value for rainfall in inches (such as 1, 1.2, 2, or another number
         value).<br />
-        Click the checkmark next to the textbox to check your design.
-      </p>
+        Click the checkmark next to the textbox to check your design.</li>
+        </ul> 
+        </p>
       <button
         type="button"
         class="btn btn-link float-end"
@@ -44,14 +46,16 @@
               ></button>
             </div>
             <div class="modal-body">
-              Complete your design prototype by selecting materials for all
-              non-building squares. To do so, click on a square and select the
-              material for that square from the options that pop-up.<br />
-              When you are ready to test your design, click on "Run Model." You
-              will be asked to "how much did it rain (in inches)?" In the
-              textbox, inserts a value for rainfall in inches (such as 1, 1.2,
-              2, or another number value).<br />
-              Click the checkmark next to the textbox to check your design.
+              <ul>
+          <li>Complete your design prototype by selecting materials for all
+        non-building squares. To do so, click on a square and select the
+        material for that square from the options that pop-up.</li>
+          <li>When you are ready to test your design, click on "Run Model." You will
+        be asked to "how much did it rain (in inches)?" In the textbox, inserts
+        a value for rainfall in inches (such as 1, 1.2, 2, or another number
+        value).<br />
+        Click the checkmark next to the textbox to check your design.</li>
+        </ul> 
             </div>
             <div class="modal-footer">
               <button
