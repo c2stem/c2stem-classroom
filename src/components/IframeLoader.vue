@@ -61,7 +61,7 @@ export default {
     return {
       iframeSource: "",
       userid: "",
-      actionType: "present",
+      actionType: "private",
     };
   },
   computed: {

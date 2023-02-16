@@ -154,13 +154,13 @@ export default {
     return image;
   },
 
-  async saveHistory(checkList, user){
-    let response = await axios.post("//localhost:8203/history/setChecks", {
-      username: user,
-      checkList: checkList,
-    });
-    if (response) {
-      console.log("successfully saved checklist: ", response);
-    }
-  }
+  // async saveHistory(checkList, user){
+  //   let response = await axios.post("//localhost:8203/history/setChecks", {
+  //     username: user,
+  //     checkList: checkList,
+  //   });
+  //   if (response) {
+  //     console.log("successfully saved checklist: ", response);
+  //   }
+  // }
 };

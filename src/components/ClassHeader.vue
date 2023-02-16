@@ -70,12 +70,12 @@ export default {
       try {
         let name = this.getProjectName;
         Simulation.saveToCloud(name);
-        let checkList = this.getCheckedDesigns;
-        let username = this.loggedIn;
-        Simulation.saveHistory(checkList, username);
-        setTimeout(() => {
-          Simulation.publishProject(name, true);
-        }, 5000);
+        // let checkList = this.getCheckedDesigns;
+        // let username = this.loggedIn;
+        // Simulation.saveHistory(checkList, username);
+        // setTimeout(() => {
+        //   Simulation.publishProject(name, true);
+        // }, 5000);
       } catch (error) {
         console.log("Cannot save the project", error);
       }

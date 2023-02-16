@@ -20,6 +20,33 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal show"
+      id="loadModal"
+      :data-bs-backdrop="backroundStatus"
+      data-bs-keyboard="false"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div>
+              <strong>Loading Project... </strong>
+              <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <button
+              v-if="projectLoaded"
+              type="button"
+              class="btn btn-secondary ms-5"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -41,6 +68,7 @@
 import IframeLoader from "../components/IframeLoader.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
 import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
+import { Modal } from "bootstrap";
 
 export default {
   name: "Engineering",
@@ -49,24 +77,41 @@ export default {
     EngineeringDisplayPanel,
     EngineeringSimulationPanel,
   },
+  data() {
+    return {
+      loadStatus: false,
+      background: "static",
+    };
+  },
+  computed: {
+    projectLoaded() {
+      return this.loadStatus;
+    },
+    backroundStatus() {
+      return this.background;
+    }
+  },
   methods: {
     saveProject() {
       this.emitter.emit("save-project", { status: true });
     },
-    getUser(){
+    getUser() {
       return localStorage.getItem("user");
-    }
+    },
   },
-  // beforeMount() {
-  //   let user = localStorage.getItem("user");
-  //   // this.$store.dispatch("setupCheckedDesigns", user);
-  //   // this.$store.dispatch("setupStageImages", user);
-  // },
   mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
+    var myModal = new Modal(document.getElementById("loadModal"));
+    myModal.show();
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
+      api.addEventListener("action", (e)=>{
+        if (e.detail.type === "openProject") {
+        this.loadStatus = true;
+        myModal.hide();
+      }
+      });
     };
   },
 };
@@ -104,5 +149,21 @@ div {
 }
 .codeBttn {
   height: fit-content;
+}
+.modal-body {
+  display: flex;
+  justify-content: center;
+}
+.modal-dialog {
+  display: flex;
+  align-items: center;
+}
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.0001) !important;
+  border: 0;
+}
+strong {
+  font-size: x-large;
+  color: aliceblue;
 }
 </style>

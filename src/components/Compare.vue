@@ -1,5 +1,5 @@
 <template>
-<!-- Comapre component  -->
+  <!-- Comapre component  -->
   <div class="container overflow-scroll">
     <!-- Table to present selected designs with their respective parameters for comparison -->
     <table class="table table-hover table-bordered">
@@ -15,14 +15,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(content, index) in contents" :key="index">
-          <td v-if="checked[index]">
-            <img v-if="images[index]"  :src=images[index] class="img-fluid" alt="...">
-            <img v-else src="../../public/stage.png" class="img-fluid" alt="...">
-
+        <tr v-for="(content, index) in filteredContent" :key="index">
+          <td>
+            <img
+              v-if="images[index]"
+              :src="images[index]"
+              class="img-fluid"
+              alt="..."
+            />
+            <img
+              v-else
+              src="../../public/stage.png"
+              class="img-fluid"
+              alt="..."
+            />
           </td>
           <td v-for="(items, i) in content" :key="i">
-            <p v-if="checked[index]">{{ items }}</p>
+            <p>{{ items }}</p>
           </td>
         </tr>
       </tbody>
@@ -45,7 +54,7 @@ export default {
   name: "Table",
   props: {
     /**
-     * The Array list of header names 
+     * The Array list of header names
      */
     header: {
       type: Array,
@@ -68,13 +77,21 @@ export default {
       required: true,
     },
     /**
-     * Array List of Stage images of all the designs. 
+     * Array List of Stage images of all the designs.
      */
     images: {
       type: Array,
       required: true,
     },
   },
+  computed: {
+    filteredContent() {
+      let filteredData = Object.entries(this.contents);
+      filteredData = filteredData.filter((data, index) => {
+        return this.checked[index];
+      });
+      return Object.fromEntries(filteredData);
+    },
+  },
 };
 </script>
-
