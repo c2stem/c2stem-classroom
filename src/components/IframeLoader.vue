@@ -82,8 +82,10 @@ export default {
         .then((response) => {
           if (response) {
             this.userid = this.loggedIn.replace(/["]+/g, "");
+            this.actionType = "private";
           } else {
             this.userid = this.username;
+            this.actionType = "present";
           }
           if (this.projectNameExists) {
             localStorage.removeItem("projectName");
