@@ -9,11 +9,12 @@
           <li>Complete your design prototype by selecting materials for all
         non-building squares. To do so, click on a square and select the
         material for that square from the options that pop-up.</li>
-          <li>When you are ready to test your design, click on "Run Model." You will
+          <li>When you are ready to test your design, click on "Test Design."</li>
+          <li> You will
         be asked to "how much did it rain (in inches)?" In the textbox, inserts
         a value for rainfall in inches (such as 1, 1.2, 2, or another number
-        value).<br />
-        Click the checkmark next to the textbox to check your design.</li>
+        value).</li>
+          <li>Click the checkmark next to the textbox to check your design.</li>
         </ul> 
         </p>
       <button
@@ -50,11 +51,12 @@
           <li>Complete your design prototype by selecting materials for all
         non-building squares. To do so, click on a square and select the
         material for that square from the options that pop-up.</li>
-          <li>When you are ready to test your design, click on "Run Model." You will
+          <li>When you are ready to test your design, click on "Test Design."</li>
+          <li> You will
         be asked to "how much did it rain (in inches)?" In the textbox, inserts
         a value for rainfall in inches (such as 1, 1.2, 2, or another number
-        value).<br />
-        Click the checkmark next to the textbox to check your design.</li>
+        value).</li>
+          <li>Click the checkmark next to the textbox to check your design.</li>
         </ul> 
             </div>
             <div class="modal-footer">

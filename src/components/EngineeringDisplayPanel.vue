@@ -34,7 +34,7 @@
     </li>
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link bg-info bg-gradient"
+        class="nav-link bg-warning bg-gradient"
         id="visualize-tab"
         data-bs-toggle="modal"
         data-bs-target="#compare"
