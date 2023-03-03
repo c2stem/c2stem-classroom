@@ -11,6 +11,9 @@ export default {
   name: "App",
   components: {
     ClassHeader
+  },
+  beforeCreate(){
+    this.$store.dispatch('initializeStorage');
   }
 };
 </script>

@@ -115,9 +115,6 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title || 'Your Website Title';
   }
 
-  if(from.name){
-    console.log("here");
-  }
   if(to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
   }
