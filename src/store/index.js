@@ -1,12 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import VuexPersistence from "vuex-persist";
 
-const vuexLocal = new VuexPersistence({
-  storage: window.localStorage,
-});
-
-export default createStore({
+const store = createStore({
   state: {
     design_history: {},
     design_history_length: 0,
@@ -19,6 +14,15 @@ export default createStore({
     test_history_length: 0,
   },
   mutations: {
+    initializeStorage(state) {
+      if (localStorage.getItem("store")) {
+        if (localStorage.getItem('user')) {
+          this.replaceState(
+            Object.assign(state, JSON.parse(localStorage.getItem("store")))
+          );
+        }
+      }
+    },
     /**
      * Adds new tests to the test_history in the state.
      * @param {state} state Current state of the store.
@@ -44,7 +48,7 @@ export default createStore({
       let dh = {};
       design.forEach((element) => {
         dh[state.design_history_length] = element;
-        state.design_history_length += 1
+        state.design_history_length += 1;
       });
       state.design_history = {
         ...state.design_history,
@@ -93,10 +97,7 @@ export default createStore({
     },
     removeCredentials(state) {
       state.user = null;
-      localStorage.removeItem("user");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("userClass");
-      localStorage.removeItem("vuex");
+      window.localStorage.clear();
       location.reload();
     },
   },
@@ -167,6 +168,9 @@ export default createStore({
     },
   },
   actions: {
+    initializeStorage(context) {
+      context.commit("initializeStorage");
+    },
     addTestHistory(context, test) {
       context.commit("addTestHistory", test);
     },
@@ -193,5 +197,12 @@ export default createStore({
     },
   },
   modules: {},
-  plugins: [vuexLocal.plugin],
+  // plugins: [vuexLocal.plugin],
 });
+
+store.subscribe((mutation, state) => {
+  // Store the state object as a JSON string
+  localStorage.setItem("store", JSON.stringify(state));
+});
+
+export default store;
