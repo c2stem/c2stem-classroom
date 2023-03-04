@@ -5,7 +5,7 @@
   <ul class="nav nav-pills" id="pills-tab" role="tablist">
     <li class="nav-item me-3" role="presentation">
       <button
-        class="nav-link bg-info bg-gradient"
+        class="nav-link active bg-info bg-gradient"
         id="instructions-tab"
         data-bs-toggle="pill"
         data-bs-target="#instructions"
@@ -61,7 +61,7 @@
       ></design-table>
     </div>
     <div
-      class="tab-pane fade"
+      class="tab-pane fade overflow-auto show active"
       id="instructions"
       role="tabpanel"
       aria-labelledby="instructions"
@@ -134,8 +134,7 @@ export default {
     return {
       designHistoryContent: [],
       designHistoryHeader: [
-        "design",
-        "date",
+        "design/date",
         "cost",
         "rainfall",
         "runoff",
@@ -150,8 +149,7 @@ export default {
       ],
       compareHeader: [
         "Stage",
-        "design",
-        "date",
+        "design/date",
         "cost",
         "rainfall",
         "runoff",
