@@ -109,14 +109,9 @@ th, td{
   padding: 0.2rem!important;
   vertical-align: middle;
 }
-p{
-  text-align: center;
-  margin: 0!important;
+p, input{
   display: flex;
   justify-content: center;
-}
-input{
-  vertical-align: middle;
-  margin-left: 40%!important;
+  margin: auto!important;
 }
 </style>
