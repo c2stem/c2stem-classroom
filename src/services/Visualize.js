@@ -133,8 +133,8 @@ export default {
       for (let j = 0; j < childContent.length; j++) {
         if(j ==1){
           var updatedContent = this.formatDate(childContent[j])
-          childObj[header[j]] = updatedContent;
-        }else{
+          childObj[header[j-1]/header[j]] = childContent[j-1] + '. '+updatedContent; //combining design and date
+        }else if(j!=0){
           childObj[header[j]] = childContent[j];
         }
       }
@@ -151,7 +151,12 @@ export default {
    */
   formatDate(content){
     var splitContent = content.split(' ');
-    var updatedDate = splitContent[1]+' '+splitContent[2]+' '+splitContent[3]+ ' '+splitContent[4]
+    //convert 3 letter month to 2 number representation
+    var map_month = this.mapMonths(splitContent[1]);
+    if(!map_month){
+      map_month = splitContent[1];
+    }
+    var updatedDate = map_month+'/'+splitContent[2]+'/'+splitContent[3].substring(2)+ ' '+splitContent[4];
     return updatedDate;
   },
   getTestObject(content) {
@@ -172,4 +177,23 @@ export default {
     }
     return obj;
   },
+
+  mapMonths(month){
+    const monthMap = {
+      "Jan":"01",
+      "Feb":"02",
+      "Mar":"03",
+      "Apr":"04",
+      "May":"05",
+      "Jun":"06",
+      "Jul":"07",
+      "Aug":"08",
+      "Sep":"09",
+      "Sept":"09",
+      "Oct":"10",
+      "Nov":"11",
+      "Dec":"12",
+    }
+    return monthMap[month];
+  }
 };

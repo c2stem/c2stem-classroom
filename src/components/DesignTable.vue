@@ -94,3 +94,24 @@ export default {
   },
 };
 </script>
+
+<style>
+table{
+  font-size: 1.1vw;
+  font-weight: 600;
+}
+
+thead{
+  vertical-align: middle;
+  text-align: center;
+}
+th, td{
+  padding: 0.2rem!important;
+  vertical-align: middle;
+}
+p, input{
+  display: flex;
+  justify-content: center;
+  margin: auto!important;
+}
+</style>

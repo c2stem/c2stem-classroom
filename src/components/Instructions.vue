@@ -1,7 +1,7 @@
 <template>
   <!-- Instructions component -->
   <!-- Instructions in a card with ability to add additional details in a modal -->
-  <div class="card overflow-scroll">
+  <div class="card overflow-auto">
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
       <p class="card-text">
