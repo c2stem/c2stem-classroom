@@ -10,13 +10,22 @@
             v-for="(headerItem, index) in header"
             :key="index"
           >
-            {{ headerItem }}
+            <p v-if="index == 0"><i class="bi bi-star-fill headerStar"></i></p>
+            <p v-else>{{ headerItem }}</p>
           </th>
         </tr>
       </thead>
       <tbody>
         <!-- loop over the list of designs and add checkboxes -->
         <tr v-for="(content, index) in contents" :key="index">
+          <td v-if="favorite.length">
+            <button v-if="favorite[index]" class="btn btn-lg btn-link" @click="toggleStar(index, flase)">
+              <i class="bi bi-star-fill headerStar"></i>
+            </button>
+            <button v-else class="btn btn-lg btn-link" @click="toggleStar(index, true)">
+              <i class="bi bi-star"></i>
+            </button>
+          </td>
           <td v-for="(items, i) in content" :key="i">
             <p>{{ items }}</p>
           </td>
@@ -77,6 +86,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    favorite:{
+      type: Array,
+      default: () => [],
+    }
   },
   methods: {
     /**
@@ -91,27 +104,40 @@ export default {
         status: e.target.checked,
       });
     },
+
+    toggleStar(i, status) {
+      this.$store.dispatch("updateFavoriteDesign", {
+        index: i,
+        status: status,
+      });
+    },
   },
 };
 </script>
 
 <style>
-table{
+table {
   font-size: 1.1vw;
   font-weight: 600;
 }
 
-thead{
+thead {
   vertical-align: middle;
   text-align: center;
 }
-th, td{
-  padding: 0.2rem!important;
+th,
+td {
+  padding: 0.2rem !important;
   vertical-align: middle;
 }
-p, input{
+p,
+input {
   display: flex;
   justify-content: center;
-  margin: auto!important;
+  margin: auto !important;
+}
+
+.headerStar {
+  color: #ede102;
 }
 </style>

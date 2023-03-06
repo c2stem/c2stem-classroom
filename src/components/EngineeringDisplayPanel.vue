@@ -58,6 +58,7 @@
         :header="designHistoryHeader"
         :contents="designHistory"
         :checked="getCheckedDesigns"
+        :favorite = "getFavoriteDesigns"
       ></design-table>
     </div>
     <div
@@ -134,6 +135,7 @@ export default {
     return {
       designHistoryContent: [],
       designHistoryHeader: [
+        "fav",
         "design/date",
         "cost",
         "rainfall",
@@ -195,6 +197,9 @@ export default {
     getRunStatus() {
       return this.$store.getters.getSimulationStatus;
     },
+    getFavoriteDesigns() {
+      return this.$store.getters.getFavoriteDesigns;
+    },
   },
   methods: {
     /**
@@ -210,14 +215,17 @@ export default {
       if (dhLength > stateDhLength) {
         const dhList = [];
         const checkList = [];
+        const favList = [];
         Object.values(this.designHistory_content).forEach((element, index) => {
           if (index >= stateDhLength && index < dhLength) {
             dhList.push(element);
             checkList.push(false);
+            favList.push(false);
           }
         });
         this.$store.dispatch("addDesignHistory", dhList);
         this.$store.dispatch("addCheckedDesigns", checkList);
+        this.$store.dispatch("addFavoriteDesigns", favList);
       }
     },
   },
