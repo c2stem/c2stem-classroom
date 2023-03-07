@@ -3,7 +3,7 @@ export default {
   async saveUserState(user, state) {
     const checkList = state.checkedStatus;
     const favList = state.favoriteStatus;
-    let response = await axios.post("//localhost:8203/state/setState", {
+    let response = await axios.post("https://run.c2stem.org/state/setState", {
       username: user,
       checkList: checkList,
       favList: favList,
@@ -14,7 +14,7 @@ export default {
   },
 
   async gerUserState(user) {
-    let response = await axios.get("//localhost:8203/state/getState/" + user, {
+    let response = await axios.get("https://run.c2stem.org/state/getState/" + user, {
       withCredentials: true,
     });
     if (response) {
