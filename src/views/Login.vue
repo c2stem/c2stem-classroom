@@ -64,7 +64,8 @@ export default {
               ServerURL: this.ServerURL,
             })
             .then(
-              data.username = this.username,
+              (data.username = this.username),
+              this.$store.dispatch("updateStore", this.username),
               this.$store.dispatch("saveCredentials", data).then(() => {
                 if (data.class.includes("CMISE")) {
                   this.$router.push({ name: "Landing" });

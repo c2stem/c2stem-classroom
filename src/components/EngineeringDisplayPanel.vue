@@ -211,6 +211,7 @@ export default {
       this.designHistory_content = await visualize.getData();
       let dhLength = Object.keys(this.designHistory_content).length;
       this.checkedDesignStatus = this.getCheckedDesigns;
+      this.favoriteStatus = this.getFavoriteDesigns;
       let stateDhLength = this.historyLength;
       if (dhLength > stateDhLength) {
         const dhList = [];
@@ -224,8 +225,12 @@ export default {
           }
         });
         this.$store.dispatch("addDesignHistory", dhList);
+        if(this.favoriteStatus.length == 0){
+          this.$store.dispatch("addFavoriteDesigns", favList);
+        }
+        if(this.checkedDesignStatus.length == 0){
         this.$store.dispatch("addCheckedDesigns", checkList);
-        this.$store.dispatch("addFavoriteDesigns", favList);
+        }
       }
     },
   },

@@ -19,7 +19,7 @@
         <!-- loop over the list of designs and add checkboxes -->
         <tr v-for="(content, index) in contents" :key="index">
           <td v-if="favorite.length">
-            <button v-if="favorite[index]" class="btn btn-lg btn-link" @click="toggleStar(index, flase)">
+            <button v-if="favorite[index]" class="btn btn-lg btn-link" @click="toggleStar(index, false)">
               <i class="bi bi-star-fill headerStar"></i>
             </button>
             <button v-else class="btn btn-lg btn-link" @click="toggleStar(index, true)">
