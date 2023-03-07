@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import userStateService from "@/services/UserState.js";
 
 const store = createStore({
   state: {
@@ -12,11 +13,13 @@ const store = createStore({
     user: "",
     test_history: {},
     test_history_length: 0,
+    favoriteStatus: [],
   },
   mutations: {
     initializeStorage(state) {
-      if (localStorage.getItem("store")) {
-        if (localStorage.getItem('user')) {
+      const localStore = localStorage.getItem("store");
+      if (localStore) {
+        if (localStorage.getItem("user")) {
           this.replaceState(
             Object.assign(state, JSON.parse(localStorage.getItem("store")))
           );
@@ -100,6 +103,26 @@ const store = createStore({
       window.localStorage.clear();
       location.reload();
     },
+    addFavoriteDesigns(state, favList) {
+      state.favoriteStatus = [...state.favoriteStatus, ...favList];
+    },
+    updateFavoriteDesign(state, data) {
+      state.favoriteStatus[data.index] = data.status;
+    },
+    async updateStore(state, user) {
+      let response = await userStateService.gerUserState(
+        user.replaceAll('"', "")
+      );
+      if(response.length==0){
+        localStorage.setItem("store", JSON.stringify(state));
+      }else{
+        let newState = state;
+        newState.checkedStatus = response[0].checkStatus;
+        newState.favoriteStatus = response[0].favoriteStatus;
+        localStorage.setItem("store", JSON.stringify(newState));
+      }
+
+    },
   },
   getters: {
     /**
@@ -166,6 +189,9 @@ const store = createStore({
     loggedIn(state) {
       return !!state.user;
     },
+    getFavoriteDesigns(state) {
+      return state.favoriteStatus;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -194,6 +220,15 @@ const store = createStore({
     },
     removeCredentials(context) {
       context.commit("removeCredentials");
+    },
+    addFavoriteDesigns(context, favList) {
+      context.commit("addFavoriteDesigns", favList);
+    },
+    updateFavoriteDesign(context, data) {
+      context.commit("updateFavoriteDesign", data);
+    },
+    updateStore(context, newStateData) {
+      context.commit("updateStore", newStateData);
     },
   },
   modules: {},

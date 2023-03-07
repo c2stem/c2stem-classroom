@@ -17,7 +17,8 @@
  * Toggles visibility based on the existence of user token  in the local storage.
  * When clicked removes credentials of current user.
  */
-import authService from "../services/Auth.js";
+import authService from "@/services/Auth.js";
+import userStateService from "@/services/UserState.js"
 export default {
   name: "Logout",
   computed: {
@@ -27,7 +28,9 @@ export default {
   },
   methods: {
     logout() {
+      const user = this.loggedIn.replaceAll('"', '');
       authService.netsbloxLogout();
+      userStateService.saveUserState(user, this.$store.state);
       this.$store.dispatch("removeCredentials");
     },
   },
