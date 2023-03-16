@@ -2,14 +2,14 @@
   <!-- Global header for the C2STEM/SPICE/CMISE environments -->
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark head">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/land">
+      <a class="navbar-brand" :href="returnNav">
         <!-- c2stem logo with link to home -->
         <img src="../assets/c2stemlogo.png" alt="" width="100" height="30" />
       </a>
       <button
         v-if="
           (loggedIn && currentRouteName == 'Construct') ||
-          currentRouteName == 'Engineering'
+          currentRouteName == 'Engineering' || currentRouteName == 'IE'
         "
         type="button"
         class="btn btn-primary btn-lg me-3"
@@ -64,6 +64,14 @@ export default {
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
+    returnNav(){
+      const lastKnown = this.currentRouteName;
+      if(lastKnown === "IE"){
+        return "/ieLand"
+      }else{
+        return "/land"
+      }
+    }
   },
   methods: {
     async saveProject() {
