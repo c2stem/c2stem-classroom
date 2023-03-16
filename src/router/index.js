@@ -4,8 +4,8 @@ import Dashboard from "../views/Dashboard.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import Explore from "../views/Explore.vue";
 import Construct from "../views/Construct.vue";
-import Manipulate from "../views/Manipulate.vue";
-import ManipulateCode from "../views/ManipulateCode.vue";
+import IE from "../views/IE.vue";
+import IELanding from "../views/IELand.vue";
 // import Landing from "../views/LandingPage.vue";
 import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
@@ -77,16 +77,16 @@ const routes = [
     meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Construct'}
   },
   {
-    path: "/manipulate",
-    name: "Manipulate View",
-    component: Manipulate,
-    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Manipulate'}
+    path: "/ieLand",
+    name: "IELanding",
+    component: IELanding,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | IE Land'}
   },
   {
-    path: "/manipulate/code",
-    name: "Manipulate Code View",
-    component: ManipulateCode,
-    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Manipulate Code'}
+    path: "/ie/:userID/:projectName/:source",
+    name: "IE",
+    component: IE,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | IE'}
   },
   {
     path: "/engineering",
