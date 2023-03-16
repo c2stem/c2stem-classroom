@@ -10,7 +10,7 @@
             v-for="(headerItem, index) in header"
             :key="index"
           >
-            <p v-if="index == 0"><i class="bi bi-star-fill headerStar"></i></p>
+            <p v-if="index == 0 && favorite.length"><i class="bi bi-star-fill headerStar"></i></p>
             <p v-else>{{ headerItem }}</p>
           </th>
         </tr>

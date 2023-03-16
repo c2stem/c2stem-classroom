@@ -5,7 +5,8 @@
         <div class="card-body">
           <h5 class="card-title">{{ name }}</h5>
           <p class="card-text">{{description[index]}}</p>
-          <a :href= "route[index]" class="btn btn-primary">Continue</a>
+          <router-link v-if="routeParams" :to="{name: route[index], params: routeParams[index]}"><button type="button" class="btn btn-primary">Continue</button></router-link>
+          <router-link v-else :to="{name: route[index]}"><button type="button" class="btn btn-primary">Continue</button></router-link>
         </div>
       </div>
     </div>
@@ -36,6 +37,9 @@ export default {
     route: {
       type: Array,
       requires: true,
+    },
+    routeParams: {
+      type: Object,
     },
     engineering: {
       type: Boolean,
