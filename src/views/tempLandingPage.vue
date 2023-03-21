@@ -3,7 +3,6 @@
     :lessonNames="names"
     :description="description"
     :route="route"
-    :routeParams="routeParams"
     :engineering="engineering"
   ></lesson-card>
 </template>
@@ -17,9 +16,9 @@ export default {
   },
   data() {
     return {
-      names: ["Computational Model", "IE" ],
-      description: ["Complete your computational model lessons", "Complete your IE model lessons"],
-      route: ["Construct", "IELanding"],
+      names: ["Computational Model", "IE", "EE" ],
+      description: ["Complete your computational model lessons", "Complete your IE model lessons", "Complete your EE design lessons"],
+      route: ["Construct", "IELanding", "EELanding"],
       engineering: true,
     };
   },
