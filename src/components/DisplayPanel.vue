@@ -4,6 +4,20 @@
   <ul class="nav nav-pills" id="pills-tab" role="tablist">
     <li class="nav-item me-3" role="presentation">
       <button
+        class="nav-link active bg-info bg-gradient"
+        id="instructions-tab"
+        data-bs-toggle="pill"
+        data-bs-target="#instructions"
+        type="button"
+        role="tab"
+        aria-controls="instructions"
+        aria-selected="false"
+      >
+        Instructions
+      </button>
+    </li>
+    <li class="nav-item me-3" role="presentation">
+      <button
         class="nav-link bg-info bg-gradient"
         id="test-history-tab"
         data-bs-toggle="pill"
@@ -14,22 +28,7 @@
         aria-selected="false"
         @click="generateTable"
       >
-        Get Test History
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button
-        class="nav-link bg-info bg-gradient"
-        id="visualize-tab"
-        data-bs-toggle="pill"
-        data-bs-target="#visualize"
-        type="button"
-        role="tab"
-        aria-controls="visualize"
-        aria-selected="false"
-        @click="generateChart"
-      >
-        Visualize
+        Test History
       </button>
     </li>
   </ul>
@@ -44,19 +43,18 @@
       tabindex="0"
     >
       <design-table
-        :header="designHistoryHeader"
-        :contents="designHistory"
+        :header="testHistoryHeader"
+        :contents="activeTableContent"
       ></design-table>
     </div>
     <div
-      class="tab-pane fade"
-      id="visualize"
+      class="tab-pane fade overflow-auto show active"
+      id="instructions"
       role="tabpanel"
-      aria-labelledby="visualize-tab"
+      aria-labelledby="instructions"
       tabindex="0"
     >
-      <div id="chart"></div>
-      >
+      <instructions />
     </div>
   </div>
 </template>
@@ -70,91 +68,71 @@
  */
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+import Instructions from "./Instructions.vue";
 
 export default {
   name: "DisplayPanel",
   components: {
     DesignTable,
+    Instructions,
   },
   data() {
     return {
-      designHistoryContent: [],
-      designHistoryHeader: [
-        "design",
-        "date",
-        "cost",
-        "rainfall",
-        "runoff",
-        "accessible squares",
-        "concrete",
-        "permeable concrete",
-        "grass",
-        "wood chips",
-        "artificial turf",
-        "poured rubber",
-      ],
-      checkedDesignStatus: [],
+      testHistoryHeader: ["design", "date", "absorption", "runoff", "cost"],
+      activeTableContent: this.testHistory,
     };
   },
   computed: {
     /**
      * Get the number of tests run by the user from store.
      */
-    historyLength() {
-      return this.$store.getters.getdhLength;
+    testHistoryLength() {
+      return this.$store.getters.getthLength;
     },
     /**
-     * Get the entire design history from the store.
+     * Get the entire test history from the store.
      */
-    designHistory() {
-      return this.$store.getters.getDesignHistory;
+    testHistory() {
+      return this.$store.getters.getTestHistory;
     },
-    /**
-     * Get a list of checkbox status in the design history table from the store.
-     */
-    getCheckedDesigns() {
-      return this.$store.getters.getCheckedDesigns;
+    currentRouteName() {
+      let name = this.$route.name;
+      return name;
     },
   },
   methods: {
     /**
-     * Generates a table by accessing design history content from c2stem environemnt.
-     * The method gets design history from c2stem and compares the results with the history in the store.
-     * The history in the store is updated with new design history from c2stem.
+     * Generates a table by accessing test history content from c2stem environemnt.
+     * The method gets test history from c2stem and compares the results with the history in the store.
+     * The history in the store is updated with new test history from c2stem.
      */
-    generateTable() {
-      this.designHistory_content = visualize.getData();
-      this.checkedDesignStatus = this.getCheckedDesigns;
-      let dhLength = Object.keys(this.designHistory_content).length;
-      let stateDhLength = this.historyLength;
-      if (dhLength > stateDhLength) {
-        const dhList = [];
-        const checkList = [];
-        Object.values(this.designHistory_content).forEach((element, index) => {
-          if (index >= stateDhLength && index < dhLength) {
-            dhList.push(element);
-            checkList.push(false);
-          }
-        });
-        this.$store.dispatch("addDesignHistory", dhList);
-        this.$store.dispatch("addCheckedDesigns", checkList);
+    async generateTable() {
+      if (this.currentRouteName == "EE") {
+        this.testHistoryContent = await visualize.getTestData("explore");
+        this.activeTableContent = this.testHistoryContent;
+        this.$store.dispatch("addEETestHistory", this.testHistoryContent);
+      } else {
+        this.activeTableContent = this.testHistory;
+        this.testHistoryContent = await visualize.getTestData("explore");
+        let thLength = Object.keys(this.testHistoryContent).length;
+        let stateThLength = this.testHistoryLength;
+        if (thLength > stateThLength) {
+          const thList = [];
+          Object.values(this.testHistoryContent).forEach((element, index) => {
+            if (index >= stateThLength && index < thLength) {
+              thList.push(element);
+            }
+          });
+          this.$store.dispatch("addTestHistory", thList);
+        }
       }
-    },
-    /**
-     * Generates a chart by accessing design history content from c2stem environemnt.
-     * Passes the design history contents to the google library. 
-     */
-    generateChart() {
-      this.designHistory_content = visualize.getData();
-      visualize.drawChart(this.designHistoryHeader, this.designHistory_content);
     },
   },
   mounted() {
-    /**
-     * Load google visualization library
-     */
-    window.google.charts.load("current", {
-      packages: ["table", "corechart", "line"],
+    this.emitter.on("update-data", (evt) => {
+      if (evt.status) {
+        this.generateTable();
+      }
     });
   },
 };

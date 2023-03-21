@@ -3,10 +3,9 @@
  * Methods related to data visualization.
  */
 export default {
-
-  async getData(){
+  async getData() {
     try {
-      const iframe = document.getElementById('iframe-id');
+      const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
       const gb = await api.getGlobalVariables();
       var designHistory = gb.vars["design history"];
@@ -16,20 +15,29 @@ export default {
       alert(error.message);
     }
   },
-  async getTestData(){
+  async getTestData(source) {
     try {
-      const iframe = document.getElementById('iframe-id');
+      const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
       const gb = await api.getGlobalVariables();
       var testHistory = gb.vars["test history"];
       var thContents = testHistory.value.contents;
-      return this.getTestObject(thContents);
+      switch (source) {
+        case "construct":
+          return this.getTestObject(thContents);
+        case "explore":
+          return this.getExploreTestObject(thContents);
+        case "manipulate":
+          return this.getTestObject(thContents);
+        default:
+          return this.getTestObject(thContents);
+      }
     } catch (error) {
       alert(error.message);
     }
   },
   /**
-   * Accesses the NetsBloxMorph of C2STEM and extract design history contents. 
+   * Accesses the NetsBloxMorph of C2STEM and extract design history contents.
    * @returns Object representation of Design History from C2STEM.
    */
   getDataOnDomain() {
@@ -118,7 +126,7 @@ export default {
 
     chart.draw(data, options);
   },
-  
+
   /**
    * Converts the existing design history format into an object representation.
    * @param {*} content Design history.
@@ -131,10 +139,11 @@ export default {
       let childObj = {};
       let childContent = content[i].contents;
       for (let j = 0; j < childContent.length; j++) {
-        if(j ==1){
-          var updatedContent = this.formatDate(childContent[j])
-          childObj[header[j-1]/header[j]] = childContent[j-1] + '. '+updatedContent; //combining design and date
-        }else if(j!=0){
+        if (j == 1) {
+          var updatedContent = this.formatDate(childContent[j]);
+          childObj[header[j - 1] / header[j]] =
+            childContent[j - 1] + ". " + updatedContent; //combining design and date
+        } else if (j != 0) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -149,14 +158,21 @@ export default {
    * @param {*} content Design History
    * @returns date
    */
-  formatDate(content){
-    var splitContent = content.split(' ');
+  formatDate(content) {
+    var splitContent = content.split(" ");
     //convert 3 letter month to 2 number representation
     var map_month = this.mapMonths(splitContent[1]);
-    if(!map_month){
+    if (!map_month) {
       map_month = splitContent[1];
     }
-    var updatedDate = map_month+'/'+splitContent[2]+'/'+splitContent[3].substring(2)+ ' '+splitContent[4];
+    var updatedDate =
+      map_month +
+      "/" +
+      splitContent[2] +
+      "/" +
+      splitContent[3].substring(2) +
+      " " +
+      splitContent[4];
     return updatedDate;
   },
   getTestObject(content) {
@@ -166,10 +182,10 @@ export default {
       let childObj = {};
       let childContent = content[i].contents;
       for (let j = 0; j < childContent.length; j++) {
-        if(j ==1){
-          var updatedContent = this.formatDate(childContent[j])
+        if (j == 1) {
+          var updatedContent = this.formatDate(childContent[j]);
           childObj[header[j]] = updatedContent;
-        }else if(j !== childContent.length-1){
+        } else if (j !== childContent.length - 1) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -178,22 +194,44 @@ export default {
     return obj;
   },
 
-  mapMonths(month){
-    const monthMap = {
-      "Jan":"01",
-      "Feb":"02",
-      "Mar":"03",
-      "Apr":"04",
-      "May":"05",
-      "Jun":"06",
-      "Jul":"07",
-      "Aug":"08",
-      "Sep":"09",
-      "Sept":"09",
-      "Oct":"10",
-      "Nov":"11",
-      "Dec":"12",
+  getExploreTestObject(content) {
+    let obj = {};
+    let header = content[0].contents;
+    for (let i = 1; i < Object.keys(content).length; i++) {
+      let childObj = {};
+      let childContent = content[i].contents;
+      for (let j = 0; j < childContent.length; j++) {
+        if(j == 0){
+          childObj['design'] = childContent[j];
+        }
+        else if (j == 1) {
+          var updatedContent = this.formatDate(childContent[j]);
+          childObj[header[j]] = updatedContent;
+        } else if ([4,5,6].indexOf(j) > -1) {
+          childObj[header[j]] = childContent[j];
+        }
+      }
+      obj[i] = childObj;
     }
+    return obj;
+  },
+
+  mapMonths(month) {
+    const monthMap = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Sept: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
     return monthMap[month];
-  }
+  },
 };

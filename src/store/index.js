@@ -4,15 +4,15 @@ import userStateService from "@/services/UserState.js";
 
 const store = createStore({
   state: {
-    design_history: {},
-    design_history_length: 0,
+    designHistory: {},
+    designHistoryLength: 0,
     checkedStatus: [],
     simulationStageImages: [],
     stageImagesLength: 0,
     runSimulation: false,
     user: "",
-    test_history: {},
-    test_history_length: 0,
+    testHistory: {},
+    testHistoryLength: 0,
     favoriteStatus: [],
   },
   mutations: {
@@ -27,7 +27,7 @@ const store = createStore({
       }
     },
     /**
-     * Adds new tests to the test_history in the state.
+     * Adds new tests to the testHistory in the state.
      * @param {state} state Current state of the store.
      * @param {*} test updated test from  C2STEM.
      */
@@ -36,28 +36,28 @@ const store = createStore({
       test.forEach((element) => {
         th[element["test"] - 1] = element;
       });
-      state.test_history = {
-        ...state.test_history,
+      state.testHistory = {
+        ...state.testHistory,
         ...th,
       };
-      state.test_history_length = test.length;
+      state.testHistoryLength = test.length;
     },
     /**
-     * Adds new designs to the design_history in the state.
+     * Adds new designs to the designHistory in the state.
      * @param {state} state Current state of the store.
      * @param {*} design updated designs from the C2STEM.
      */
     addDesignHistory(state, design) {
       let dh = {};
       design.forEach((element) => {
-        dh[state.design_history_length] = element;
-        state.design_history_length += 1;
+        dh[state.designHistoryLength] = element;
+        state.designHistoryLength += 1;
       });
-      state.design_history = {
-        ...state.design_history,
+      state.designHistory = {
+        ...state.designHistory,
         ...dh,
       };
-      // state.design_history_length += design.length;
+      // state.designHistoryLength += design.length;
     },
     /**
      * Add a boolean checkbox status to the checkedStatus List.
@@ -113,54 +113,48 @@ const store = createStore({
       let response = await userStateService.gerUserState(
         user.replaceAll('"', "")
       );
-      if(response.length==0){
+      if (response.length == 0) {
         localStorage.setItem("store", JSON.stringify(state));
-      }else{
+      } else {
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
         localStorage.setItem("store", JSON.stringify(newState));
       }
-
     },
   },
   getters: {
     /**
      * Get the number of test run by users.
      * @param {state} state
-     * @returns test_history_length
+     * @returns testHistoryLength
      */
     getthLength(state) {
-      return state.test_history_length;
+      return state.testHistoryLength;
     },
     /**
      * Gets an array of all the tests run by the user.
      * @param {state} state
-     * @returns test_history
+     * @returns testHistory
      */
     getTestHistory(state) {
-      return state.test_history;
+      return state.testHistory;
     },
     /**
      * Get the number of test run by users.
      * @param {state} state
-     * @returns design_history_length
-     */
-    /**
-     * Get the number of test run by users.
-     * @param {state} state
-     * @returns design_history_length
+     * @returns designHistoryLength
      */
     getdhLength(state) {
-      return state.design_history_length;
+      return state.designHistoryLength;
     },
     /**
      * Gets an array of all the designs run by the user.
      * @param {state} state
-     * @returns design_history
+     * @returns designHistory
      */
     getDesignHistory(state) {
-      return state.design_history;
+      return state.designHistory;
     },
     /**
      * Get a List of status of all the cehckboxes in the engineering design table.

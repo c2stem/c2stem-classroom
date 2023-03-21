@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from "../views/Dashboard.vue";
 import PageNotFound from "../views/PageNotFound.vue";
-import Explore from "../views/Explore.vue";
+import EE from "../views/EE.vue";
+import EELanding from "../views/EELand.vue";
 import Construct from "../views/Construct.vue";
 import IE from "../views/IE.vue";
 import IELanding from "../views/IELand.vue";
@@ -65,10 +66,16 @@ const routes = [
     meta: { requiresAuth : true, class: 'SPICE', title: 'C2STEM | List'}
   },
   {
-    path: "/explore",
-    name: "Explore View",
-    component: Explore,
-    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | Explore'}
+    path: "/eeLand",
+    name: "EELanding",
+    component: EELanding,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | EE Land'}
+  },
+  {
+    path: "/ee/:userID/:projectName/:source",
+    name: "EE",
+    component: EE,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | EE'}
   },
   {
     path: "/construct",
