@@ -34,7 +34,7 @@
           <div class="modal-body">
             <design-table
               :header="testHistoryHeader"
-              :contents="testHistory"
+              :contents="activeTableContent"
             ></design-table>
           </div>
           <div class="modal-footer">
@@ -78,6 +78,7 @@ export default {
         "runoff",
         // "cost",
       ],
+      activeTableContent: this.testHistory
     };
   },
   computed: {
@@ -93,6 +94,10 @@ export default {
     testHistory() {
       return this.$store.getters.getTestHistory;
     },
+    currentRouteName() {
+      let name = this.$route.name;
+      return name;
+    },
   },
   methods: {
     /**
@@ -105,24 +110,31 @@ export default {
       this.$store.dispatch("addStageImage", stageImg);
       // this.$store.dispatch("updateSimulationStatus", true);
     },
-        /**
+    /**
      * Generates a table by accessing design history content from c2stem environemnt.
      * The method gets design history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new design history from c2stem.
      */
-     async generateTable() {
-      this.testHistory_content = await visualize.getTestData();
-      let thLength = Object.keys(this.testHistory_content).length;
-      let stateThLength = this.testHistoryLength;
-      if (thLength > stateThLength) {
-        const thList = [];
-        Object.values(this.testHistory_content).forEach((element, index) => {
-          if (index >= stateThLength && index < thLength) {
-            thList.push(element);
-          }
-        });
-        console.log(thList)
-        this.$store.dispatch("addTestHistory", thList);
+    async generateTable() {
+      if (this.currentRouteName == "IE") {
+        this.testHistoryContent = await visualize.getTestData("manipulate");
+        this.activeTableContent = this.testHistoryContent;
+        this.$store.dispatch("addIETestHistory", this.testHistoryContent);
+      } else {
+        this.activeTableContent = this.testHistory;
+        this.testHistoryContent = await visualize.getTestData("construct");
+        let thLength = Object.keys(this.testHistoryContent).length;
+        let stateThLength = this.testHistoryLength;
+        if (thLength > stateThLength) {
+          const thList = [];
+          Object.values(this.testHistoryContent).forEach((element, index) => {
+            if (index >= stateThLength && index < thLength) {
+              thList.push(element);
+            }
+          });
+          console.log(thList);
+          this.$store.dispatch("addTestHistory", thList);
+        }
       }
     },
   },

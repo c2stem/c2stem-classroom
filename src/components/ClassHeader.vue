@@ -8,8 +8,11 @@
       </a>
       <button
         v-if="
-          (loggedIn && currentRouteName == 'Construct') ||
-          currentRouteName == 'Engineering' || currentRouteName == 'IE'
+          loggedIn &&
+          (currentRouteName == 'Construct' ||
+            currentRouteName == 'Engineering' ||
+            currentRouteName == 'IE' ||
+            currentRouteName == 'EE')
         "
         type="button"
         class="btn btn-primary btn-lg me-3"
@@ -64,14 +67,16 @@ export default {
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
-    returnNav(){
+    returnNav() {
       const lastKnown = this.currentRouteName;
-      if(lastKnown === "IE"){
-        return "/ieLand"
-      }else{
-        return "/land"
+      if (lastKnown === "IE") {
+        return "/ieLand";
+      } else if (lastKnown === "EE") {
+        return "/eeLand";
+      } else {
+        return "/land";
       }
-    }
+    },
   },
   methods: {
     async saveProject() {
@@ -90,12 +95,11 @@ export default {
     },
   },
   mounted() {
-
-    this.emitter.on('save-project', (evt) => {
-      if(evt.status){
+    this.emitter.on("save-project", (evt) => {
+      if (evt.status) {
         Simulation.publishProject(this.getProjectName, true);
       }
-    })
+    });
   },
 };
 </script>

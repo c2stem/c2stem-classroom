@@ -2,7 +2,7 @@
 <!-- Simulation Panel Component -->
   <div class="start-panel">
     <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Simuation</i>
+      <i class="bi bi-flag-fill"> Test Model</i>
     </button>
   </div>
 </template>
@@ -21,11 +21,17 @@ export default {
      * Run scripts when green flag is pressed.
      * Extract a stage image after finishing running the script. 
      */
-    async runModel(event) {
+     async runModel(event) {
       simulation.runProject(event);
-      let stageImg = await simulation.getImage();
-      this.$store.dispatch("addStageImage", stageImg);
-      // this.$store.dispatch("updateSimulationStatus", true);
+      this.sleep(10000).then(() => {
+        this.updateData();
+      });
+    },
+    updateData() {
+      this.emitter.emit("update-data", { status: true });
+    },
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
   },
 };

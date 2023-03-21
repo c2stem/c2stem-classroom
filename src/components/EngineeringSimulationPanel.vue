@@ -12,7 +12,8 @@
 /**
  * Simulation Panel Component
  * A Panel with C2STEM simulation triggers.
- * Currently only has green flag to run scripts.
+ * Has green flag to run scripts and,
+ * See code component to see an image of code in a modal.
  */
 import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
