@@ -23,15 +23,19 @@ export default {
   name: "Logout",
   computed: {
     loggedIn() {
-      return localStorage.getItem("user");
+      return this.$store.state.user;
     },
+
   },
   methods: {
     logout() {
-      const user = this.loggedIn.replaceAll('"', '');
+      const user = this.getUser().replaceAll('"', '');
       authService.netsbloxLogout();
       userStateService.saveUserState(user, this.$store.state);
       this.$store.dispatch("removeCredentials");
+    },
+    getUser() {
+      return localStorage.getItem("user");
     },
   },
 };
