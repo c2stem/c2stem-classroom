@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     loggedIn() {
-      return localStorage.getItem("user");
+      return this.$store.state.user;
     },
     currentRole() {
       let role = localStorage.getItem("userRole");
