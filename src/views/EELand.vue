@@ -18,7 +18,7 @@
     data() {
       return {
         names: ["Lesson 7", "Lesson 8", "Lesson 9" ],
-        description: [ "Complete your EE design lessons", "Complete your EE design lessons", "Complete your EE design lessons"],
+        description: [ "", "", ""],
         route: ["EE", "EE", "EE"],
         routeParams: [
           {

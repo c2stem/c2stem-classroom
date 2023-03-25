@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       names: ["Lesson 7", "Lesson 8", "Lesson 9" ],
-      description: [ "Complete your IE model lessons", "Complete your IE model lessons", "Complete your IE model lessons"],
+      description: [ "", "", ""],
       route: ["IE", "IE", "IE"],
       routeParams: [
         {

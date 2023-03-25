@@ -1,16 +1,26 @@
 <template>
   <div class="row">
-    <div v-for="(name, index) in lessonNames" :key="index" class="col">
+    <div v-for="(name, index) in lessonNames" :key="index" class=" cardCol col-6 col-xl-3 col-lg-3">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">{{ name }}</h5>
-          <p class="card-text">{{description[index]}}</p>
-          <router-link v-if="routeParams" :to="{name: route[index], params: routeParams[index]}"><button type="button" class="btn btn-primary">Continue</button></router-link>
-          <router-link v-else :to="{name: route[index]}"><button type="button" class="btn btn-primary">Continue</button></router-link>
+          <p class="card-text">{{ description[index] }}</p>
+          <router-link
+            v-if="routeParams"
+            :to="{ name: route[index], params: routeParams[index] }"
+            ><button type="button" class="btn btn-primary">
+              Continue
+            </button></router-link
+          >
+          <router-link v-else :to="{ name: route[index] }"
+            ><button type="button" class="btn btn-primary">
+              Continue
+            </button></router-link
+          >
         </div>
       </div>
     </div>
-    <div v-if="engineering" class="col">
+    <div v-if="engineering" class="cardCol col-6 col-xl-3 col-lg-3">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Engineering Design</h5>
@@ -50,13 +60,24 @@ export default {
 </script>
 
 <style scoped>
-.card{
-    height: fit-content;
-    margin: 20px;
+.card {
+  margin: 20px;
+  width: fit-content;
+  min-height: fit-content;
 }
-div{
-    min-height: 0;
-    margin: auto;
-    width: max-content;
+.card-text{
+  display: flex;
+  justify-content: flex-start;
+}
+div {
+  min-height: 127px;
+  margin: 0;
+}
+.row {
+  height: fit-content;
+  justify-content: center;
+}
+.cardCol{
+  width: fit-content;
 }
 </style>

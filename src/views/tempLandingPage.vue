@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       names: ["Computational Model", "IE", "EE" ],
-      description: ["Complete your computational model lessons", "Complete your IE model lessons", "Complete your EE design lessons"],
+      description: ["Complete your computational model lessons", "", ""],
       route: ["Construct", "IELanding", "EELanding"],
       engineering: true,
     };
