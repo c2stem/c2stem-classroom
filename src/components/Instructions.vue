@@ -4,19 +4,7 @@
   <div class="card overflow-auto">
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
-      <p class="card-text">
-        <ul>
-          <li>Complete your design by selecting materials for all
-        non-building squares. To do so, click on a square and select the
-        material for that square from the options that pop-up.</li>
-          <li>When you are ready to test your design, click on "Test Design."</li>
-          <li> You will
-        be asked "how much did it rain (in inches)?" In the textbox, inserts
-        a value for rainfall in inches (such as 1, 1.2, 2, or another number
-        value).</li>
-          <li>Press enter on your keboard or click the checkmark next to the textbox to test your design.</li>
-        </ul> 
-        </p>
+      <p class="card-text" v-html="instruction"/>
       <button
         type="button"
         class="btn btn-link float-end"
@@ -46,19 +34,7 @@
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
-              <ul>
-          <li>Complete your design by selecting materials for all
-        non-building squares. To do so, click on a square and select the
-        material for that square from the options that pop-up.</li>
-          <li>When you are ready to test your design, click on "Test Design."</li>
-          <li> You will
-        be asked "how much did it rain (in inches)?" In the textbox, inserts
-        a value for rainfall in inches (such as 1, 1.2, 2, or another number
-        value).</li>
-          <li>Press enter on your keyboard or click the checkmark next to the textbox to test your design.</li>
-        </ul> 
-            </div>
+            <div class="modal-body" v-html="instruction"/>
             <div class="modal-footer">
               <button
                 type="button"
@@ -74,6 +50,18 @@
     </div>
   </div>
 </template>
+
+<script>
+import tempalteEngineering from "../assets/templates/templateEngineering.html";
+export default{
+  name:"Instructions",
+  data(){
+    return{
+      instruction: tempalteEngineering,
+    }
+  }
+}
+</script>
 
 <style>
 div.modal-content {
