@@ -4,7 +4,7 @@
   <div class="card overflow-auto">
     <div class="card-body">
       <h5 class="card-title">Instructions</h5>
-      <p class="card-text" v-html="instruction"/>
+      <p class="card-text" v-html="renderInstructions" />
       <button
         type="button"
         class="btn btn-link float-end"
@@ -34,7 +34,7 @@
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body" v-html="instruction"/>
+            <div class="modal-body" v-html="renderInstructions" />
             <div class="modal-footer">
               <button
                 type="button"
@@ -53,14 +53,27 @@
 
 <script>
 import tempalteEngineering from "../assets/templates/templateEngineering.html";
-export default{
-  name:"Instructions",
-  data(){
-    return{
-      instruction: tempalteEngineering,
-    }
-  }
-}
+export default {
+  name: "Instructions",
+  props: {
+    routeName: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    renderInstructions() {
+      switch (this.routeName) {
+        case "Engineering":
+          return tempalteEngineering;
+        case "IE":
+          return tempalteEngineering;
+        default:
+          return tempalteEngineering;
+      }
+    },
+  },
+};
 </script>
 
 <style>
