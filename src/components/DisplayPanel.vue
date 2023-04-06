@@ -54,7 +54,7 @@
       aria-labelledby="instructions"
       tabindex="0"
     >
-      <instructions />
+      <instructions :routeName= "EE" />
     </div>
   </div>
 </template>
