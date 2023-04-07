@@ -53,6 +53,7 @@
 
 <script>
 import tempalteEngineering from "../assets/templates/templateEngineering.html";
+import tempalteEE from "../assets/templates/templateEE.html";
 export default {
   name: "Instructions",
   props: {
@@ -68,6 +69,8 @@ export default {
           return tempalteEngineering;
         case "IE":
           return tempalteEngineering;
+        case "EE":
+          return tempalteEE;
         default:
           return tempalteEngineering;
       }

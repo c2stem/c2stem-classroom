@@ -4,6 +4,7 @@ import Dashboard from "../views/Dashboard.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import EE from "../views/EE.vue";
 import EELanding from "../views/EELand.vue";
+import EETaskLanding from "../views/EETaskLand.vue"
 import Construct from "../views/Construct.vue";
 import IE from "../views/IE.vue";
 import IELanding from "../views/IELand.vue";
@@ -69,7 +70,13 @@ const routes = [
     path: "/eeLand",
     name: "EELanding",
     component: EELanding,
-    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | EE Land'}
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | EE Lannding'}
+  },
+  {
+    path: "/eeTaskLand",
+    name: "EETaskLanding",
+    component: EETaskLanding,
+    meta: { requiresAuth : true, class: 'CMISE', title: 'C2STEM | EE Task Landing'}
   },
   {
     path: "/ee/:userID/:projectName/:source",

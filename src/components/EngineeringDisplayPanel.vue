@@ -68,7 +68,7 @@
       aria-labelledby="instructions"
       tabindex="0"
     >
-      <instructions :routeName= "Engineering"/>
+      <instructions routeName= "Engineering"/>
     </div>
   </div>
   <div

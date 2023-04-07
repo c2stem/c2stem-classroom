@@ -5,36 +5,36 @@
     :route="route"
     :routeParams="routeParams"
     :engineering="engineering"
-  ></lesson-card>
+  >
+  </lesson-card>
 </template>
 
 <script>
 import LessonCard from "../components/LessonCard.vue";
 export default {
-  name: "EELanding",
+  name: "EETaskLanding",
   components: {
     LessonCard,
   },
   data() {
     return {
-      names: ["Lesson 6", "Lesson 7", "Lesson 8", "Lesson 9"],
-      description: ["", "", "", ""],
-      route: ["EE", "EETaskLanding", "EE", "EE"],
+      names: ["Task 1", "Task 2", "Task 3"],
+      description: ["", "", ""],
+      route: ["EE", "EE", "EE"],
       routeParams: [
         {
           userID: "oele",
-          projectName: "cmise-project-lesson6-explore",
-          source: "https://editor.c2stem.org",
-        },
-        {},
-        {
-          userID: "oele",
-          projectName: "cmise-project-lesson8-explore",
+          projectName: "cmise-project-lesson7-EE-task1",
           source: "https://editor.c2stem.org",
         },
         {
           userID: "oele",
-          projectName: "cmise-project-lesson9-explore",
+          projectName: "cmise-project-lesson7-EE-task2",
+          source: "https://editor.c2stem.org",
+        },
+        {
+          userID: "oele",
+          projectName: "cmise-project-lesson7-EE-task3",
           source: "https://editor.c2stem.org",
         },
       ],
