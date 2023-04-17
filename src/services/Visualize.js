@@ -3,11 +3,16 @@
  * Methods related to data visualization.
  */
 export default {
+  // Data retrieving methods
+  async getGlobalVariables() {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    const gb = await api.getGlobalVariables();
+    return gb;
+  },
   async getData() {
     try {
-      const iframe = document.getElementById("iframe-id");
-      const api = new window.EmbeddedNetsBloxAPI(iframe);
-      const gb = await api.getGlobalVariables();
+      const gb = await this.getGlobalVariables();
       var designHistory = gb.vars["design history"];
       var dhContents = designHistory.value.contents;
       return this.getObject(dhContents);
@@ -17,21 +22,33 @@ export default {
   },
   async getTestData(source) {
     try {
-      const iframe = document.getElementById("iframe-id");
-      const api = new window.EmbeddedNetsBloxAPI(iframe);
-      const gb = await api.getGlobalVariables();
+      const gb = await this.getGlobalVariables();
       var testHistory = gb.vars["test history"];
       var thContents = testHistory.value.contents;
+      /**
+       * The switch was created in case a differnt table structure was required for was condition.
+       * The feature has been revised but leaving the implementation for future improvements.
+       *  */
       switch (source) {
         case "construct":
           return this.getTestObject(thContents);
         case "explore":
-          return this.getExploreTestObject(thContents);
+          return this.getTestObject(thContents);
         case "manipulate":
           return this.getTestObject(thContents);
         default:
           return this.getTestObject(thContents);
       }
+    } catch (error) {
+      alert(error.message);
+    }
+  },
+
+  async getAbsorptionLimit() {
+    try {
+      const gb = await this.getGlobalVariables();
+      var absorptionLimit = gb.vars["absorption-limit"].value;
+      return absorptionLimit;
     } catch (error) {
       alert(error.message);
     }
@@ -53,6 +70,7 @@ export default {
     }
   },
 
+  // Data formatting methods
   /**
    * Generate a table using Google library based on the header and content provided.
    * @param {*} header Array consisting the names of attributes from Design History.
@@ -175,7 +193,7 @@ export default {
       splitContent[4];
     return updatedDate;
   },
-  getTestObject(content) {
+  async getTestObject(content) {
     let obj = {};
     let header = content[0].contents;
     for (let i = 1; i < Object.keys(content).length; i++) {
@@ -185,29 +203,14 @@ export default {
         if (j == 1) {
           var updatedContent = this.formatDate(childContent[j]);
           childObj[header[j]] = updatedContent;
-        } else if (j !== childContent.length - 1) {
+          // } else if ([4, 5, 6].indexOf(j) > -1) {
+          //   childObj[header[j]] = childContent[j];
+          // }
+        } else if (j == 4) {
+          const absorptionLimit = await this.getAbsorptionLimit();
+          childObj["Absorption limit(inches)"] = absorptionLimit;
           childObj[header[j]] = childContent[j];
-        }
-      }
-      obj[i] = childObj;
-    }
-    return obj;
-  },
-
-  getExploreTestObject(content) {
-    let obj = {};
-    let header = content[0].contents;
-    for (let i = 1; i < Object.keys(content).length; i++) {
-      let childObj = {};
-      let childContent = content[i].contents;
-      for (let j = 0; j < childContent.length; j++) {
-        if(j == 0){
-          childObj['design'] = childContent[j];
-        }
-        else if (j == 1) {
-          var updatedContent = this.formatDate(childContent[j]);
-          childObj[header[j]] = updatedContent;
-        } else if ([4,5,6].indexOf(j) > -1) {
+        } else if (j !== 6) {
           childObj[header[j]] = childContent[j];
         }
       }

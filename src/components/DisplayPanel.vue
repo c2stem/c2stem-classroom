@@ -54,7 +54,7 @@
       aria-labelledby="instructions"
       tabindex="0"
     >
-      <instructions routeName= "EE" />
+      <instructions routeName="EE" />
     </div>
   </div>
 </template>
@@ -78,7 +78,15 @@ export default {
   },
   data() {
     return {
-      testHistoryHeader: ["design", "date", "absorption", "runoff", "cost"],
+      testHistoryHeader: [
+        "Test #",
+        "Date",
+        "Rainfall (inches)",
+        "Surface Material",
+        "Absorption limit (inches)",
+        "Absorption (inches)",
+        "Runoff (inches)",
+      ],
       activeTableContent: this.testHistory,
     };
   },
