@@ -70,15 +70,15 @@ export default {
     return {
       testHistoryContent: [],
       testHistoryHeader: [
-        "test",
-        "date",
-        "rainfall",
-        "material",
-        "absorption",
-        "runoff",
-        // "cost",
+        "Test #",
+        "Date",
+        "Rainfall (inches)",
+        "Surface Material",
+        "Absorption limit (inches)",
+        "Absorption (inches)",
+        "Runoff (inches)",
       ],
-      activeTableContent: this.testHistory
+      activeTableContent: this.testHistory,
     };
   },
   computed: {
