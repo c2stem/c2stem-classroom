@@ -58,7 +58,7 @@
         :header="designHistoryHeader"
         :contents="designHistory"
         :checked="getCheckedDesigns"
-        :favorite = "getFavoriteDesigns"
+        :favorite="getFavoriteDesigns"
       ></design-table>
     </div>
     <div
@@ -68,7 +68,7 @@
       aria-labelledby="instructions"
       tabindex="0"
     >
-      <instructions routeName= "Engineering"/>
+      <instructions routeName="Engineering" />
     </div>
   </div>
   <div
@@ -139,6 +139,7 @@ export default {
         "design/date",
         "cost",
         "rainfall",
+        "absorption",
         "runoff",
         "accessible squares",
         "concrete",
@@ -154,6 +155,7 @@ export default {
         "design/date",
         "cost",
         "rainfall",
+        "absorption",
         "runoff",
         "accessible squares",
         "concrete",
@@ -225,11 +227,11 @@ export default {
           }
         });
         this.$store.dispatch("addDesignHistory", dhList);
-        if(this.favoriteStatus.length == 0){
+        if (this.favoriteStatus.length == 0) {
           this.$store.dispatch("addFavoriteDesigns", favList);
         }
-        if(this.checkedDesignStatus.length == 0){
-        this.$store.dispatch("addCheckedDesigns", checkList);
+        if (this.checkedDesignStatus.length == 0) {
+          this.$store.dispatch("addCheckedDesigns", checkList);
         }
       }
     },
@@ -242,11 +244,11 @@ export default {
       packages: ["table", "corechart", "line"],
     });
 
-    this.emitter.on('update-data', (evt) => {
-      if(evt.status){
+    this.emitter.on("update-data", (evt) => {
+      if (evt.status) {
         this.generateTable();
       }
-    })
+    });
   },
 };
 </script>
