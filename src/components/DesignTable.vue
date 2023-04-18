@@ -6,11 +6,13 @@
       <thead>
         <tr>
           <th
-            class="table-info"
+            class="table-light"
             v-for="(headerItem, index) in header"
             :key="index"
           >
-            <p v-if="index == 0 && favorite.length"><i class="bi bi-star-fill headerStar"></i></p>
+            <p v-if="index == 0 && favorite.length">
+              <i class="bi bi-star-fill headerStar"></i>
+            </p>
             <p v-else>{{ headerItem }}</p>
           </th>
         </tr>
@@ -18,18 +20,30 @@
       <tbody>
         <!-- loop over the list of designs and add checkboxes -->
         <tr v-for="(content, index) in contents" :key="index">
-          <td v-if="favorite.length">
-            <button v-if="favorite[index]" class="btn btn-lg btn-link" @click="toggleStar(index, false)">
+          <td v-if="favorite.length" class="table-warning">
+            <button
+              v-if="favorite[index]"
+              class="btn btn-lg btn-link"
+              @click="toggleStar(index, false)"
+            >
               <i class="bi bi-star-fill headerStar"></i>
             </button>
-            <button v-else class="btn btn-lg btn-link" @click="toggleStar(index, true)">
+            <button
+              v-else
+              class="btn btn-lg btn-link"
+              @click="toggleStar(index, true)"
+            >
               <i class="bi bi-star"></i>
             </button>
           </td>
-          <td v-for="(items, i) in content" :key="i">
+          <td
+            v-for="(items, i, index) in content"
+            :key="i"
+            :class="setCellColor(index)"
+          >
             <p>{{ items }}</p>
           </td>
-          <td v-if="checked.length">
+          <td v-if="checked.length" class="table-warning">
             <input
               v-if="checked[index]"
               class="form-check-input mt-0"
@@ -86,10 +100,10 @@ export default {
       type: Array,
       default: () => [],
     },
-    favorite:{
+    favorite: {
       type: Array,
       default: () => [],
-    }
+    },
   },
   methods: {
     /**
@@ -110,6 +124,18 @@ export default {
         index: i,
         status: status,
       });
+    },
+
+    setCellColor(i) {
+      if (i == 0) {
+        return "table-warning";
+      } else if (i == 1) {
+        return "table-danger";
+      } else if ([2, 3, 4].indexOf(i) > -1) {
+        return "table-info";
+      } else {
+        return "table-success";
+      }
     },
   },
 };
@@ -138,6 +164,6 @@ input {
 }
 
 .headerStar {
-  color: #ede102;
+  color: #d8cd03;
 }
 </style>

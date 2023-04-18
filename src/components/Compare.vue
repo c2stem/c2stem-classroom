@@ -95,3 +95,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+table {
+  font-size: 0.9vw;
+  font-weight: 700;
+}
+</style>

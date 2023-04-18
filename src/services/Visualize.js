@@ -53,6 +53,16 @@ export default {
       alert(error.message);
     }
   },
+
+  async getTotalAbsorption() {
+    try {
+      const gb = await this.getGlobalVariables();
+      var totalAbsorption = gb.vars["total absorption amount (inches)"].value;
+      return Math.round(totalAbsorption * 10000) / 10000;
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   /**
    * Accesses the NetsBloxMorph of C2STEM and extract design history contents.
    * @returns Object representation of Design History from C2STEM.
@@ -150,7 +160,7 @@ export default {
    * @param {*} content Design history.
    * @returns An Object representation of the design contents.
    */
-  getObject(content) {
+  async getObject(content) {
     let obj = {};
     let header = content[0].contents;
     for (let i = 1; i < Object.keys(content).length; i++) {
@@ -161,6 +171,10 @@ export default {
           var updatedContent = this.formatDate(childContent[j]);
           childObj[header[j - 1] / header[j]] =
             childContent[j - 1] + ". " + updatedContent; //combining design and date
+        } else if (j == 4) {
+          const totalAbsorption = await this.getTotalAbsorption();
+          childObj["Absorption (inches)"] = totalAbsorption;
+          childObj[header[j]] = childContent[j];
         } else if (j != 0) {
           childObj[header[j]] = childContent[j];
         }
@@ -193,6 +207,7 @@ export default {
       splitContent[4];
     return updatedDate;
   },
+
   async getTestObject(content) {
     let obj = {};
     let header = content[0].contents;
