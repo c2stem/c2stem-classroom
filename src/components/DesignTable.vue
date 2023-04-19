@@ -6,7 +6,7 @@
       <thead>
         <tr>
           <th
-            class="table-light"
+            class="table-light header"
             v-for="(headerItem, index) in header"
             :key="index"
           >
@@ -150,6 +150,10 @@ table {
 thead {
   vertical-align: middle;
   text-align: center;
+}
+.header {
+  position: sticky;
+  top: 0;
 }
 th,
 td {
