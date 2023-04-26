@@ -36,11 +36,7 @@
               <i class="bi bi-star"></i>
             </button>
           </td>
-          <td
-            v-for="(items, i, index) in content"
-            :key="i"
-            :class="setCellColor(index)"
-          >
+          <td v-for="(items, i) in content" :key="i" :class="setCellColor(i)">
             <p>{{ items }}</p>
           </td>
           <td v-if="checked.length" class="table-warning">
@@ -127,11 +123,14 @@ export default {
     },
 
     setCellColor(i) {
-      if (i == 0) {
+      i = i.toLowerCase();
+      if (i.includes("date") || i.includes("test")) {
         return "table-warning";
-      } else if (i == 1) {
+      } else if (i.includes("cost")) {
         return "table-danger";
-      } else if ([2, 3, 4].indexOf(i) > -1) {
+      } else if (i.includes("rainfall")) {
+        return "table-primary";
+      } else if (i.includes("absorption") || i.includes("runoff")) {
         return "table-info";
       } else {
         return "table-success";
