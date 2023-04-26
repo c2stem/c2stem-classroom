@@ -4,26 +4,72 @@
  */
 export default {
   // Data retrieving methods
+  /**
+   * Method to retreive global variables from the NetsBlox project.
+   * @returns a VariableFrame object from NetsBlox that contains global variables
+   */
   async getGlobalVariables() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const gb = await api.getGlobalVariables();
     return gb;
   },
+  /**
+   * Method to get the accurate keys of all the global variable names to retrieve respective values.
+   * @param {object} gb a VariableFrame object from NetsBlox that contains global variables
+   * @param {string} name global variable search name
+   * @returns Accurate key of the global variable from the NetsBlox project.
+   */
+  getGlobalVariableName(gb, name) {
+    var globalVariableList = Object.keys(gb.vars);
+    switch (name) {
+      case "absorption limit":
+        return globalVariableList.find(
+          (element) =>
+            element.includes("absorption") && element.includes("limit")
+        );
+      case "total absorption":
+        return globalVariableList.find(
+          (element) =>
+            element.includes("total") && element.includes("absorption")
+        );
+      case "design history":
+        return globalVariableList.find(
+          (element) => element.includes("design") && element.includes("history")
+        );
+      case "test history":
+        return globalVariableList.find(
+          (element) => element.includes("test") && element.includes("history")
+        );
+      default:
+        break;
+    }
+  },
+  /**
+   * Method to get design history table global variable from the project.
+   * @returns an array of design history table contents.
+   */
   async getData() {
     try {
       const gb = await this.getGlobalVariables();
-      var designHistory = gb.vars["design history"];
+      const varName = this.getGlobalVariableName(gb, "design history");
+      var designHistory = gb.vars[varName];
       var dhContents = designHistory.value.contents;
       return this.getObject(dhContents);
     } catch (error) {
       alert(error.message);
     }
   },
+  /**
+   * Method to get Test history table global variable from the project.
+   * @param {string} source name of the condition [construct, explore, manipulate]
+   * @returns an array of the test history table contents.
+   */
   async getTestData(source) {
     try {
       const gb = await this.getGlobalVariables();
-      var testHistory = gb.vars["test history"];
+      const varName = this.getGlobalVariableName(gb, "test history");
+      var testHistory = gb.vars[varName];
       var thContents = testHistory.value.contents;
       /**
        * The switch was created in case a differnt table structure was required for was condition.
@@ -43,21 +89,29 @@ export default {
       alert(error.message);
     }
   },
-
+  /**
+   * Method to get abosorption limit global variable from the NetsBox project.
+   * @returns absorption limit in number.
+   */
   async getAbsorptionLimit() {
     try {
       const gb = await this.getGlobalVariables();
-      var absorptionLimit = gb.vars["absorption-limit"].value;
+      const varName = this.getGlobalVariableName(gb, "absorption limit");
+      var absorptionLimit = gb.vars[varName].value;
       return absorptionLimit;
     } catch (error) {
       alert(error.message);
     }
   },
-
+  /**
+   * Method to get total abosorption global variable from the NetsBox project.
+   * @returns total absorption in number.
+   */
   async getTotalAbsorption() {
     try {
       const gb = await this.getGlobalVariables();
-      var totalAbsorption = gb.vars["total absorption amount (inches)"].value;
+      const varName = this.getGlobalVariableName(gb, "total absorption");
+      var totalAbsorption = gb.vars[varName].value;
       return Math.round(totalAbsorption * 10000) / 10000;
     } catch (error) {
       alert(error.message);
@@ -175,7 +229,7 @@ export default {
           const totalAbsorption = await this.getTotalAbsorption();
           childObj["Absorption (inches)"] = totalAbsorption;
           childObj[header[j]] = childContent[j];
-        } else if (j != 0) {
+        } else if ((j != 0) & (j != 12)) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -207,7 +261,11 @@ export default {
       splitContent[4];
     return updatedDate;
   },
-
+  /**
+   * Converts the existing test history format into an object representation.
+   * @param {*} content Test History
+   * @returns An Object representation of the test contents.
+   */
   async getTestObject(content) {
     let obj = {};
     let header = content[0].contents;
@@ -222,10 +280,9 @@ export default {
           //   childObj[header[j]] = childContent[j];
           // }
         } else if (j == 4) {
-          const absorptionLimit = await this.getAbsorptionLimit();
-          childObj["Absorption limit(inches)"] = absorptionLimit;
+          childObj[header[7]] = childContent[7];
           childObj[header[j]] = childContent[j];
-        } else if (j !== 6) {
+        } else if ((j != 6) & (j != 7)) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -233,7 +290,11 @@ export default {
     }
     return obj;
   },
-
+  /**
+   * Method to change the string month representation to the numerical representation.
+   * @param {string} month a string key to retrieve a assigned value.
+   * @returns a numerical representation of the month.
+   */
   mapMonths(month) {
     const monthMap = {
       Jan: "01",
