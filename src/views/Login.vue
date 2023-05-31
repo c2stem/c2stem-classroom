@@ -38,6 +38,7 @@
  * @requires ../services/Auth.js that contains method for login.
  */
 import auth from "../services/Auth.js";
+import nav from "../services/Navigation.js";
 export default {
   data() {
     return {
@@ -67,11 +68,8 @@ export default {
               (data.username = this.username),
               this.$store.dispatch("updateStore", this.username),
               this.$store.dispatch("saveCredentials", data).then(() => {
-                if (data.class.includes("CMISE")) {
-                  this.$router.push({ name: "Landing" });
-                } else if (data.class.includes("SPICE")) {
-                  this.$router.push({ name: "Home" });
-                }
+                const reRoute = nav.routeByClassOnLogin(data);
+                this.$router.push({ name: reRoute });
               })
             );
         });
