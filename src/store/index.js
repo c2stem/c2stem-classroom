@@ -96,6 +96,7 @@ const store = createStore({
       localStorage.setItem("user", JSON.stringify(data.username));
       localStorage.setItem("userRole", JSON.stringify(data.role));
       localStorage.setItem("userClass", JSON.stringify(data.class));
+      localStorage.setItem("userGroup", JSON.stringify(data.group));
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     },
     removeCredentials(state) {
