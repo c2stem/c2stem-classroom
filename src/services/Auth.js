@@ -1,12 +1,12 @@
-import axios from "axios";
+import $axios from "./Axios";
 import { enc, SHA512 } from "crypto-js";
 
 export default {
   login(credentials) {
-    return axios.post("https://run.c2stem.org/user/login", credentials);
+    return $axios.axios_instance.post("user/login", credentials);
   },
   register(credentials) {
-    return axios.post("https://run.c2stem.org/user/register", credentials);
+    return $axios.axios_instance.post("user/register", credentials);
   },
   netsbloxLogin(credentials) {
     const data = credentials;

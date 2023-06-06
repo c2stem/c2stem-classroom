@@ -22,6 +22,14 @@
       </button>
       <div class="bttn-auth ms-2 me-2">
         <button
+          v-if="loggedIn && currentRole == 'admin'"
+          type="button"
+          class="btn btn-primary btn-lg me-3"
+          @click="$router.push('/dashboard')"
+        >
+          Dashbaord
+        </button>
+        <button
           v-if="
             loggedIn &&
             currentRole == 'admin' &&

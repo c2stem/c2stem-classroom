@@ -39,6 +39,7 @@
  */
 import auth from "../services/Auth.js";
 import nav from "../services/Navigation.js";
+import $axios from "../services/Axios";
 export default {
   data() {
     return {
@@ -66,6 +67,7 @@ export default {
             })
             .then(
               (data.username = this.username),
+              $axios.setHeader(data.token),
               this.$store.dispatch("updateStore", this.username),
               this.$store.dispatch("saveCredentials", data).then(() => {
                 const reRoute = nav.routeByClassOnLogin(data);

@@ -1,9 +1,9 @@
-import axios from "axios";
+import $axios from "./Axios";
 export default {
   async saveUserState(user, state) {
     const checkList = state.checkedStatus;
     const favList = state.favoriteStatus;
-    let response = await axios.post("https://run.c2stem.org/state/setState", {
+    let response = await $axios.axios_instance.post("state/setState", {
       username: user,
       checkList: checkList,
       favList: favList,
@@ -14,13 +14,13 @@ export default {
   },
 
   async gerUserState(user) {
-    let response = await axios.get("https://run.c2stem.org/state/getState/" + user, {
+    let response = await $axios.axios_instance.get("state/getState/" + user, {
       withCredentials: true,
     });
     if (response) {
       return response.data;
-    }else{
-        return [];
+    } else {
+      return [];
     }
   },
 };

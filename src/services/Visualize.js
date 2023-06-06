@@ -2,6 +2,8 @@
  * Visualize service.
  * Methods related to data visualization.
  */
+// import axios from "axios";
+import $axios from "../services/Axios";
 export default {
   // Data retrieving methods
   /**
@@ -312,5 +314,19 @@ export default {
       Dec: "12",
     };
     return monthMap[month];
+  },
+
+  async getUsersByClass(className) {
+    let response = await $axios.axios_instance.get(
+      "user/getUsersByClass/" + className,
+      {
+        withCredentials: true,
+      }
+    );
+    if (response) {
+      return response;
+    } else {
+      return "";
+    }
   },
 };
