@@ -26,6 +26,9 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div v-if="userData">{{ userData }}</div>
+    </div>
   </div>
 </template>
 
@@ -36,14 +39,21 @@ export default {
   data() {
     return {
       classname: "",
-      userData: [],
+      userDataList: [],
     };
   },
+  computed: {
+    userData() {
+      return this.userDataList;
+    },
+  },
   methods: {
-    extractData() {
-      visualize.getUsersByClass(this.classname).then((response) => {
-        this.userData = response.data;
-      });
+    async extractData() {
+      visualize
+        .getUsersByClass(this.$axios, this.classname)
+        .then((response) => {
+          this.userDataList = response.data;
+        });
     },
   },
 };

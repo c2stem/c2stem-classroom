@@ -1,12 +1,11 @@
-import $axios from "./Axios";
 import { enc, SHA512 } from "crypto-js";
 
 export default {
-  login(credentials) {
-    return $axios.axios_instance.post("user/login", credentials);
+  login($axios, credentials) {
+    return $axios.post("user/login", credentials);
   },
-  register(credentials) {
-    return $axios.axios_instance.post("user/register", credentials);
+  register($axios, credentials) {
+    return $axios.post("user/register", credentials);
   },
   netsbloxLogin(credentials) {
     const data = credentials;

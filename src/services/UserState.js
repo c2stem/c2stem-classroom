@@ -1,9 +1,8 @@
-import $axios from "./Axios";
 export default {
-  async saveUserState(user, state) {
+  async saveUserState(user, state, $axios) {
     const checkList = state.checkedStatus;
     const favList = state.favoriteStatus;
-    let response = await $axios.axios_instance.post("state/setState", {
+    let response = await $axios.post("state/setState", {
       username: user,
       checkList: checkList,
       favList: favList,
@@ -13,8 +12,8 @@ export default {
     }
   },
 
-  async gerUserState(user) {
-    let response = await $axios.axios_instance.get("state/getState/" + user, {
+  async gerUserState($axios, user) {
+    let response = await $axios.get("state/getState/" + user, {
       withCredentials: true,
     });
     if (response) {

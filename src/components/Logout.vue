@@ -18,20 +18,19 @@
  * When clicked removes credentials of current user.
  */
 import authService from "@/services/Auth.js";
-import userStateService from "@/services/UserState.js"
+import userStateService from "@/services/UserState.js";
 export default {
   name: "Logout",
   computed: {
     loggedIn() {
       return this.$store.state.user;
     },
-
   },
   methods: {
     logout() {
-      const user = this.getUser().replaceAll('"', '');
+      const user = this.getUser().replaceAll('"', "");
       authService.netsbloxLogout();
-      userStateService.saveUserState(user, this.$store.state);
+      userStateService.saveUserState(user, this.$store.state, this.$axios);
       this.$store.dispatch("removeCredentials");
     },
     getUser() {

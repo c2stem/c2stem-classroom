@@ -111,7 +111,7 @@ export default {
      */
     register() {
       auth
-        .register({
+        .register(this.$axios, {
           username: this.username,
           password: this.password,
           email: this.email,

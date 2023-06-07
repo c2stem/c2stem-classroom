@@ -5,9 +5,7 @@ export default {
     baseURL: "https://run.c2stem.org/",
   }),
 
-  setHeader(token) {
-    this.axios_instance.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${token}`;
+  setHeader(axios_instance, token) {
+    axios_instance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   },
 };

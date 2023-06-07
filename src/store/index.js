@@ -110,6 +110,7 @@ const store = createStore({
     },
     async updateStore(state, user) {
       let response = await userStateService.gerUserState(
+        this.$axios,
         user.replaceAll('"', "")
       );
       if (response.length == 0) {
