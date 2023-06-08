@@ -26,8 +26,27 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div v-if="userData">{{ userData }}</div>
+    <div class="row" v-if="userData.length">
+      <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            <th
+              class="table-light header"
+              v-for="(headerItem, index) in userDataHeader"
+              :key="index"
+            >
+              {{ headerItem }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(userDataItems, index) in userData" :key="index">
+            <td v-for="(item, index) in userDataItems" :key="index">
+              {{ item }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -40,6 +59,7 @@ export default {
     return {
       classname: "",
       userDataList: [],
+      userDataHeader: ["Username", "Email", "Role", "Class", "Group", ""],
     };
   },
   computed: {
@@ -52,7 +72,22 @@ export default {
       visualize
         .getUsersByClass(this.$axios, this.classname)
         .then((response) => {
-          this.userDataList = response.data;
+          if (this.userDataList.length) {
+            this.userDataList = [];
+          }
+          if (response.data.length) {
+            response.data.forEach((element) => {
+              let a = {};
+              a["username"] = element.username;
+              a["email"] = element.email;
+              a["role"] = element.role;
+              a["class"] = element.class;
+              a["group"] = element.group;
+              this.userDataList.push(a);
+            });
+          } else {
+            alert("No users found");
+          }
         });
     },
   },
@@ -61,14 +96,13 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-div {
+  width: 50%;
   height: fit-content;
 }
-
+.row {
+  margin: 10px;
+  justify-content: center;
+}
 select {
   width: fit-content;
   margin: 10px;
@@ -80,5 +114,8 @@ select {
 .filterCard {
   display: flex;
   align-items: center;
+}
+td {
+  text-align: center;
 }
 </style>
