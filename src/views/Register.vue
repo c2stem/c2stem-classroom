@@ -65,20 +65,7 @@
       </div>
     </div>
   </div>
-  <div
-    v-if="isActive"
-    class="alert alert-warning alert-dismissible fade show alertBox"
-    role="alert"
-  >
-    <p>User: {{ username }} has been registered.</p>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-      @click="closeAlert"
-    ></button>
-  </div>
+  <AlertBox :message="alertMessage" v-if="isActive"></AlertBox>
 </template>
 
 <script>
@@ -87,7 +74,11 @@
  * @requires ../services/Auth.js that contains method for login.
  */
 import auth from "../services/Auth.js";
+import AlertBox from "../components/AlertBox.vue";
 export default {
+  components: {
+    AlertBox,
+  },
   data() {
     return {
       username: "",
@@ -96,6 +87,7 @@ export default {
       classname: "",
       role: "",
       cardActive: false,
+      alertMessage: "",
     };
   },
   computed: {
@@ -119,11 +111,13 @@ export default {
           role: this.role,
         })
         .then(() => {
+          if (document.getElementById("alertID")) {
+            document.getElementById("alertID").style.display = "flex";
+          }
           this.cardActive = true;
+          this.alertMessage =
+            " User: " + this.username + " has been registered.";
         });
-    },
-    closeAlert() {
-      this.$router.go(0);
     },
   },
 };

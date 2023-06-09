@@ -324,4 +324,16 @@ export default {
       return "";
     }
   },
+
+  async setUserGroup($axios, username, groupName) {
+    let response = await $axios.post("user/setUserGroup", {
+      username: username,
+      group: groupName,
+    });
+    if (response) {
+      return response;
+    } else {
+      return undefined;
+    }
+  },
 };
