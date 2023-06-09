@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
-import Dashboard from "../views/Dashboard.vue";
+import Dashboard from "../views/visualize/Dashboard.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import EE from "../views/EE.vue";
 import EELanding from "../views/EELand.vue";
@@ -152,22 +152,26 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem("user");
-  // const userRole = localStorage.getItem('userRole');
+  const userRole = localStorage.getItem("userRole");
   const userClass = localStorage.getItem("userClass");
   const userGroup = localStorage.getItem("userGroup");
 
   if (to.meta && to.meta.title) {
-    document.title = to.meta.title || "Your Website Title";
+    document.title = to.meta.title || "C2STEM";
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     next("/");
   }
   if (userClass && !userClass.includes(to.meta.class)) {
-    router.back();
+    if (!userRole && !userRole.includes("admin")) {
+      router.back();
+    }
   }
   if (userGroup && !userGroup.includes(to.meta.group)) {
-    router.back();
+    if (!userRole && !userRole.includes("admin")) {
+      router.back();
+    }
   }
   next();
 });

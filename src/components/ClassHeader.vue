@@ -2,10 +2,13 @@
   <!-- Global header for the C2STEM/SPICE/CMISE environments -->
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark head">
     <div class="container-fluid">
-      <a class="navbar-brand" :href="returnNav">
-        <!-- c2stem logo with link to home -->
+      <button
+        type="button"
+        class="btn btn-link navbar-brand"
+        @click="returnNav"
+      >
         <img src="../assets/c2stemlogo.png" alt="" width="100" height="30" />
-      </a>
+      </button>
       <button
         v-if="
           loggedIn &&
@@ -21,6 +24,14 @@
         Save Project
       </button>
       <div class="bttn-auth ms-2 me-2">
+        <button
+          v-if="loggedIn && currentRole == 'admin'"
+          type="button"
+          class="btn btn-primary btn-lg me-3"
+          @click="$router.push('/dashboard')"
+        >
+          Dashbaord
+        </button>
         <button
           v-if="
             loggedIn &&
@@ -67,16 +78,6 @@ export default {
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
-    returnNav() {
-      const lastKnown = this.currentRouteName;
-      if (lastKnown === "IE") {
-        return "/ieLand";
-      } else if (lastKnown === "EE") {
-        return "/eeLand";
-      } else {
-        return "/land";
-      }
-    },
   },
   methods: {
     async saveProject() {
@@ -93,6 +94,17 @@ export default {
         console.log("Cannot save the project", error);
       }
     },
+    // TO DO: need to be improved with new routes.
+    returnNav() {
+      const lastKnown = this.currentRouteName;
+      if (lastKnown === "IE") {
+        return "/ieLand";
+      } else if (lastKnown === "EE") {
+        return "/eeLand";
+      } else {
+        return this.$router.push("/land");
+      }
+    },
   },
   mounted() {
     this.emitter.on("save-project", (evt) => {
@@ -107,5 +119,8 @@ export default {
 <style scoped>
 .head {
   background: #615195;
+}
+.btn:focus {
+  box-shadow: none;
 }
 </style>

@@ -39,6 +39,7 @@
  */
 import auth from "../services/Auth.js";
 import nav from "../services/Navigation.js";
+import axios_instance from "../services/Axios";
 export default {
   data() {
     return {
@@ -56,7 +57,10 @@ export default {
      */
     login() {
       auth
-        .login({ username: this.username, password: this.password })
+        .login(this.$axios, {
+          username: this.username,
+          password: this.password,
+        })
         .then(({ data }) => {
           auth
             .netsbloxLogin({
@@ -66,6 +70,7 @@ export default {
             })
             .then(
               (data.username = this.username),
+              axios_instance.setHeader(this.$axios, data.token),
               this.$store.dispatch("updateStore", this.username),
               this.$store.dispatch("saveCredentials", data).then(() => {
                 const reRoute = nav.routeByClassOnLogin(data);

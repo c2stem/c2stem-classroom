@@ -313,4 +313,27 @@ export default {
     };
     return monthMap[month];
   },
+
+  async getUsersByClass($axios, className) {
+    let response = await $axios.get("user/getUsersByClass/" + className, {
+      withCredentials: true,
+    });
+    if (response) {
+      return response;
+    } else {
+      return "";
+    }
+  },
+
+  async setUserGroup($axios, username, groupName) {
+    let response = await $axios.post("user/setUserGroup", {
+      username: username,
+      group: groupName,
+    });
+    if (response) {
+      return response;
+    } else {
+      return undefined;
+    }
+  },
 };

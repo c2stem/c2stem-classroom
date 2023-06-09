@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import axios from "axios";
 import userStateService from "@/services/UserState.js";
 
 const store = createStore({
@@ -94,10 +93,9 @@ const store = createStore({
     saveCredentials(state, data) {
       state.user = data.token;
       localStorage.setItem("user", JSON.stringify(data.username));
-      localStorage.setItem("userRole", JSON.stringify(data.role));
+      localStorage.setItem("userRole", JSON.stringify(data.role).toLowerCase());
       localStorage.setItem("userClass", JSON.stringify(data.class));
       localStorage.setItem("userGroup", JSON.stringify(data.group));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     },
     removeCredentials(state) {
       state.user = null;
@@ -112,6 +110,7 @@ const store = createStore({
     },
     async updateStore(state, user) {
       let response = await userStateService.gerUserState(
+        this.$axios,
         user.replaceAll('"', "")
       );
       if (response.length == 0) {
