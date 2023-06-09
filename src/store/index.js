@@ -93,7 +93,7 @@ const store = createStore({
     saveCredentials(state, data) {
       state.user = data.token;
       localStorage.setItem("user", JSON.stringify(data.username));
-      localStorage.setItem("userRole", JSON.stringify(data.role));
+      localStorage.setItem("userRole", JSON.stringify(data.role).toLowerCase());
       localStorage.setItem("userClass", JSON.stringify(data.class));
       localStorage.setItem("userGroup", JSON.stringify(data.group));
     },
