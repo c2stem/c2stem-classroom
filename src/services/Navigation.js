@@ -1,8 +1,11 @@
 export default {
   routeByClassOnLogin(data) {
     if (data.class.includes("CMISE")) {
-      // this.$router.push({ name: "Landing" });
-      return this.filterByGroupOnLogin(data.group);
+      if (data.group && !data.role.includes("admin")) {
+        return this.filterByGroupOnLogin(data.group);
+      } else {
+        return "Landing";
+      }
     } else if (data.class.includes("SPICE")) {
       return "Home";
     }
@@ -15,6 +18,8 @@ export default {
       return "EELanding";
     } else if (userGroup.includes("Construct")) {
       return "Construct";
+    } else {
+      return "Landing";
     }
   },
 };

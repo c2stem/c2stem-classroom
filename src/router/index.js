@@ -17,6 +17,14 @@ import Register from "../views/Register.vue";
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
 
+function islogin(to, from, next) {
+  if (!localStorage.getItem("user")) {
+    next();
+  } else {
+    router.back();
+  }
+}
+
 const routes = [
   // {
   //   path: "/",
@@ -28,13 +36,14 @@ const routes = [
     path: "/",
     name: "Login",
     component: Login,
+    beforeEnter: islogin,
     meta: { title: "C2STEM | Login" },
   },
   {
     path: "/register",
     name: "Register",
     component: Register,
-    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Rgister" },
+    meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Rgister" },
   },
   {
     path: "/land",
@@ -163,14 +172,26 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     next("/");
   }
-  if (userClass && !userClass.includes(to.meta.class)) {
-    if (!userRole && !userRole.includes("admin")) {
-      router.back();
-    }
-  }
-  if (userGroup && !userGroup.includes(to.meta.group)) {
-    if (!userRole && !userRole.includes("admin")) {
-      router.back();
+  if (userRole && userRole.includes("admin")) {
+    next();
+  } else {
+    if (to.name == "Landing") {
+      if (userGroup && userGroup !== "All") {
+        if (from.name.includes("IE")) {
+          router.push("/ieland");
+        } else if (from.name.includes("EE")) {
+          router.push("/eeland");
+        }
+      }
+    } else {
+      if (userClass && !userClass.includes(to.meta.class)) {
+        router.back();
+      }
+      if (userGroup && to.meta.group) {
+        if (!userGroup.includes(to.meta.group || "All")) {
+          router.back();
+        }
+      }
     }
   }
   next();
