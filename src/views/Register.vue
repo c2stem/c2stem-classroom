@@ -117,6 +117,13 @@ export default {
           this.cardActive = true;
           this.alertMessage =
             " User: " + this.username + " has been registered.";
+        })
+        .catch((error) => {
+          if (document.getElementById("alertID")) {
+            document.getElementById("alertID").style.display = "flex";
+          }
+          this.cardActive = true;
+          this.alertMessage = error;
         });
     },
   },

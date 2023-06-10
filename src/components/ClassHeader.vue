@@ -98,11 +98,11 @@ export default {
     returnNav() {
       const lastKnown = this.currentRouteName;
       if (lastKnown === "IE") {
-        return "/ieLand";
+        this.$router.push("/ieLand");
       } else if (lastKnown === "EE") {
-        return "/eeLand";
+        this.$router.push("/eeLand");
       } else {
-        return this.$router.push("/land");
+        this.$router.push("/land");
       }
     },
   },
