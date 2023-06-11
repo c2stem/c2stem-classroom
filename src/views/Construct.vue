@@ -96,7 +96,7 @@ export default {
     });
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    var myModal = new Modal(document.getElementById("loadModal"));
+    const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);

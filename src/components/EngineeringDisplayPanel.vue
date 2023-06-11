@@ -205,7 +205,7 @@ export default {
   },
   methods: {
     /**
-     * Generates a table by accessing design history content from c2stem environemnt.
+     * Generates a table by accessing design history content from c2stem environment.
      * The method gets design history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new design history from c2stem.
      */
@@ -227,10 +227,10 @@ export default {
           }
         });
         this.$store.dispatch("addDesignHistory", dhList);
-        if (this.favoriteStatus.length == 0) {
+        if (this.favoriteStatus.length === 0) {
           this.$store.dispatch("addFavoriteDesigns", favList);
         }
-        if (this.checkedDesignStatus.length == 0) {
+        if (this.checkedDesignStatus.length === 0) {
           this.$store.dispatch("addCheckedDesigns", checkList);
         }
       }

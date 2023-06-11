@@ -11,8 +11,7 @@ export default {
   async getGlobalVariables() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    const gb = await api.getGlobalVariables();
-    return gb;
+    return await api.getGlobalVariables();
   },
   /**
    * Method to get the accurate keys of all the global variable names to retrieve respective values.
@@ -90,21 +89,20 @@ export default {
     }
   },
   /**
-   * Method to get abosorption limit global variable from the NetsBox project.
+   * Method to get absorption limit global variable from the NetsBox project.
    * @returns absorption limit in number.
    */
   async getAbsorptionLimit() {
     try {
       const gb = await this.getGlobalVariables();
       const varName = this.getGlobalVariableName(gb, "absorption limit");
-      var absorptionLimit = gb.vars[varName].value;
-      return absorptionLimit;
+      return gb.vars[varName].value;
     } catch (error) {
       alert(error.message);
     }
   },
   /**
-   * Method to get total abosorption global variable from the NetsBox project.
+   * Method to get total absorption global variable from the NetsBox project.
    * @returns total absorption in number.
    */
   async getTotalAbsorption() {
@@ -123,11 +121,11 @@ export default {
    */
   getDataOnDomain() {
     try {
-      var iframe = document.getElementById("iframe-id"),
-        ide = iframe.contentWindow.world.children[0];
-      var gb = ide.globalVariables;
-      var designHistory = gb.getVar("design history");
-      var dhContents = designHistory.contents;
+      const iframe = document.getElementById("iframe-id"),
+          ide = iframe.contentWindow.world.children[0];
+      const gb = ide.globalVariables;
+      const designHistory = gb.getVar("design history");
+      const dhContents = designHistory.contents;
       return this.getObject(dhContents);
     } catch (error) {
       alert(error.message);
@@ -141,11 +139,11 @@ export default {
    * @param {*} contents List of designs run by the user.
    */
   drawTable(header, contents) {
-    var data = new window.google.visualization.DataTable();
-    var dhHeaders = header;
+    const data = new window.google.visualization.DataTable();
+    const dhHeaders = header;
 
     for (let i = 0; i < dhHeaders.length; i++) {
-      if (i == 1 || i == dhHeaders.length - 1) {
+      if (i === 1 || i === dhHeaders.length - 1) {
         data.addColumn("string", dhHeaders[i]);
       } else {
         data.addColumn("number", dhHeaders[i]);
@@ -162,8 +160,8 @@ export default {
       }
       data.addRow(contentArray);
     }
-    var table = new window.google.visualization.Table(
-      document.getElementById("table")
+    const table = new window.google.visualization.Table(
+        document.getElementById("table")
     );
 
     table.draw(data, { showRowNumber: true, width: "100%", height: "100%" });
@@ -171,11 +169,12 @@ export default {
 
   /**
    * Generate a chart using Google library based on the design content provided.
+   * @param header
    * @param {*} contents List of designs run by the user.
    */
   drawChart(header, contents) {
-    var data = new window.google.visualization.DataTable();
-    var dhHeaders = header;
+    const data = new window.google.visualization.DataTable();
+    const dhHeaders = header;
 
     for (let i = 0; i < dhHeaders.length; i++) {
       data.addColumn("number", dhHeaders[i]);
@@ -191,7 +190,7 @@ export default {
       }
       data.addRow(contentArray);
     }
-    var options = {
+    const options = {
       title: "Design History",
       hAxis: {
         title: "Design Number",
@@ -202,8 +201,8 @@ export default {
       width: 550,
       height: 400,
     };
-    var chart = new window.google.visualization.LineChart(
-      document.getElementById("chart")
+    const chart = new window.google.visualization.LineChart(
+        document.getElementById("chart")
     );
 
     chart.draw(data, options);
@@ -221,15 +220,14 @@ export default {
       let childObj = {};
       let childContent = content[i].contents;
       for (let j = 0; j < childContent.length; j++) {
-        if (j == 1) {
-          var updatedContent = this.formatDate(childContent[j]);
+        if (j === 1) {
+          const updatedContent = this.formatDate(childContent[j]);
           childObj[header[j - 1] / header[j]] =
             childContent[j - 1] + ". " + updatedContent; //combining design and date
-        } else if (j == 4) {
-          const totalAbsorption = await this.getTotalAbsorption();
-          childObj["Absorption (inches)"] = totalAbsorption;
+        } else if (j === 4) {
+          childObj["Absorption (inches)"] = await this.getTotalAbsorption();
           childObj[header[j]] = childContent[j];
-        } else if ((j != 0) & (j != 12)) {
+        } else if ((j !== 0) && (j !== 12)) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -245,20 +243,20 @@ export default {
    * @returns date
    */
   formatDate(content) {
-    var splitContent = content.split(" ");
+    const splitContent = content.split(" ");
     //convert 3 letter month to 2 number representation
-    var map_month = this.mapMonths(splitContent[1]);
+    let map_month = this.mapMonths(splitContent[1]);
     if (!map_month) {
       map_month = splitContent[1];
     }
-    var updatedDate =
-      map_month +
-      "/" +
-      splitContent[2] +
-      "/" +
-      splitContent[3].substring(2) +
-      " " +
-      splitContent[4];
+    const updatedDate =
+        map_month +
+        "/" +
+        splitContent[2] +
+        "/" +
+        splitContent[3].substring(2) +
+        " " +
+        splitContent[4];
     return updatedDate;
   },
   /**
@@ -273,16 +271,16 @@ export default {
       let childObj = {};
       let childContent = content[i].contents;
       for (let j = 0; j < childContent.length; j++) {
-        if (j == 1) {
-          var updatedContent = this.formatDate(childContent[j]);
+        if (j === 1) {
+          const updatedContent = this.formatDate(childContent[j]);
           childObj[header[j]] = updatedContent;
           // } else if ([4, 5, 6].indexOf(j) > -1) {
           //   childObj[header[j]] = childContent[j];
           // }
-        } else if (j == 4) {
+        } else if (j === 4) {
           childObj[header[7]] = childContent[7];
           childObj[header[j]] = childContent[j];
-        } else if ((j != 6) & (j != 7)) {
+        } else if ((j !== 6) && (j !== 7)) {
           childObj[header[j]] = childContent[j];
         }
       }

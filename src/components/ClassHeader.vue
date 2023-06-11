@@ -12,10 +12,10 @@
       <button
         v-if="
           loggedIn &&
-          (currentRouteName == 'Construct' ||
-            currentRouteName == 'Engineering' ||
-            currentRouteName == 'IE' ||
-            currentRouteName == 'EE')
+          (currentRouteName === 'Construct' ||
+            currentRouteName === 'Engineering' ||
+            currentRouteName === 'IE' ||
+            currentRouteName === 'EE')
         "
         type="button"
         class="btn btn-primary btn-lg me-3"
@@ -25,7 +25,7 @@
       </button>
       <div class="bttn-auth ms-2 me-2">
         <button
-          v-if="loggedIn && currentRole == 'admin'"
+          v-if="loggedIn && currentRole === 'admin'"
           type="button"
           class="btn btn-primary btn-lg me-3"
           @click="$router.push('/dashboard')"
@@ -35,7 +35,7 @@
         <button
           v-if="
             loggedIn &&
-            currentRole == 'admin' &&
+            currentRole === 'admin' &&
             currentRouteName !== 'Register'
           "
           type="button"
@@ -69,8 +69,7 @@ export default {
       return Formatter.removeQuotes(role);
     },
     currentRouteName() {
-      let name = this.$route.name;
-      return name;
+      return this.$route.name;
     },
     getProjectName() {
       return localStorage.getItem("projectName");

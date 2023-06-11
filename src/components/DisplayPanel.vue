@@ -104,18 +104,17 @@ export default {
       return this.$store.getters.getTestHistory;
     },
     currentRouteName() {
-      let name = this.$route.name;
-      return name;
+      return this.$route.name;
     },
   },
   methods: {
     /**
-     * Generates a table by accessing test history content from c2stem environemnt.
+     * Generates a table by accessing test history content from c2stem environment.
      * The method gets test history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new test history from c2stem.
      */
     async generateTable() {
-      if (this.currentRouteName == "EE") {
+      if (this.currentRouteName === "EE") {
         this.testHistoryContent = await visualize.getTestData("explore");
         this.activeTableContent = this.testHistoryContent;
         this.$store.dispatch("addEETestHistory", this.testHistoryContent);

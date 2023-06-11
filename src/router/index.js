@@ -43,7 +43,7 @@ const routes = [
     path: "/register",
     name: "Register",
     component: Register,
-    meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Rgister" },
+    meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Register" },
   },
   {
     path: "/land",
@@ -82,7 +82,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       class: "CMISE",
-      title: "C2STEM | EE Lannding",
+      title: "C2STEM | EE Landing",
       group: "EE",
     },
   },
@@ -175,7 +175,7 @@ router.beforeEach((to, from, next) => {
   if (userRole && userRole.includes("admin")) {
     next();
   } else {
-    if (to.name == "Landing") {
+    if (to.name === "Landing") {
       if (userGroup && userGroup !== "All") {
         if (from.name.includes("IE")) {
           router.push("/ieland");

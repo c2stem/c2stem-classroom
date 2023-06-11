@@ -113,7 +113,7 @@ const store = createStore({
         this.$axios,
         user.replaceAll('"', "")
       );
-      if (response.length == 0) {
+      if (response.length === 0) {
         localStorage.setItem("store", JSON.stringify(state));
       } else {
         let newState = state;
@@ -157,7 +157,7 @@ const store = createStore({
       return state.designHistory;
     },
     /**
-     * Get a List of status of all the cehckboxes in the engineering design table.
+     * Get a List of status of all the checkboxes in the engineering design table.
      * @param {state} state
      * @returns checkedStatus
      */

@@ -61,6 +61,7 @@
 import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+
 export default {
   name: "Simulation Panel",
   components: {
@@ -95,8 +96,7 @@ export default {
       return this.$store.getters.getTestHistory;
     },
     currentRouteName() {
-      let name = this.$route.name;
-      return name;
+      return this.$route.name;
     },
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
      * The history in the store is updated with new design history from c2stem.
      */
     async generateTable() {
-      if (this.currentRouteName == "IE") {
+      if (this.currentRouteName === "IE") {
         this.testHistoryContent = await visualize.getTestData("manipulate");
         this.activeTableContent = this.testHistoryContent;
         this.$store.dispatch("addIETestHistory", this.testHistoryContent);

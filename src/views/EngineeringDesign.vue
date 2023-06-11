@@ -57,7 +57,7 @@
  * In this view user will have access to a C2STEM project in an iframe.
  * Instruction panel is available with resources.
  * Display panel has data visualization from C2STEM data.
- * The green flag is availble to run scripts from outside of iframe.
+ * The green flag is available to run scripts from outside of iframe.
  * A See code button to access the code of the project.
  * A compare tabs allows for design comparison.
  * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
@@ -102,7 +102,7 @@ export default {
   mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    var myModal = new Modal(document.getElementById("loadModal"));
+    const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);

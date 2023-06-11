@@ -77,7 +77,7 @@ export default {
      * Based on the data from props, generate an iframe source url.
      */
     if (this.loggedIn) {
-      var projectExist = simulationService.projectExists(this.projectname);
+      const projectExist = simulationService.projectExists(this.projectname);
       projectExist
         .then((response) => {
           if (response) {
