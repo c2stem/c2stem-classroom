@@ -3,6 +3,7 @@
  * Methods related to C2STEM GUI and C2STEM simulation.
  */
 import axios from "axios";
+
 export default {
   runProject() {
     try {
@@ -16,7 +17,7 @@ export default {
 
   async getImage() {
     try {
-      var iframe = document.getElementById("iframe-id");
+      const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
       const stage = await api.getStageImage();
       let image = new Image();
@@ -27,7 +28,7 @@ export default {
     }
   },
   async getProjectList() {
-    var projects = [];
+    const projects = [];
     const user = localStorage.getItem("user");
     if (user) {
       try {
@@ -35,10 +36,10 @@ export default {
           "https://editor.c2stem.org/api/getProjectList",
           { withCredentials: true }
         );
-        var pl = response.data.split(" ");
+        const pl = response.data.split(" ");
         pl.forEach((element) => {
-          var project = element.split("&")[0];
-          var projectName = project.split("=")[1];
+          const project = element.split("&")[0];
+          const projectName = project.split("=")[1];
           projects.push(projectName);
         });
       } catch (error) {
@@ -48,7 +49,7 @@ export default {
     return projects;
   },
   async getSharedProjectList() {
-    var projects = [];
+    const projects = [];
     const user = localStorage.getItem("user");
     if (user) {
       try {
@@ -56,10 +57,10 @@ export default {
           "https://editor.c2stem.org/api/getSharedProjectList",
           { withCredentials: true }
         );
-        var pl = response.data.split(" ");
+        const pl = response.data.split(" ");
         pl.forEach((element) => {
-          var project = element.split("&")[0];
-          var projectName = project.split("=")[1];
+          const project = element.split("&")[0];
+          const projectName = project.split("=")[1];
           projects.push(projectName);
         });
       } catch (error) {
@@ -87,21 +88,20 @@ export default {
   async getProject() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    const xml = await api.getProjectXML();
-    return xml;
+    return await api.getProjectXML();
   },
   async saveToCloud(projectName) {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    api.saveToCloud(projectName);
+    await api.saveToCloud(projectName);
   },
   async publishProject(projectName, publish) {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
-    api.publishProject(projectName, publish);
+    await api.publishProject(projectName, publish);
   },
   async saveToLocal(projectXML) {
-    var element = document.createElement("a");
+    const element = document.createElement("a");
     element.setAttribute(
       "href",
       "data:attachment/xml," + encodeURI(projectXML)
@@ -119,9 +119,9 @@ export default {
    */
   runProjectOnDomain(event) {
     try {
-      var iframe = document.getElementById("iframe-id"),
-        world = iframe.contentWindow.world,
-        ide = world.children[0];
+      const iframe = document.getElementById("iframe-id"),
+          world = iframe.contentWindow.world,
+          ide = world.children[0];
       if (event.shiftKey) {
         ide.toggleFastTracking();
       } else {
@@ -143,12 +143,12 @@ export default {
    * @returns current stage image
    */
   getImageOnDomain() {
-    var iframe = document.getElementById("iframe-id"),
-      world = iframe.contentWindow.world,
-      ide = world.children[0],
-      // stage = ide.children[4], // stage location for physdev
-      stage = ide.children[3],
-      imgCanvas = stage.fullImage();
+    const iframe = document.getElementById("iframe-id"),
+        world = iframe.contentWindow.world,
+        ide = world.children[0],
+        // stage = ide.children[4], // stage location for physdev
+        stage = ide.children[3],
+        imgCanvas = stage.fullImage();
     let image = new Image();
     image.src = imgCanvas.toDataURL();
     return image;

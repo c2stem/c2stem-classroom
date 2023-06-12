@@ -68,15 +68,23 @@ export default {
               password: this.password,
               ServerURL: this.ServerURL,
             })
-            .then(
-              (data.username = this.username),
-              axios_instance.setHeader(this.$axios, data.token),
-              this.$store.dispatch("updateStore", this.username),
-              this.$store.dispatch("saveCredentials", data).then(() => {
-                const reRoute = nav.routeByClassOnLogin(data);
-                this.$router.push({ name: reRoute });
-              })
-            );
+            .catch((err) => {
+              console.log(err);
+            })
+            .then((response) => {
+              if (response) {
+                data.username = this.username;
+                axios_instance.setHeader(this.$axios, data.token);
+                this.$store.dispatch("updateStore", this.username);
+                this.$store.dispatch("saveCredentials", data).then(() => {
+                  const reRoute = nav.routeByClassOnLogin(data);
+                  this.$router.push({ name: reRoute });
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         });
     },
   },

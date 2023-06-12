@@ -27,10 +27,14 @@ export default {
     },
   },
   methods: {
-    logout() {
+    async logout() {
       const user = this.getUser().replaceAll('"', "");
+      await userStateService.saveUserState(
+        user,
+        this.$store.state,
+        this.$axios
+      );
       authService.netsbloxLogout();
-      userStateService.saveUserState(user, this.$store.state, this.$axios);
       this.$store.dispatch("removeCredentials");
     },
     getUser() {

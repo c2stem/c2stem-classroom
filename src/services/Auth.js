@@ -12,11 +12,11 @@ export default {
     const username = data.username;
     const password = data.password;
     const serverUrl = data.ServerURL;
-    var request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.open("POST", serverUrl + "/api", true);
     request.withCredentials = true;
     const gen_hash = SHA512(password).toString(enc.Hex);
-    var loginData = {
+    const loginData = {
       __u: username,
       __h: gen_hash,
     };
@@ -24,8 +24,8 @@ export default {
   },
 
   netsbloxLogout() {
-    var serverUrl = "https://physdev.c2stem.org";
-    var request = new XMLHttpRequest();
+    const serverUrl = "https://physdev.c2stem.org";
+    const request = new XMLHttpRequest();
     request.open("POST", serverUrl + "/api/logout", true);
     request.withCredentials = true;
     return this._requestPromise(request);
@@ -46,8 +46,8 @@ export default {
           if (request.status >= 200 && request.status < 300) {
             resolve(request);
           } else {
-            var err = new Error(
-              request.statusText || "Unsuccessful Xhr response"
+            const err = new Error(
+                request.statusText || "Unsuccessful Xhr response"
             );
             err.request = request;
             reject(err);

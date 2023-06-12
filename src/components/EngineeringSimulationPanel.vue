@@ -35,6 +35,9 @@ export default {
     historyLength() {
       return this.$store.getters.getdhLength;
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
   },
   methods: {
     getDesignData() {
@@ -47,7 +50,11 @@ export default {
     async processDesignData() {
       // let response = this.getDesignData();
       simulation.getImage().then((response) => {
-        this.$store.dispatch("addStageImage", response.src);
+        if (this.currentRouteName === "Playground") {
+          this.$store.dispatch("addPlayStageImage", response.src);
+        } else {
+          this.$store.dispatch("addStageImage", response.src);
+        }
         this.updateData();
       });
     },

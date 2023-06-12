@@ -55,6 +55,14 @@
       tabindex="0"
     >
       <design-table
+        v-if="currentRouteName === 'Playground'"
+        :header="designHistoryHeader"
+        :contents="playHistory"
+        :checked="getPlayChecks"
+        :favorite="getPlayFavs"
+      ></design-table>
+      <design-table
+        v-else
         :header="designHistoryHeader"
         :contents="designHistory"
         :checked="getCheckedDesigns"
@@ -91,6 +99,14 @@
         </div>
         <div class="modal-body">
           <compare
+            v-if="currentRouteName === 'Playground'"
+            :header="compareHeader"
+            :contents="playHistory"
+            :checked="getPlayChecks"
+            :images="getPlayFavs"
+          ></compare>
+          <compare
+            v-else
             :header="compareHeader"
             :contents="designHistory"
             :checked="getCheckedDesigns"
@@ -202,36 +218,79 @@ export default {
     getFavoriteDesigns() {
       return this.$store.getters.getFavoriteDesigns;
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
+    playHistory() {
+      return this.$store.getters.getPlayHistory;
+    },
+    getPlayChecks() {
+      return this.$store.getters.getPlayChecks;
+    },
+    getPlayFavs() {
+      return this.$store.getters.getPlayFavs;
+    },
   },
   methods: {
     /**
-     * Generates a table by accessing design history content from c2stem environemnt.
+     * Generates a table by accessing design history content from c2stem environment.
      * The method gets design history from c2stem and compares the results with the history in the store.
      * The history in the store is updated with new design history from c2stem.
      */
     async generateTable() {
       this.designHistory_content = await visualize.getData();
-      let dhLength = Object.keys(this.designHistory_content).length;
-      this.checkedDesignStatus = this.getCheckedDesigns;
-      this.favoriteStatus = this.getFavoriteDesigns;
-      let stateDhLength = this.historyLength;
-      if (dhLength > stateDhLength) {
+      if (this.currentRouteName === "Playground") {
         const dhList = [];
         const checkList = [];
         const favList = [];
-        Object.values(this.designHistory_content).forEach((element, index) => {
-          if (index >= stateDhLength && index < dhLength) {
-            dhList.push(element);
-            checkList.push(false);
-            favList.push(false);
-          }
+        Object.values(this.designHistory_content).forEach((element) => {
+          dhList.push(element);
+          checkList.push(false);
+          favList.push(false);
         });
-        this.$store.dispatch("addDesignHistory", dhList);
-        if (this.favoriteStatus.length == 0) {
-          this.$store.dispatch("addFavoriteDesigns", favList);
+        this.$store.dispatch("addPlayHistory", dhList);
+        this.$store.dispatch("addPlayFavorites", favList);
+        this.$store.dispatch("addPlayCheckedStatus", checkList);
+      } else {
+        const dhList = [];
+        const checkList = [];
+        const favList = [];
+        let dhLength = Object.keys(this.designHistory_content).length;
+        this.checkedDesignStatus = this.getCheckedDesigns;
+        let checkLength = this.checkedDesignStatus.length;
+        // let favLength = this.favoriteStatus.length;
+        this.favoriteStatus = this.getFavoriteDesigns;
+        let stateDhLength = this.historyLength;
+        if (checkLength > stateDhLength) {
+          if (checkLength === dhLength || checkLength === dhLength - 1) {
+            this.checkedDesignStatus.forEach((element) => {
+              checkList.push(element);
+            });
+            this.favoriteStatus.forEach((element) => {
+              favList.push(element);
+            });
+          } else {
+            this.$store.dispatch("resetCheckedDesigns");
+            this.$store.dispatch("resetFavoriteDesigns");
+          }
         }
-        if (this.checkedDesignStatus.length == 0) {
-          this.$store.dispatch("addCheckedDesigns", checkList);
+        if (dhLength > stateDhLength) {
+          Object.values(this.designHistory_content).forEach(
+            (element, index) => {
+              if (index >= stateDhLength && index < dhLength) {
+                dhList.push(element);
+                checkList.push(false);
+                favList.push(false);
+              }
+            }
+          );
+          this.$store.dispatch("addDesignHistory", dhList);
+          if (this.getFavoriteDesigns.length === 0) {
+            this.$store.dispatch("addFavoriteDesigns", favList);
+          }
+          if (this.getCheckedDesigns.length === 0) {
+            this.$store.dispatch("addCheckedDesigns", checkList);
+          }
         }
       }
     },

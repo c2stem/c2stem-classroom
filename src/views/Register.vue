@@ -144,12 +144,4 @@ div {
   justify-content: center;
   align-items: center;
 }
-.alertBox {
-  width: 30%;
-  height: 5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-}
 </style>

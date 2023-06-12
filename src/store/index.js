@@ -13,6 +13,10 @@ const store = createStore({
     testHistory: {},
     testHistoryLength: 0,
     favoriteStatus: [],
+    playHistory: {},
+    playCheckedStatus: [],
+    playFavStatus: [],
+    simulationPlayStageImages: [],
   },
   mutations: {
     initializeStorage(state) {
@@ -113,7 +117,7 @@ const store = createStore({
         this.$axios,
         user.replaceAll('"', "")
       );
-      if (response.length == 0) {
+      if (response.length === 0) {
         localStorage.setItem("store", JSON.stringify(state));
       } else {
         let newState = state;
@@ -121,6 +125,43 @@ const store = createStore({
         newState.favoriteStatus = response[0].favoriteStatus;
         localStorage.setItem("store", JSON.stringify(newState));
       }
+    },
+    // Playground state
+    addPlayHistory(state, playData) {
+      let p = {};
+      playData.forEach((element, index) => {
+        p[index] = element;
+      });
+      state.playHistory = {
+        ...p,
+      };
+    },
+    addPlayCheckedStatus(state, checkStatus) {
+      state.playCheckedStatus = [];
+      checkStatus.forEach((element) => {
+        state.playCheckedStatus.push(element);
+      });
+    },
+    addPlayFavorites(state, favStatus) {
+      state.playFavStatus = [];
+      favStatus.forEach((element) => {
+        state.playFavStatus.push(element);
+      });
+    },
+    updatePlayChecks(state, data) {
+      state.playCheckedStatus[data.index] = data.status;
+    },
+    updatePlayFavs(state, data) {
+      state.playFavStatus[data.index] = data.status;
+    },
+    addPlayStageImage(state, image) {
+      state.simulationPlayStageImages.push(image);
+    },
+    resetCheckedDesigns(state) {
+      state.checkedStatus = [];
+    },
+    resetFavoriteDesigns(state) {
+      state.favoriteStatus = [];
     },
   },
   getters: {
@@ -157,7 +198,7 @@ const store = createStore({
       return state.designHistory;
     },
     /**
-     * Get a List of status of all the cehckboxes in the engineering design table.
+     * Get a List of status of all the checkboxes in the engineering design table.
      * @param {state} state
      * @returns checkedStatus
      */
@@ -185,6 +226,15 @@ const store = createStore({
     },
     getFavoriteDesigns(state) {
       return state.favoriteStatus;
+    },
+    getPlayHistory(state) {
+      return state.playHistory;
+    },
+    getPlayChecks(state) {
+      return state.playCheckedStatus;
+    },
+    getPlayFavs(state) {
+      return state.playFavStatus;
     },
   },
   actions: {
@@ -223,6 +273,30 @@ const store = createStore({
     },
     updateStore(context, newStateData) {
       context.commit("updateStore", newStateData);
+    },
+    addPlayHistory(context, PlayData) {
+      context.commit("addPlayHistory", PlayData);
+    },
+    addPlayCheckedStatus(context, checkStatus) {
+      context.commit("addPlayCheckedStatus", checkStatus);
+    },
+    addPlayFavorites(context, favStatus) {
+      context.commit("addPlayFavorites", favStatus);
+    },
+    updatePlayChecks(context, data) {
+      context.commit("updatePlayChecks", data);
+    },
+    updatePlayFavs(context, data) {
+      context.commit("updatePlayFavs", data);
+    },
+    addPlayStageImage(context, image) {
+      context.commit("addPlayStageImage", image);
+    },
+    resetCheckedDesigns(context) {
+      context.commit("resetCheckedDesigns");
+    },
+    resetFavoriteDesigns(context) {
+      context.commit("resetFavoriteDesigns");
     },
   },
   modules: {},

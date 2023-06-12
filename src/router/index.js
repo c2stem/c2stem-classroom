@@ -8,6 +8,7 @@ import EETaskLanding from "../views/EETaskLand.vue";
 import Construct from "../views/Construct.vue";
 import IE from "../views/IE.vue";
 import IELanding from "../views/IELand.vue";
+import Playground from "../views/Playground.vue";
 // import Landing from "../views/LandingPage.vue";
 import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
@@ -40,10 +41,16 @@ const routes = [
     meta: { title: "C2STEM | Login" },
   },
   {
+    path: "/playground",
+    name: "Playground",
+    component: Playground,
+    meta: { role: "Admin", title: "C2STEM | Playground" },
+  },
+  {
     path: "/register",
     name: "Register",
     component: Register,
-    meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Rgister" },
+    meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Register" },
   },
   {
     path: "/land",
@@ -82,7 +89,7 @@ const routes = [
     meta: {
       requiresAuth: true,
       class: "CMISE",
-      title: "C2STEM | EE Lannding",
+      title: "C2STEM | EE Landing",
       group: "EE",
     },
   },
@@ -175,7 +182,7 @@ router.beforeEach((to, from, next) => {
   if (userRole && userRole.includes("admin")) {
     next();
   } else {
-    if (to.name == "Landing") {
+    if (to.name === "Landing") {
       if (userGroup && userGroup !== "All") {
         if (from.name.includes("IE")) {
           router.push("/ieland");

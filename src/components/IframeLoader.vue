@@ -77,7 +77,7 @@ export default {
      * Based on the data from props, generate an iframe source url.
      */
     if (this.loggedIn) {
-      var projectExist = simulationService.projectExists(this.projectname);
+      const projectExist = simulationService.projectExists(this.projectname);
       projectExist
         .then((response) => {
           if (response) {
@@ -118,6 +118,24 @@ export default {
         .catch((error) => {
           console.log("error", error);
         });
+    } else {
+      if (this.embed) {
+        this.iframeSource =
+          this.source +
+          "/?action=present&Username=" +
+          this.username +
+          "&ProjectName=" +
+          this.projectname +
+          "&embedModeNoFlag&noExitWarning&noRun";
+      } else {
+        this.iframeSource =
+          this.source +
+          "/?action=present&Username=" +
+          this.username +
+          "&ProjectName=" +
+          this.projectname +
+          "&noExitWarning&noRun&editMode&noExitWarning";
+      }
     }
   },
 };
