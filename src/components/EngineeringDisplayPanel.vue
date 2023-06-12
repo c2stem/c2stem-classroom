@@ -252,14 +252,29 @@ export default {
         this.$store.dispatch("addPlayFavorites", favList);
         this.$store.dispatch("addPlayCheckedStatus", checkList);
       } else {
+        const dhList = [];
+        const checkList = [];
+        const favList = [];
         let dhLength = Object.keys(this.designHistory_content).length;
         this.checkedDesignStatus = this.getCheckedDesigns;
+        let checkLength = this.checkedDesignStatus.length;
+        // let favLength = this.favoriteStatus.length;
         this.favoriteStatus = this.getFavoriteDesigns;
         let stateDhLength = this.historyLength;
+        if (checkLength > stateDhLength) {
+          if (checkLength === dhLength || checkLength === dhLength - 1) {
+            this.checkedDesignStatus.forEach((element) => {
+              checkList.push(element);
+            });
+            this.favoriteStatus.forEach((element) => {
+              favList.push(element);
+            });
+          } else {
+            this.$store.dispatch("resetCheckedDesigns");
+            this.$store.dispatch("resetFavoriteDesigns");
+          }
+        }
         if (dhLength > stateDhLength) {
-          const dhList = [];
-          const checkList = [];
-          const favList = [];
           Object.values(this.designHistory_content).forEach(
             (element, index) => {
               if (index >= stateDhLength && index < dhLength) {
@@ -270,10 +285,10 @@ export default {
             }
           );
           this.$store.dispatch("addDesignHistory", dhList);
-          if (this.favoriteStatus.length === 0) {
+          if (this.getFavoriteDesigns.length === 0) {
             this.$store.dispatch("addFavoriteDesigns", favList);
           }
-          if (this.checkedDesignStatus.length === 0) {
+          if (this.getCheckedDesigns.length === 0) {
             this.$store.dispatch("addCheckedDesigns", checkList);
           }
         }

@@ -157,6 +157,12 @@ const store = createStore({
     addPlayStageImage(state, image) {
       state.simulationPlayStageImages.push(image);
     },
+    resetCheckedDesigns(state) {
+      state.checkedStatus = [];
+    },
+    resetFavoriteDesigns(state) {
+      state.favoriteStatus = [];
+    },
   },
   getters: {
     /**
@@ -285,6 +291,12 @@ const store = createStore({
     },
     addPlayStageImage(context, image) {
       context.commit("addPlayStageImage", image);
+    },
+    resetCheckedDesigns(context) {
+      context.commit("resetCheckedDesigns");
+    },
+    resetFavoriteDesigns(context) {
+      context.commit("resetFavoriteDesigns");
     },
   },
   modules: {},
