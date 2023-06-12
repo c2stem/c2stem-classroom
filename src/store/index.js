@@ -13,6 +13,10 @@ const store = createStore({
     testHistory: {},
     testHistoryLength: 0,
     favoriteStatus: [],
+    playHistory: {},
+    playCheckedStatus: [],
+    playFavStatus: [],
+    simulationPlayStageImages: [],
   },
   mutations: {
     initializeStorage(state) {
@@ -122,6 +126,37 @@ const store = createStore({
         localStorage.setItem("store", JSON.stringify(newState));
       }
     },
+    // Playground state
+    addPlayHistory(state, playData) {
+      let p = {};
+      playData.forEach((element, index) => {
+        p[index] = element;
+      });
+      state.playHistory = {
+        ...p,
+      };
+    },
+    addPlayCheckedStatus(state, checkStatus) {
+      state.playCheckedStatus = [];
+      checkStatus.forEach((element) => {
+        state.playCheckedStatus.push(element);
+      });
+    },
+    addPlayFavorites(state, favStatus) {
+      state.playFavStatus = [];
+      favStatus.forEach((element) => {
+        state.playFavStatus.push(element);
+      });
+    },
+    updatePlayChecks(state, data) {
+      state.playCheckedStatus[data.index] = data.status;
+    },
+    updatePlayFavs(state, data) {
+      state.playFavStatus[data.index] = data.status;
+    },
+    addPlayStageImage(state, image) {
+      state.simulationPlayStageImages.push(image);
+    },
   },
   getters: {
     /**
@@ -186,6 +221,15 @@ const store = createStore({
     getFavoriteDesigns(state) {
       return state.favoriteStatus;
     },
+    getPlayHistory(state) {
+      return state.playHistory;
+    },
+    getPlayChecks(state) {
+      return state.playCheckedStatus;
+    },
+    getPlayFavs(state) {
+      return state.playFavStatus;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -223,6 +267,24 @@ const store = createStore({
     },
     updateStore(context, newStateData) {
       context.commit("updateStore", newStateData);
+    },
+    addPlayHistory(context, PlayData) {
+      context.commit("addPlayHistory", PlayData);
+    },
+    addPlayCheckedStatus(context, checkStatus) {
+      context.commit("addPlayCheckedStatus", checkStatus);
+    },
+    addPlayFavorites(context, favStatus) {
+      context.commit("addPlayFavorites", favStatus);
+    },
+    updatePlayChecks(context, data) {
+      context.commit("updatePlayChecks", data);
+    },
+    updatePlayFavs(context, data) {
+      context.commit("updatePlayFavs", data);
+    },
+    addPlayStageImage(context, image) {
+      context.commit("addPlayStageImage", image);
     },
   },
   modules: {},

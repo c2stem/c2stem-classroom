@@ -1,17 +1,17 @@
 <template>
-  <!-- Engineering Design View -->
+  <!--  Playground Engineering View-->
   <div class="container">
     <div class="row">
       <div class="col">
         <engineering-simulation-panel />
         <div class="iframe-panel">
-          <iframe-loader
-            source="https://editor.c2stem.org"
-            iframeid="iframe-id"
-            username="oele"
-            projectname="cmise-project-engineering"
+          <IframeLoader
             :embed="true"
-          ></iframe-loader>
+            projectname="cmise-project-engineering"
+            username="oele"
+            iframeid="iframe-id"
+            source="https://editor.c2stem.org"
+          ></IframeLoader>
         </div>
       </div>
       <div class="col">
@@ -23,14 +23,14 @@
     <div
       class="modal show"
       id="loadModal"
-      :data-bs-backdrop="backroundStatus"
+      :data-bs-backdrop="backgroundStatus"
       data-bs-keyboard="false"
     >
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-body">
             <div>
-              <strong>Loading Project... </strong>
+              <strong>Loading Project...</strong>
               <div class="spinner-border text-light" role="status">
                 <span class="visually-hidden">Loading...</span>
               </div>
@@ -49,33 +49,17 @@
     </div>
   </div>
 </template>
-
 <script>
-/**
- * Engineering Design view.
- * Similar to manipulate view customized for engineering design with compare feature.
- * In this view user will have access to a C2STEM project in an iframe.
- * Instruction panel is available with resources.
- * Display panel has data visualization from C2STEM data.
- * The green flag is available to run scripts from outside of iframe.
- * A See code button to access the code of the project.
- * A compare tabs allows for design comparison.
- * @requires ../components/IframeLoader.vue to display a c2stem environment in an iframe.
- * @requires ../components/Instructions.vue to present resources to users.
- * @requires ../components/EngineeringDisplayPanel.vue for data visualization and comparison.
- * @requires ../components/SimulationPanel.vue for the green flag.
- */
+import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 import IframeLoader from "../components/IframeLoader.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
-import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 import { Modal } from "bootstrap";
-
 export default {
-  name: "Engineering",
+  name: "Playground",
   components: {
+    EngineeringSimulationPanel,
     IframeLoader,
     EngineeringDisplayPanel,
-    EngineeringSimulationPanel,
   },
   data() {
     return {
@@ -87,16 +71,8 @@ export default {
     projectLoaded() {
       return this.loadStatus;
     },
-    backroundStatus() {
+    backgroundStatus() {
       return this.background;
-    },
-  },
-  methods: {
-    saveProject() {
-      this.emitter.emit("save-project", { status: true });
-    },
-    getUser() {
-      return localStorage.getItem("user");
     },
   },
   mounted() {
@@ -105,7 +81,6 @@ export default {
     const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
     iframe.onload = () => {
-      api.addEventListener("projectSaved", this.saveProject);
       api.addEventListener("action", (e) => {
         if (e.detail.type === "openProject") {
           this.loadStatus = true;
@@ -116,7 +91,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .container {
   max-width: 100%;

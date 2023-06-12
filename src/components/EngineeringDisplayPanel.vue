@@ -55,6 +55,14 @@
       tabindex="0"
     >
       <design-table
+        v-if="currentRouteName === 'Playground'"
+        :header="designHistoryHeader"
+        :contents="playHistory"
+        :checked="getPlayChecks"
+        :favorite="getPlayFavs"
+      ></design-table>
+      <design-table
+        v-else
         :header="designHistoryHeader"
         :contents="designHistory"
         :checked="getCheckedDesigns"
@@ -91,6 +99,14 @@
         </div>
         <div class="modal-body">
           <compare
+            v-if="currentRouteName === 'Playground'"
+            :header="compareHeader"
+            :contents="playHistory"
+            :checked="getPlayChecks"
+            :images="getPlayFavs"
+          ></compare>
+          <compare
+            v-else
             :header="compareHeader"
             :contents="designHistory"
             :checked="getCheckedDesigns"
@@ -202,6 +218,18 @@ export default {
     getFavoriteDesigns() {
       return this.$store.getters.getFavoriteDesigns;
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
+    playHistory() {
+      return this.$store.getters.getPlayHistory;
+    },
+    getPlayChecks() {
+      return this.$store.getters.getPlayChecks;
+    },
+    getPlayFavs() {
+      return this.$store.getters.getPlayFavs;
+    },
   },
   methods: {
     /**
@@ -211,27 +239,43 @@ export default {
      */
     async generateTable() {
       this.designHistory_content = await visualize.getData();
-      let dhLength = Object.keys(this.designHistory_content).length;
-      this.checkedDesignStatus = this.getCheckedDesigns;
-      this.favoriteStatus = this.getFavoriteDesigns;
-      let stateDhLength = this.historyLength;
-      if (dhLength > stateDhLength) {
+      if (this.currentRouteName === "Playground") {
         const dhList = [];
         const checkList = [];
         const favList = [];
-        Object.values(this.designHistory_content).forEach((element, index) => {
-          if (index >= stateDhLength && index < dhLength) {
-            dhList.push(element);
-            checkList.push(false);
-            favList.push(false);
-          }
+        Object.values(this.designHistory_content).forEach((element) => {
+          dhList.push(element);
+          checkList.push(false);
+          favList.push(false);
         });
-        this.$store.dispatch("addDesignHistory", dhList);
-        if (this.favoriteStatus.length === 0) {
-          this.$store.dispatch("addFavoriteDesigns", favList);
-        }
-        if (this.checkedDesignStatus.length === 0) {
-          this.$store.dispatch("addCheckedDesigns", checkList);
+        this.$store.dispatch("addPlayHistory", dhList);
+        this.$store.dispatch("addPlayFavorites", favList);
+        this.$store.dispatch("addPlayCheckedStatus", checkList);
+      } else {
+        let dhLength = Object.keys(this.designHistory_content).length;
+        this.checkedDesignStatus = this.getCheckedDesigns;
+        this.favoriteStatus = this.getFavoriteDesigns;
+        let stateDhLength = this.historyLength;
+        if (dhLength > stateDhLength) {
+          const dhList = [];
+          const checkList = [];
+          const favList = [];
+          Object.values(this.designHistory_content).forEach(
+            (element, index) => {
+              if (index >= stateDhLength && index < dhLength) {
+                dhList.push(element);
+                checkList.push(false);
+                favList.push(false);
+              }
+            }
+          );
+          this.$store.dispatch("addDesignHistory", dhList);
+          if (this.favoriteStatus.length === 0) {
+            this.$store.dispatch("addFavoriteDesigns", favList);
+          }
+          if (this.checkedDesignStatus.length === 0) {
+            this.$store.dispatch("addCheckedDesigns", checkList);
+          }
         }
       }
     },

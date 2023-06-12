@@ -8,6 +8,7 @@ import EETaskLanding from "../views/EETaskLand.vue";
 import Construct from "../views/Construct.vue";
 import IE from "../views/IE.vue";
 import IELanding from "../views/IELand.vue";
+import Playground from "../views/Playground.vue";
 // import Landing from "../views/LandingPage.vue";
 import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
@@ -38,6 +39,12 @@ const routes = [
     component: Login,
     beforeEnter: islogin,
     meta: { title: "C2STEM | Login" },
+  },
+  {
+    path: "/playground",
+    name: "Playground",
+    component: Playground,
+    meta: { role: "Admin", title: "C2STEM | Playground" },
   },
   {
     path: "/register",

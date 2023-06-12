@@ -30,7 +30,7 @@
           class="btn btn-primary btn-lg me-3"
           @click="$router.push('/dashboard')"
         >
-          Dashbaord
+          Dashboard
         </button>
         <button
           v-if="
@@ -43,6 +43,22 @@
           @click="$router.push('/register')"
         >
           Register
+        </button>
+        <button
+          v-if="!loggedIn && currentRouteName === 'Login'"
+          type="button"
+          class="btn btn-primary btn-lg"
+          @click="$router.push('/playground')"
+        >
+          Playground
+        </button>
+        <button
+          v-if="!loggedIn && currentRouteName === 'Playground'"
+          type="button"
+          class="btn btn-primary btn-lg"
+          @click="$router.push('/')"
+        >
+          Login
         </button>
         <logout></logout>
       </div>

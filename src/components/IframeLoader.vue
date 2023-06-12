@@ -118,6 +118,24 @@ export default {
         .catch((error) => {
           console.log("error", error);
         });
+    } else {
+      if (this.embed) {
+        this.iframeSource =
+          this.source +
+          "/?action=present&Username=" +
+          this.username +
+          "&ProjectName=" +
+          this.projectname +
+          "&embedModeNoFlag&noExitWarning&noRun";
+      } else {
+        this.iframeSource =
+          this.source +
+          "/?action=present&Username=" +
+          this.username +
+          "&ProjectName=" +
+          this.projectname +
+          "&noExitWarning&noRun&editMode&noExitWarning";
+      }
     }
   },
 };

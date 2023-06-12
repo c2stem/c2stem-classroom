@@ -101,6 +101,11 @@ export default {
       default: () => [],
     },
   },
+  computed: {
+    currentRouteName() {
+      return this.$route.name;
+    },
+  },
   methods: {
     /**
      * Gets called when user clicks the checkbox.
@@ -109,17 +114,31 @@ export default {
      * @param {Event} e Event from the checkbox.
      */
     check(i, e) {
-      this.$store.dispatch("updateCheckedDesigns", {
-        index: i,
-        status: e.target.checked,
-      });
+      if (this.currentRouteName === "Playground") {
+        this.$store.dispatch("updatePlayChecks", {
+          index: i,
+          status: e.target.checked,
+        });
+      } else {
+        this.$store.dispatch("updateCheckedDesigns", {
+          index: i,
+          status: e.target.checked,
+        });
+      }
     },
 
     toggleStar(i, status) {
-      this.$store.dispatch("updateFavoriteDesign", {
-        index: i,
-        status: status,
-      });
+      if (this.currentRouteName === "Playground") {
+        this.$store.dispatch("updatePlayFavs", {
+          index: i,
+          status: status,
+        });
+      } else {
+        this.$store.dispatch("updateFavoriteDesign", {
+          index: i,
+          status: status,
+        });
+      }
     },
 
     setCellColor(i) {
