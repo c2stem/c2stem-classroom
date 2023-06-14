@@ -122,7 +122,7 @@ export default {
   getDataOnDomain() {
     try {
       const iframe = document.getElementById("iframe-id"),
-          ide = iframe.contentWindow.world.children[0];
+        ide = iframe.contentWindow.world.children[0];
       const gb = ide.globalVariables;
       const designHistory = gb.getVar("design history");
       const dhContents = designHistory.contents;
@@ -161,7 +161,7 @@ export default {
       data.addRow(contentArray);
     }
     const table = new window.google.visualization.Table(
-        document.getElementById("table")
+      document.getElementById("table")
     );
 
     table.draw(data, { showRowNumber: true, width: "100%", height: "100%" });
@@ -202,7 +202,7 @@ export default {
       height: 400,
     };
     const chart = new window.google.visualization.LineChart(
-        document.getElementById("chart")
+      document.getElementById("chart")
     );
 
     chart.draw(data, options);
@@ -227,7 +227,7 @@ export default {
         } else if (j === 4) {
           childObj["Absorption (inches)"] = await this.getTotalAbsorption();
           childObj[header[j]] = childContent[j];
-        } else if ((j !== 0) && (j !== 12)) {
+        } else if (j !== 0 && j !== 12) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -250,13 +250,13 @@ export default {
       map_month = splitContent[1];
     }
     const updatedDate =
-        map_month +
-        "/" +
-        splitContent[2] +
-        "/" +
-        splitContent[3].substring(2) +
-        " " +
-        splitContent[4];
+      map_month +
+      "/" +
+      splitContent[2] +
+      "/" +
+      splitContent[3].substring(2) +
+      " " +
+      splitContent[4];
     return updatedDate;
   },
   /**
@@ -280,7 +280,7 @@ export default {
         } else if (j === 4) {
           childObj[header[7]] = childContent[7];
           childObj[header[j]] = childContent[j];
-        } else if ((j !== 6) && (j !== 7)) {
+        } else if (j !== 6 && j !== 7) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -313,25 +313,52 @@ export default {
   },
 
   async getUsersByClass($axios, className) {
-    let response = await $axios.get("user/getUsersByClass/" + className, {
-      withCredentials: true,
-    });
-    if (response) {
-      return response;
-    } else {
-      return "";
+    try {
+      return await $axios.get("user/getUsersByClass/" + className, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      return error;
     }
   },
 
   async setUserGroup($axios, username, groupName) {
-    let response = await $axios.post("user/setUserGroup", {
-      username: username,
-      group: groupName,
-    });
-    if (response) {
-      return response;
-    } else {
-      return undefined;
+    try {
+      return await $axios.post("user/setUserGroup", {
+        username: username,
+        group: groupName,
+      });
+    } catch (error) {
+      return error;
+    }
+  },
+
+  async getTeacherList($axios) {
+    try {
+      return await $axios.get("user/getTeachers");
+    } catch (error) {
+      return error;
+    }
+  },
+
+  async getUsersByTeacher($axios, teacherName) {
+    try {
+      return await $axios.get("user/getUsersByTeacher/" + teacherName, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      return error;
+    }
+  },
+
+  async setTeacherByUser($axios, username, teacherName) {
+    try {
+      return await $axios.post("user/setTeacherByUser", {
+        username: username,
+        teacher: teacherName,
+      });
+    } catch (error) {
+      return error;
     }
   },
 };

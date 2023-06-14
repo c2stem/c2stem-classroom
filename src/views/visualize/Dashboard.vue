@@ -3,8 +3,23 @@
     <div class="row">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Extract Users based on class</h5>
+          <!--          <h5 class="card-title">Extract Users based on class</h5>-->
           <div class="filterCard">
+            <label for="filterId" class="form-label">Extract a user by: </label>
+            <select
+              v-model="userFilter"
+              class="form-select"
+              aria-label="select"
+              id="filterId"
+            >
+              <option value="class">Class</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+          <div
+            v-if="getFilter.length > 0 && getFilter === 'class'"
+            class="filterCard"
+          >
             <label for="classId" class="form-label">Select a class: </label>
             <select
               v-model="classname"
@@ -18,7 +33,31 @@
             <button
               type="button"
               class="btn btn-primary btn-md me-3"
-              @click="extractData"
+              @click="extractData((extractFilter = 'class'))"
+            >
+              Filter
+            </button>
+          </div>
+          <div v-else-if="getFilter.length > 0" class="filterCard">
+            <label for="teacherId" class="form-label">Select a teacher: </label>
+            <select
+              v-model="teacherName"
+              class="form-select"
+              aria-label="select"
+              id="teacherId"
+            >
+              <option
+                v-for="(teacher, index) in Teachers"
+                :key="index"
+                :value="teacher"
+              >
+                {{ teacher }}
+              </option>
+            </select>
+            <button
+              type="button"
+              class="btn btn-primary btn-md me-3"
+              @click="extractData((extractFilter = 'teacher'))"
             >
               Filter
             </button>
@@ -53,6 +92,14 @@
                   <option value="EE">EE</option>
                   <option value="Construct">Construct</option>
                 </select>
+              </span>
+              <span
+                v-else-if="itemIndex === 'teacher' && editingIndex === index"
+              >
+                <input
+                  v-model="updatedTeacherName"
+                  placeholder="enter teacher name.."
+                />
               </span>
               <span v-else>
                 {{ item }}
@@ -96,10 +143,23 @@ export default {
       classname: "",
       groupname: "",
       userDataList: [],
-      userDataHeader: ["Username", "Email", "Role", "Class", "Group", ""],
+      userDataHeader: [
+        "Username",
+        "Email",
+        "Role",
+        "Class",
+        "Group",
+        "Teacher",
+        "",
+      ],
       editStatus: false,
       editIndex: "",
       alertMessage: "",
+      userFilter: "",
+      teachers: [],
+      teacherName: "",
+      updatedTeacherName: "",
+      extractFilter: "",
     };
   },
   computed: {
@@ -115,14 +175,30 @@ export default {
     isAlertBoxActive() {
       return this.alertMessage;
     },
+    getFilter() {
+      if (this.userFilter === "teacher") {
+        this.getTeachers();
+        return this.userFilter;
+      } else {
+        return this.userFilter;
+      }
+    },
+    Teachers() {
+      return this.teachers;
+    },
   },
   methods: {
-    async extractData() {
-      let response = await visualize.getUsersByClass(
-        this.$axios,
-        this.classname
-      );
-      if (response) {
+    async extractData(filter) {
+      let response = "";
+      if (filter === "class") {
+        response = await visualize.getUsersByClass(this.$axios, this.classname);
+      } else if (filter === "teacher") {
+        response = await visualize.getUsersByTeacher(
+          this.$axios,
+          this.teacherName
+        );
+      }
+      if (response.status >= 200 && response.status < 300) {
         if (this.userDataList.length) {
           this.userDataList = [];
         }
@@ -134,11 +210,15 @@ export default {
             a["role"] = element.role;
             a["class"] = element.class;
             a["group"] = element.group;
+            a["teacher"] = element.teacher;
             this.userDataList.push(a);
           });
         } else {
           this.alertMessage = "No users found";
         }
+      } else {
+        this.resetAlertBox();
+        this.alertMessage = response.message;
       }
     },
     editUser(index) {
@@ -148,29 +228,62 @@ export default {
       this.editIndex = "";
     },
     async saveUser(index) {
-      if (document.getElementById("alertID")) {
-        document.getElementById("alertID").style.display = "flex";
-      }
-      if (this.editIndex == index) {
+      this.resetAlertBox();
+      if (this.editIndex === index) {
         const editedData = this.userDataList[index];
-        let response = await visualize.setUserGroup(
-          this.$axios,
-          editedData.username,
-          this.groupname
-        );
-        if (response) {
-          if (typeof response !== "undefined") {
-            this.groupname = "";
-            this.alertMessage = "succesfully saved the data.";
-          } else {
-            this.alertMessage = "could not save it.";
+        if (editedData.group !== this.groupname && this.groupname.length > 0) {
+          let response = await visualize.setUserGroup(
+            this.$axios,
+            editedData.username,
+            this.groupname
+          );
+          if (response) {
+            if (typeof response !== "undefined") {
+              this.groupname = "";
+              this.alertMessage = "succesfully saved the data.";
+            } else {
+              this.alertMessage = "could not save group.";
+            }
           }
         }
-        this.extractData();
+        if (
+          editedData.teacher !== this.updatedTeacherName &&
+          this.updatedTeacherName.length > 0
+        ) {
+          let teacherResponse = await visualize.setTeacherByUser(
+            this.$axios,
+            editedData.username,
+            this.updatedTeacherName
+          );
+          if (teacherResponse) {
+            if (typeof teacherResponse !== "undefined") {
+              this.updatedTeacherName = "";
+              this.alertMessage = "successfully saved the data.";
+            } else {
+              this.alertMessage = "could not save teacher.";
+            }
+          }
+        }
+        await this.extractData(this.extractFilter);
         this.editIndex = "";
       } else {
         this.editIndex = "";
         this.alertMessage = "cannot save. Retry.";
+      }
+    },
+    async getTeachers() {
+      let response = await visualize.getTeacherList(this.$axios);
+      if (response.data.length > 0) {
+        this.teachers = response.data;
+      } else {
+        this.resetAlertBox();
+        this.userFilter = "";
+        this.alertMessage = "Cannot find teachers.";
+      }
+    },
+    resetAlertBox() {
+      if (document.getElementById("alertID")) {
+        document.getElementById("alertID").style.display = "flex";
       }
     },
   },
@@ -178,6 +291,9 @@ export default {
 </script>
 
 <style scoped>
+div {
+  min-height: 0;
+}
 .container {
   width: 50%;
   height: fit-content;
