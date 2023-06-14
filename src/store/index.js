@@ -100,6 +100,7 @@ const store = createStore({
       localStorage.setItem("userRole", JSON.stringify(data.role).toLowerCase());
       localStorage.setItem("userClass", JSON.stringify(data.class));
       localStorage.setItem("userGroup", JSON.stringify(data.group));
+      localStorage.setItem("userTeacher", JSON.stringify(data.teacher));
     },
     removeCredentials(state) {
       state.user = null;

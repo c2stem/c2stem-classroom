@@ -2,10 +2,18 @@ import { enc, SHA512 } from "crypto-js";
 
 export default {
   login($axios, credentials) {
-    return $axios.post("user/login", credentials);
+    try {
+      return $axios.post("user/login", credentials);
+    } catch (error) {
+      return error;
+    }
   },
   register($axios, credentials) {
-    return $axios.post("user/register", credentials);
+    try {
+      return $axios.post("user/register", credentials);
+    } catch (error) {
+      return error;
+    }
   },
   netsbloxLogin(credentials) {
     const data = credentials;
@@ -47,7 +55,7 @@ export default {
             resolve(request);
           } else {
             const err = new Error(
-                request.statusText || "Unsuccessful Xhr response"
+              request.statusText || "Unsuccessful Xhr response"
             );
             err.request = request;
             reject(err);
