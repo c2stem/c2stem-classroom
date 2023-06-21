@@ -1,84 +1,96 @@
 <template>
   <!-- Login View -->
   <div class="register-card">
-    <div class="card">
-      <div class="card-body">
-        <form @submit.prevent="register">
-          <div class="mb-1">
-            <h2>Register users in C2STEM</h2>
+    <div class="row">
+      <h2>Register users in C2STEM</h2>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <form @submit.prevent="register">
+              <div class="mb-1">
+                <h3>Single User</h3>
+              </div>
+              <div class="mb-1">
+                <label for="emailId" class="form-label">Email</label>
+                <input
+                  v-model="email"
+                  type="email"
+                  class="form-control"
+                  id="emailId"
+                />
+              </div>
+              <div class="row mb-1">
+                <div class="col">
+                  <label for="userNameId" class="form-label">Username</label>
+                  <input
+                    v-model="username"
+                    type="text"
+                    class="form-control"
+                    id="userNameId"
+                  />
+                </div>
+                <div class="col">
+                  <label for="passwordId" class="form-label">Password</label>
+                  <input
+                    v-model="password"
+                    type="password"
+                    class="form-control"
+                    id="passwordId"
+                  />
+                </div>
+              </div>
+              <div class="row mb-1">
+                <div class="col">
+                  <label for="classId" class="form-label">Class</label>
+                  <select v-model="classname" class="form-select" id="classId">
+                    <option value="CMISE">CMISE</option>
+                    <option value="SPICE">SPICE</option>
+                  </select>
+                </div>
+                <div class="col">
+                  <label for="roleId" class="form-label">Role</label>
+                  <select v-model="role" class="form-select" id="roleId">
+                    <option value="User">User</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col">
+                  <label for="groupId" class="form-label">Group</label>
+                  <select v-model="group" class="form-select" id="groupId">
+                    <option value="IE">IE</option>
+                    <option value="EE">EE</option>
+                    <option value="Construct">Construct</option>
+                    <option value="All">All</option>
+                  </select>
+                </div>
+                <div class="col">
+                  <label for="teacherId" class="form-label">Teacher</label>
+                  <input
+                    type="text"
+                    v-model="teacher"
+                    id="teacherId"
+                    class="form-control"
+                    data-toggle="tooltip"
+                    data-placement="right"
+                    title="Default : 'All'"
+                  />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            <a href="/land">Back to Landing page</a>
           </div>
-          <div class="mb-1">
-            <label for="emailId" class="form-label">Email</label>
-            <input
-              v-model="email"
-              type="email"
-              class="form-control"
-              id="emailId"
-            />
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h3>Bulk Users</h3>
           </div>
-          <div class="row mb-1">
-            <div class="col">
-              <label for="userNameId" class="form-label">Username</label>
-              <input
-                v-model="username"
-                type="text"
-                class="form-control"
-                id="userNameId"
-              />
-            </div>
-            <div class="col">
-              <label for="passwordId" class="form-label">Password</label>
-              <input
-                v-model="password"
-                type="password"
-                class="form-control"
-                id="passwordId"
-              />
-            </div>
-          </div>
-          <div class="row mb-1">
-            <div class="col">
-              <label for="classId" class="form-label">Class</label>
-              <select v-model="classname" class="form-select" id="classId">
-                <option value="CMISE">CMISE</option>
-                <option value="SPICE">SPICE</option>
-              </select>
-            </div>
-            <div class="col">
-              <label for="roleId" class="form-label">Role</label>
-              <select v-model="role" class="form-select" id="roleId">
-                <option value="User">User</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col">
-              <label for="groupId" class="form-label">Group</label>
-              <select v-model="group" class="form-select" id="groupId">
-                <option value="IE">IE</option>
-                <option value="EE">EE</option>
-                <option value="Construct">Construct</option>
-                <option value="All">All</option>
-              </select>
-            </div>
-            <div class="col">
-              <label for="teacherId" class="form-label">Teacher</label>
-              <input
-                type="text"
-                v-model="teacher"
-                id="teacherId"
-                class="form-control"
-                data-toggle="tooltip"
-                data-placement="right"
-                title="Default : 'All'"
-              />
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-        <a href="/land">Back to Landing page</a>
+        </div>
       </div>
     </div>
   </div>
@@ -156,6 +168,7 @@ export default {
   height: fit-content;
   margin: 20px;
   width: 400px;
+  justify-content: center;
 }
 
 div {
@@ -171,5 +184,10 @@ div {
 
 label {
   margin-bottom: 0 !important;
+}
+h2,
+h3 {
+  display: flex;
+  justify-content: center;
 }
 </style>
