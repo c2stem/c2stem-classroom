@@ -89,6 +89,21 @@
         <div class="card">
           <div class="card-body">
             <h3>Bulk Users</h3>
+            <div class="card description">
+              <div class="card-body">
+                <p class="card-text desc-text">
+                  Import a csv file with user data to register users in bulk.
+                  Click on the sample link to download a csv file.
+                  <a
+                    href="userDataSample.csv"
+                    download="userDataSample.csv"
+                    style="float: right"
+                    >sample</a
+                  >
+                </p>
+              </div>
+            </div>
+            <csv-handler />
           </div>
         </div>
       </div>
@@ -104,10 +119,12 @@
  */
 import auth from "../services/Auth.js";
 import AlertBox from "../components/AlertBox.vue";
+import csvHandler from "@/components/csvHandler.vue";
 
 export default {
   components: {
     AlertBox,
+    csvHandler,
   },
   data() {
     return {
@@ -189,5 +206,11 @@ h2,
 h3 {
   display: flex;
   justify-content: center;
+}
+.description,
+.desc-text {
+  width: fit-content !important;
+  display: inline-block;
+  text-align: center;
 }
 </style>
