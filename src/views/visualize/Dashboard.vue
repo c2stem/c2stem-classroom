@@ -134,7 +134,7 @@
 import visualize from "../../services/Visualize.js";
 import AlertBox from "../../components/AlertBox.vue";
 export default {
-  name: "Dasboard",
+  name: "Dashboard",
   components: {
     AlertBox,
   },
@@ -240,7 +240,7 @@ export default {
           if (response) {
             if (typeof response !== "undefined") {
               this.groupname = "";
-              this.alertMessage = "succesfully saved the data.";
+              this.alertMessage = "successfully saved the data.";
             } else {
               this.alertMessage = "could not save group.";
             }
