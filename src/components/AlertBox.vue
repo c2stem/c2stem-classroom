@@ -4,7 +4,7 @@
     role="alert"
     id="alertID"
   >
-    <p>{{ message }}</p>
+    <p id="alertText">{{ alertMessage }}</p>
     <button
       type="button"
       class="btn-close"
@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       cardActive: true,
+      alertMessage: this.message,
     };
   },
   props: {
@@ -30,6 +31,7 @@ export default {
   methods: {
     closeAlert() {
       document.getElementById("alertID").style.display = "none";
+      this.emitter.emit("close-alert");
     },
   },
 };

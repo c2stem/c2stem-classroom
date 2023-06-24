@@ -93,7 +93,7 @@
               <div class="card-body">
                 <p class="card-text desc-text">
                   Import a csv file with user data to register users in bulk.
-                  Click on the sample link to download a csv file.
+                  Click on the link to download a sample csv file.
                   <a
                     href="userDataSample.csv"
                     download="userDataSample.csv"
@@ -103,7 +103,7 @@
                 </p>
               </div>
             </div>
-            <csv-handler />
+            <file-handler :fileType="this.fileTypes"></file-handler>
           </div>
         </div>
       </div>
@@ -119,12 +119,12 @@
  */
 import auth from "../services/Auth.js";
 import AlertBox from "../components/AlertBox.vue";
-import csvHandler from "@/components/csvHandler.vue";
+import FileHandler from "../components/FileHandler.vue";
 
 export default {
   components: {
     AlertBox,
-    csvHandler,
+    FileHandler,
   },
   data() {
     return {
@@ -137,6 +137,7 @@ export default {
       alertMessage: "",
       group: "",
       teacher: "",
+      fileTypes: ["csv"],
     };
   },
   computed: {
@@ -162,21 +163,32 @@ export default {
           teacher: this.teacher,
         })
         .then(() => {
-          if (document.getElementById("alertID")) {
-            document.getElementById("alertID").style.display = "flex";
-          }
           this.cardActive = true;
           this.alertMessage =
             " User: " + this.username + " has been registered.";
         })
         .catch((error) => {
-          if (document.getElementById("alertID")) {
-            document.getElementById("alertID").style.display = "flex";
-          }
           this.cardActive = true;
-          this.alertMessage = error;
+          this.alertMessage = JSON.stringify(error.message);
         });
     },
+  },
+  mounted() {
+    this.emitter.on("alert", (evt) => {
+      if (evt.data) {
+        if (document.getElementById("alertID")) {
+          document.getElementById("alertText").innerText = evt.data;
+          document.getElementById("alertID").style.display = "flex";
+        } else {
+          this.alertMessage = evt.data;
+          this.cardActive = true;
+        }
+      }
+    });
+    this.emitter.on("close-alert", () => {
+      this.cardActive = false;
+      this.alertMessage = "";
+    });
   },
 };
 </script>

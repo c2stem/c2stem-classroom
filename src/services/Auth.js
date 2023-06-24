@@ -15,6 +15,13 @@ export default {
       return error;
     }
   },
+  registerBulkUsers($axios, userDataObj) {
+    try {
+      return $axios.post("user/registerInBulk", userDataObj);
+    } catch (error) {
+      return error;
+    }
+  },
   netsbloxLogin(credentials) {
     const data = credentials;
     const username = data.username;
