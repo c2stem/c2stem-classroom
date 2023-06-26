@@ -30,9 +30,16 @@ export default {
   },
   methods: {
     closeAlert() {
-      document.getElementById("alertID").style.display = "none";
+      if (document.getElementById("alertID")) {
+        document.getElementById("alertID").style.display = "none";
+      }
       this.emitter.emit("close-alert");
     },
+  },
+  mounted() {
+    setTimeout(() => {
+      this.closeAlert();
+    }, 6000);
   },
 };
 </script>

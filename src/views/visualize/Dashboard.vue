@@ -122,11 +122,7 @@
         </tbody>
       </table>
     </div>
-    <AlertBox
-      :message="alertMessage"
-      display="flex"
-      v-if="isAlertBoxActive"
-    ></AlertBox>
+    <AlertBox :message="alertMessage" v-if="isAlertBoxActive"></AlertBox>
   </div>
 </template>
 
@@ -160,6 +156,7 @@ export default {
       teacherName: "",
       updatedTeacherName: "",
       extractFilter: "",
+      cardActive: false,
     };
   },
   computed: {
@@ -173,7 +170,7 @@ export default {
       return this.editIndex;
     },
     isAlertBoxActive() {
-      return this.alertMessage;
+      return this.cardActive;
     },
     getFilter() {
       if (this.userFilter === "teacher") {
@@ -214,11 +211,10 @@ export default {
             this.userDataList.push(a);
           });
         } else {
-          this.alertMessage = "No users found";
+          this.sendAlert("No users found");
         }
       } else {
-        this.resetAlertBox();
-        this.alertMessage = response.message;
+        this.sendAlert(response.message);
       }
     },
     editUser(index) {
@@ -228,7 +224,6 @@ export default {
       this.editIndex = "";
     },
     async saveUser(index) {
-      this.resetAlertBox();
       if (this.editIndex === index) {
         const editedData = this.userDataList[index];
         if (editedData.group !== this.groupname && this.groupname.length > 0) {
@@ -240,9 +235,9 @@ export default {
           if (response) {
             if (typeof response !== "undefined") {
               this.groupname = "";
-              this.alertMessage = "successfully saved the data.";
+              this.sendAlert("successfully saved the data.");
             } else {
-              this.alertMessage = "could not save group.";
+              this.sendAlert("could not save group.");
             }
           }
         }
@@ -258,9 +253,9 @@ export default {
           if (teacherResponse) {
             if (typeof teacherResponse !== "undefined") {
               this.updatedTeacherName = "";
-              this.alertMessage = "successfully saved the data.";
+              this.sendAlert("successfully saved the data.");
             } else {
-              this.alertMessage = "could not save teacher.";
+              this.sendAlert("could not save teacher.");
             }
           }
         }
@@ -268,7 +263,7 @@ export default {
         this.editIndex = "";
       } else {
         this.editIndex = "";
-        this.alertMessage = "cannot save. Retry.";
+        this.sendAlert("cannot save. Retry.");
       }
     },
     async getTeachers() {
@@ -276,16 +271,20 @@ export default {
       if (response.data.length > 0) {
         this.teachers = response.data;
       } else {
-        this.resetAlertBox();
         this.userFilter = "";
-        this.alertMessage = "Cannot find teachers.";
+        this.sendAlert("Cannot find teachers.");
       }
     },
-    resetAlertBox() {
-      if (document.getElementById("alertID")) {
-        document.getElementById("alertID").style.display = "flex";
-      }
+    sendAlert(message) {
+      this.cardActive = true;
+      this.alertMessage = message;
     },
+  },
+  mounted() {
+    this.emitter.on("close-alert", () => {
+      this.cardActive = false;
+      this.alertMessage = "";
+    });
   },
 };
 </script>
