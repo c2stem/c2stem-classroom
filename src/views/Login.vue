@@ -39,7 +39,7 @@
  */
 import auth from "../services/Auth.js";
 import nav from "../services/Navigation.js";
-import axios_instance from "../services/Axios";
+import Token from "../services/Token";
 export default {
   data() {
     return {
@@ -57,7 +57,7 @@ export default {
      */
     login() {
       auth
-        .login(this.$axios, {
+        .login({
           username: this.username,
           password: this.password,
         })
@@ -74,7 +74,7 @@ export default {
             .then((response) => {
               if (response) {
                 data.username = this.username;
-                axios_instance.setHeader(this.$axios, data.token);
+                Token.setAccessToken(data.token);
                 this.$store.dispatch("updateStore", this.username);
                 this.$store.dispatch("saveCredentials", data).then(() => {
                   const reRoute = nav.routeByClassOnLogin(data);

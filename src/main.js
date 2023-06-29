@@ -5,12 +5,11 @@ import mitt from "mitt";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import axios from "./services/Axios";
+import axiosInterceptors from "./services/AxiosInterceptors";
 
 const emitter = mitt();
 const app = createApp(App);
-app.config.globalProperties.$axios = { ...axios.axios_instance };
-store.$axios = axios.axios_instance;
+axiosInterceptors();
 app.config.globalProperties.emitter = emitter;
 app.use(store).use(router);
 app.mount("#app");

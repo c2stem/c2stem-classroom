@@ -1,23 +1,24 @@
 import { enc, SHA512 } from "crypto-js";
+import axiosInstance from "./Axios";
 
 export default {
-  login($axios, credentials) {
+  login(credentials) {
     try {
-      return $axios.post("user/login", credentials);
+      return axiosInstance.post("user/login", credentials);
     } catch (error) {
       return error;
     }
   },
-  register($axios, credentials) {
+  register(credentials) {
     try {
-      return $axios.post("user/register", credentials);
+      return axiosInstance.post("user/register", credentials);
     } catch (error) {
       return error;
     }
   },
-  registerBulkUsers($axios, userDataObj) {
+  registerBulkUsers(userDataObj) {
     try {
-      return $axios.post("user/registerInBulk", userDataObj);
+      return axiosInstance.post("user/registerInBulk", userDataObj);
     } catch (error) {
       return error;
     }

@@ -188,12 +188,9 @@ export default {
     async extractData(filter) {
       let response = "";
       if (filter === "class") {
-        response = await visualize.getUsersByClass(this.$axios, this.classname);
+        response = await visualize.getUsersByClass(this.classname);
       } else if (filter === "teacher") {
-        response = await visualize.getUsersByTeacher(
-          this.$axios,
-          this.teacherName
-        );
+        response = await visualize.getUsersByTeacher(this.teacherName);
       }
       if (response.status >= 200 && response.status < 300) {
         if (this.userDataList.length) {
@@ -228,7 +225,6 @@ export default {
         const editedData = this.userDataList[index];
         if (editedData.group !== this.groupname && this.groupname.length > 0) {
           let response = await visualize.setUserGroup(
-            this.$axios,
             editedData.username,
             this.groupname
           );
@@ -246,7 +242,6 @@ export default {
           this.updatedTeacherName.length > 0
         ) {
           let teacherResponse = await visualize.setTeacherByUser(
-            this.$axios,
             editedData.username,
             this.updatedTeacherName
           );
@@ -267,7 +262,7 @@ export default {
       }
     },
     async getTeachers() {
-      let response = await visualize.getTeacherList(this.$axios);
+      let response = await visualize.getTeacherList();
       if (response.data.length > 0) {
         this.teachers = response.data;
       } else {

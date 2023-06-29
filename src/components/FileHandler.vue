@@ -127,7 +127,7 @@ export default {
       this.emitter.emit("alert", { data: message });
     },
     registerUsers() {
-      Auth.registerBulkUsers(this.$axios, this.fileData)
+      Auth.registerBulkUsers(this.fileData)
         .then(() => {
           this.myModal.hide();
           this.sendAlert("Users have been registered.");

@@ -2,6 +2,7 @@
  * Visualize service.
  * Methods related to data visualization.
  */
+import axiosInstance from "./Axios";
 export default {
   // Data retrieving methods
   /**
@@ -312,9 +313,9 @@ export default {
     return monthMap[month];
   },
 
-  async getUsersByClass($axios, className) {
+  async getUsersByClass(className) {
     try {
-      return await $axios.get("user/getUsersByClass/" + className, {
+      return await axiosInstance.get("user/getUsersByClass/" + className, {
         withCredentials: true,
       });
     } catch (error) {
@@ -322,9 +323,9 @@ export default {
     }
   },
 
-  async setUserGroup($axios, username, groupName) {
+  async setUserGroup(username, groupName) {
     try {
-      return await $axios.post("user/setUserGroup", {
+      return await axiosInstance.post("user/setUserGroup", {
         username: username,
         group: groupName,
       });
@@ -333,17 +334,17 @@ export default {
     }
   },
 
-  async getTeacherList($axios) {
+  async getTeacherList() {
     try {
-      return await $axios.get("user/getTeachers");
+      return await axiosInstance.get("user/getTeachers");
     } catch (error) {
       return error;
     }
   },
 
-  async getUsersByTeacher($axios, teacherName) {
+  async getUsersByTeacher(teacherName) {
     try {
-      return await $axios.get("user/getUsersByTeacher/" + teacherName, {
+      return await axiosInstance.get("user/getUsersByTeacher/" + teacherName, {
         withCredentials: true,
       });
     } catch (error) {
@@ -351,9 +352,9 @@ export default {
     }
   },
 
-  async setTeacherByUser($axios, username, teacherName) {
+  async setTeacherByUser(username, teacherName) {
     try {
-      return await $axios.post("user/setTeacherByUser", {
+      return await axiosInstance.post("user/setTeacherByUser", {
         username: username,
         teacher: teacherName,
       });
