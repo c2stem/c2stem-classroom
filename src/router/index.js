@@ -183,8 +183,10 @@ router.beforeEach((to, from, next) => {
     next();
   } else {
     if (to.name === "Landing") {
-      if (userGroup && userGroup !== "All") {
-        if (from.name.includes("IE")) {
+      if (typeof userGroup !== "undefined" && !userGroup.includes("All")) {
+        if (typeof from.name === "undefined") {
+          router.back();
+        } else if (from.name.includes("IE")) {
           router.push("/ieland");
         } else if (from.name.includes("EE")) {
           router.push("/eeland");
@@ -194,7 +196,7 @@ router.beforeEach((to, from, next) => {
       if (userClass && !userClass.includes(to.meta.class)) {
         router.back();
       }
-      if (userGroup && to.meta.group) {
+      if (userGroup && typeof to.meta.group !== "undefined") {
         if (!userGroup.includes(to.meta.group || "All")) {
           router.back();
         }
