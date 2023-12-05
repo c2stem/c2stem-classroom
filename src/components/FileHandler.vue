@@ -148,4 +148,7 @@ export default {
 button {
   float: right;
 }
+.modal-dialog {
+  max-width: fit-content;
+}
 </style>
