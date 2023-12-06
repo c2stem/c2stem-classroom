@@ -111,11 +111,22 @@ export default {
     },
     // TO DO: need to be improved with new routes.
     returnNav() {
+      const userClass = localStorage.getItem("userClass");
+      const userRole = localStorage.getItem("userRole");
       const lastKnown = this.currentRouteName;
+      const spiceRoutes = ["Home", "AST", "Action View Representation"];
       if (lastKnown === "IE") {
+        // restricting the home button to Ieland and IE for users in IE group.
         this.$router.push("/ieLand");
       } else if (lastKnown === "EE") {
+        // restricting the home button to eeland and EE for users in EE group.
         this.$router.push("/eeLand");
+      } else if (userClass.includes("SPICE") || !userRole.includes("admin")) {
+        // Restricting hte user sto single page construct view for users in SPICE Class.
+        return;
+      } else if (spiceRoutes.includes(lastKnown)) {
+        // restricting the home button to Home for users in SPICE class.
+        this.$router.push("/home");
       } else {
         this.$router.push("/land");
       }
