@@ -181,6 +181,13 @@ router.beforeEach((to, from, next) => {
   }
   if (userRole && userRole.includes("admin")) {
     next();
+  } else if (
+    userClass &&
+    userClass.includes("SPICE") &&
+    !to.name.includes("Home")
+  ) {
+    // restricting router engagement for SPICE class users. Access is allowed to Home view only.
+    router.back();
   } else {
     if (to.name === "Landing") {
       if (typeof userGroup !== "undefined" && !userGroup.includes("All")) {
