@@ -19,7 +19,7 @@ import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
 
 function islogin(to, from, next) {
-  if (!localStorage.getItem("user")) {
+  if (!sessionStorage.getItem("user")) {
     next();
   } else {
     router.back();
@@ -167,10 +167,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem("user");
-  const userRole = localStorage.getItem("userRole");
-  const userClass = localStorage.getItem("userClass");
-  const userGroup = localStorage.getItem("userGroup");
+  const loggedIn = sessionStorage.getItem("user");
+  const userRole = sessionStorage.getItem("userRole");
+  const userClass = sessionStorage.getItem("userClass");
+  const userGroup = sessionStorage.getItem("userGroup");
 
   if (to.meta && to.meta.title) {
     document.title = to.meta.title || "C2STEM";

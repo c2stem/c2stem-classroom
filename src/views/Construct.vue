@@ -71,21 +71,21 @@ export default {
     },
     backroundStatus() {
       return this.background;
-    }
+    },
   },
   beforeRouteLeave() {
     const answer = window.confirm(
       "Do you really want to leave? you have unsaved changes!"
     );
     if (!answer) return false;
-  },  
-  methods:{
+  },
+  methods: {
     saveProject() {
-      this.emitter.emit('save-project', { 'status': true });
+      this.emitter.emit("save-project", { status: true });
     },
-    getUser(){
-      return localStorage.getItem("user");
-    }
+    getUser() {
+      return sessionStorage.getItem("user");
+    },
   },
   mounted() {
     /**
@@ -100,11 +100,11 @@ export default {
     myModal.show();
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
-      api.addEventListener("action", (e)=>{
+      api.addEventListener("action", (e) => {
         if (e.detail.type === "openProject") {
-        this.loadStatus = true;
-        myModal.hide();
-      }
+          this.loadStatus = true;
+          myModal.hide();
+        }
       });
     };
   },
@@ -135,11 +135,11 @@ div {
 }
 
 .modal-content {
-    background-color: rgba(0,0,0,.0001) !important;
-    border: 0;
+  background-color: rgba(0, 0, 0, 0.0001) !important;
+  border: 0;
 }
 
-strong{
+strong {
   font-size: x-large;
   color: aliceblue;
 }

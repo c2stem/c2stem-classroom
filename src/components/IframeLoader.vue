@@ -66,10 +66,10 @@ export default {
   },
   computed: {
     loggedIn() {
-      return localStorage.getItem("user");
+      return sessionStorage.getItem("user");
     },
     projectNameExists() {
-      return localStorage.getItem("projectName");
+      return sessionStorage.getItem("projectName");
     },
   },
   created() {
@@ -88,10 +88,10 @@ export default {
             this.actionType = "present";
           }
           if (this.projectNameExists) {
-            localStorage.removeItem("projectName");
-            localStorage.setItem("projectName", this.projectname);
+            sessionStorage.removeItem("projectName");
+            sessionStorage.setItem("projectName", this.projectname);
           } else {
-            localStorage.setItem("projectName", this.projectname);
+            sessionStorage.setItem("projectName", this.projectname);
           }
           if (this.embed) {
             this.iframeSource =

@@ -31,7 +31,11 @@ function normalizeTree(root) {
 }
 
 const ed = require("edit-distance");
-const correctTree = normalizeTree(JSON.parse('{"id":"item_9","name":"receiveGo","modifiedBefore":false,"connectedBefore":false,"next":{"next":{"id":"item_10","name":"doIf","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"id":"item_11","name":"reportEquals","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"2","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}},{"name":"3","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},{"id":"item_16","name":"forward","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"10","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}}],"underlay":[{"name":"","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}]}},"contained":[],"underlay":[]}}'));
+const correctTree = normalizeTree(
+  JSON.parse(
+    '{"id":"item_9","name":"receiveGo","modifiedBefore":false,"connectedBefore":false,"next":{"next":{"id":"item_10","name":"doIf","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"id":"item_11","name":"reportEquals","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"2","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}},{"name":"3","modifiedBefore":true,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}},{"id":"item_16","name":"forward","modifiedBefore":false,"connectedBefore":true,"next":{"contained":[{"name":"10","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}],"underlay":[]}}],"underlay":[{"name":"","modifiedBefore":false,"connectedBefore":false,"next":{"contained":[],"underlay":[]}}]}},"contained":[],"underlay":[]}}'
+  )
+);
 
 // Map of blocks (id -> block object)
 let blocks = {};
@@ -42,9 +46,13 @@ let actions = [];
 
 // Tree understanding functions
 let insert, remove, update, children;
-insert = remove = () => { return 1; };
-update = (nodeA, nodeB) => { return (nodeA.name !== nodeB.name ? 1 : 0); };
-children = (node) => { 
+insert = remove = () => {
+  return 1;
+};
+update = (nodeA, nodeB) => {
+  return nodeA.name !== nodeB.name ? 1 : 0;
+};
+children = (node) => {
   let ret = [];
   if (node.next.next) ret.push(node.next.next);
   return [...ret, ...node.next.contained];
@@ -131,7 +139,10 @@ const actionListener = (action) => {
       treeRoots.push(blocks[t[0]].next.contained[t[1]]);
       // If there's an underlay, restore it, otherwise just remove it from the parent
       if (blocks[t[0]].next.underlay[t[1]]) {
-        blocks[t[0]].next.contained[t[1]] = blocks[t[0]].next.underlay.splice(t[1], 1)[0];
+        blocks[t[0]].next.contained[t[1]] = blocks[t[0]].next.underlay.splice(
+          t[1],
+          1
+        )[0];
       } else {
         blocks[t[0]].next.contained.splice(Number(t[1]), 1)[0];
       }
@@ -436,7 +447,7 @@ const actionListener = (action) => {
       break;
     }
     case "removeListInput": {
-      const t = id.split("/")
+      const t = id.split("/");
       actionRep.group = "adjust";
       actionRep.block = t[0];
       blocks[t[0]].next.contained.pop();
@@ -457,7 +468,14 @@ const actionListener = (action) => {
   // tree, and see if that's better than before (effective/non-effective action).
   // TODO: are we only expecting one tree? how should we choose which one to use for edit distance?
   if (treeRoots[0] && actionRep.type !== "assessment") {
-    const ted = ed.ted(normalizeTree(JSON.parse(JSON.stringify(treeRoots[0]))), correctTree, children, insert, remove, update);
+    const ted = ed.ted(
+      normalizeTree(JSON.parse(JSON.stringify(treeRoots[0]))),
+      correctTree,
+      children,
+      insert,
+      remove,
+      update
+    );
     actionRep.ted = ted.distance;
     let lastEditDistance = Infinity;
     for (let i = actions.length - 1; i >= 0; --i) {
@@ -474,9 +492,9 @@ const actionListener = (action) => {
 
   console.log(actions);
   console.log(treeRoots);
-  window.localStorage.setItem("blocks", JSON.stringify(blocks));
-  window.localStorage.setItem("treeRoots", JSON.stringify(treeRoots));
-  window.localStorage.setItem("actionList", JSON.stringify(actions));
+  window.sessionStorage.setItem("blocks", JSON.stringify(blocks));
+  window.sessionStorage.setItem("treeRoots", JSON.stringify(treeRoots));
+  window.sessionStorage.setItem("actionList", JSON.stringify(actions));
 };
 
 export default {

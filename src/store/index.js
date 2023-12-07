@@ -20,11 +20,11 @@ const store = createStore({
   },
   mutations: {
     initializeStorage(state) {
-      const localStore = localStorage.getItem("store");
+      const localStore = sessionStorage.getItem("store");
       if (localStore) {
-        if (localStorage.getItem("user")) {
+        if (sessionStorage.getItem("user")) {
           this.replaceState(
-            Object.assign(state, JSON.parse(localStorage.getItem("store")))
+            Object.assign(state, JSON.parse(sessionStorage.getItem("store")))
           );
         }
       }
@@ -96,15 +96,18 @@ const store = createStore({
     },
     saveCredentials(state, data) {
       state.user = data.token;
-      localStorage.setItem("user", JSON.stringify(data.username));
-      localStorage.setItem("userRole", JSON.stringify(data.role).toLowerCase());
-      localStorage.setItem("userClass", JSON.stringify(data.class));
-      localStorage.setItem("userGroup", JSON.stringify(data.group));
-      localStorage.setItem("userTeacher", JSON.stringify(data.teacher));
+      sessionStorage.setItem("user", JSON.stringify(data.username));
+      sessionStorage.setItem(
+        "userRole",
+        JSON.stringify(data.role).toLowerCase()
+      );
+      sessionStorage.setItem("userClass", JSON.stringify(data.class));
+      sessionStorage.setItem("userGroup", JSON.stringify(data.group));
+      sessionStorage.setItem("userTeacher", JSON.stringify(data.teacher));
     },
     removeCredentials(state) {
       state.user = null;
-      window.localStorage.clear();
+      window.sessionStorage.clear();
       location.reload();
     },
     addFavoriteDesigns(state, favList) {
@@ -119,12 +122,12 @@ const store = createStore({
         user.replaceAll('"', "")
       );
       if (response.length === 0) {
-        localStorage.setItem("store", JSON.stringify(state));
+        sessionStorage.setItem("store", JSON.stringify(state));
       } else {
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
-        localStorage.setItem("store", JSON.stringify(newState));
+        sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
     // Playground state
@@ -306,7 +309,7 @@ const store = createStore({
 
 store.subscribe((mutation, state) => {
   // Store the state object as a JSON string
-  localStorage.setItem("store", JSON.stringify(state));
+  sessionStorage.setItem("store", JSON.stringify(state));
 });
 
 export default store;

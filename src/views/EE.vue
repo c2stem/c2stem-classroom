@@ -87,14 +87,14 @@ export default {
     },
     backroundStatus() {
       return this.background;
-    }
+    },
   },
   methods: {
     saveProject() {
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {
-      return localStorage.getItem("user");
+      return sessionStorage.getItem("user");
     },
   },
   mounted() {
@@ -104,11 +104,11 @@ export default {
     myModal.show();
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
-      api.addEventListener("action", (e)=>{
+      api.addEventListener("action", (e) => {
         if (e.detail.type === "openProject") {
-        this.loadStatus = true;
-        myModal.hide();
-      }
+          this.loadStatus = true;
+          myModal.hide();
+        }
       });
     };
   },
