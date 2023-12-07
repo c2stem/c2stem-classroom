@@ -81,14 +81,14 @@ export default {
       return this.$store.state.user;
     },
     currentRole() {
-      let role = localStorage.getItem("userRole");
+      let role = sessionStorage.getItem("userRole");
       return Formatter.removeQuotes(role);
     },
     currentRouteName() {
       return this.$route.name;
     },
     getProjectName() {
-      return localStorage.getItem("projectName");
+      return sessionStorage.getItem("projectName");
     },
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
@@ -111,8 +111,8 @@ export default {
     },
     // TO DO: need to be improved with new routes.
     returnNav() {
-      const userClass = localStorage.getItem("userClass");
-      const userRole = localStorage.getItem("userRole");
+      const userClass = sessionStorage.getItem("userClass");
+      const userRole = sessionStorage.getItem("userRole");
       const lastKnown = this.currentRouteName;
       const spiceRoutes = ["Home", "AST", "Action View Representation"];
       if (lastKnown === "IE") {

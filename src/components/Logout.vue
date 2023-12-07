@@ -38,7 +38,7 @@ export default {
       this.$store.dispatch("removeCredentials");
     },
     getUser() {
-      return localStorage.getItem("user");
+      return sessionStorage.getItem("user");
     },
   },
 };

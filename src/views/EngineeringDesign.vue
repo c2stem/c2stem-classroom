@@ -96,7 +96,7 @@ export default {
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {
-      return localStorage.getItem("user");
+      return sessionStorage.getItem("user");
     },
   },
   mounted() {

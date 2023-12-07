@@ -1,12 +1,12 @@
 class TokenService {
   setAccessToken(token) {
-    localStorage.setItem("token", JSON.stringify(token));
+    sessionStorage.setItem("token", JSON.stringify(token));
   }
   setRefreshToken(token) {
-    localStorage.setItem("refreshToken", JSON.stringify(token));
+    sessionStorage.setItem("refreshToken", JSON.stringify(token));
   }
   getAccessToken() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    const token = JSON.parse(sessionStorage.getItem("token"));
     if (token) {
       return token;
     } else {
@@ -14,7 +14,7 @@ class TokenService {
     }
   }
   getRefreshToken() {
-    const token = JSON.parse(localStorage.getItem("refreshToken"));
+    const token = JSON.parse(sessionStorage.getItem("refreshToken"));
     if (token) {
       return token;
     } else {
@@ -22,7 +22,7 @@ class TokenService {
     }
   }
   updateAccessToken(token) {
-    localStorage.setItem("token", JSON.stringify(token));
+    sessionStorage.setItem("token", JSON.stringify(token));
   }
 }
 

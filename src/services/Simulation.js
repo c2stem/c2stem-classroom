@@ -29,7 +29,7 @@ export default {
   },
   async getProjectList() {
     const projects = [];
-    const user = localStorage.getItem("user");
+    const user = sessionStorage.getItem("user");
     if (user) {
       try {
         let response = await axios.get(
@@ -50,7 +50,7 @@ export default {
   },
   async getSharedProjectList() {
     const projects = [];
-    const user = localStorage.getItem("user");
+    const user = sessionStorage.getItem("user");
     if (user) {
       try {
         let response = await axios.get(
@@ -120,8 +120,8 @@ export default {
   runProjectOnDomain(event) {
     try {
       const iframe = document.getElementById("iframe-id"),
-          world = iframe.contentWindow.world,
-          ide = world.children[0];
+        world = iframe.contentWindow.world,
+        ide = world.children[0];
       if (event.shiftKey) {
         ide.toggleFastTracking();
       } else {
@@ -144,11 +144,11 @@ export default {
    */
   getImageOnDomain() {
     const iframe = document.getElementById("iframe-id"),
-        world = iframe.contentWindow.world,
-        ide = world.children[0],
-        // stage = ide.children[4], // stage location for physdev
-        stage = ide.children[3],
-        imgCanvas = stage.fullImage();
+      world = iframe.contentWindow.world,
+      ide = world.children[0],
+      // stage = ide.children[4], // stage location for physdev
+      stage = ide.children[3],
+      imgCanvas = stage.fullImage();
     let image = new Image();
     image.src = imgCanvas.toDataURL();
     return image;
