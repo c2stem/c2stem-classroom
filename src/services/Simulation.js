@@ -112,6 +112,16 @@ export default {
     element.click();
     document.body.removeChild(element);
   },
+  async deleteProject(projectName) {
+    const iframe = document.getElementById("iframe-id");
+    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    let projectExists = await this.projectExists(projectName);
+    if (projectExists) {
+      await api.deleteProject(projectName);
+    } else {
+      console.log("project does not exist");
+    }
+  },
   /**
    * Green flag run method.
    * Accesses the NetsBloxMorph of C2STEM and runs scripts.
