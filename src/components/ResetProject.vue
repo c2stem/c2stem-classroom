@@ -106,21 +106,27 @@ export default {
             .toLowerCase()
             .replace(/["]+/g, "");
           if (this.allowedRoles.includes(role)) {
-            simulationService.deleteProject(this.projectName);
-            setTimeout(() => {
-              simulationService
-                .projectExists(this.projectName)
-                .then((response) => {
-                  if (response) {
-                    this.cardActive = true;
-                    this.alertMessage = "Reset failed try again";
-                  } else {
-                    this.cardActive = true;
-                    this.alertMessage = "Reset successful";
-                    this.$router.go();
-                  }
-                });
-            }, 2000);
+            simulationService
+              .deleteProjectByName(this.projectName)
+              .then((response) => {
+                if (response) {
+                  simulationService
+                    .projectExists(this.projectName)
+                    .then((response) => {
+                      if (response) {
+                        this.cardActive = true;
+                        this.alertMessage = "Reset failed try again";
+                      } else {
+                        this.cardActive = true;
+                        this.alertMessage = "Reset successful";
+                        this.$router.go();
+                      }
+                    });
+                } else {
+                  this.cardActive = true;
+                  this.alertMessage = "Reset failed: Could not reset";
+                }
+              });
           } else {
             this.cardActive = true;
             this.alertMessage = "Reset failed: No access";

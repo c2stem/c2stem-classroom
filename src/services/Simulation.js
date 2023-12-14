@@ -122,6 +122,28 @@ export default {
       console.log("project does not exist");
     }
   },
+
+  async deleteProjectByName(projectName) {
+    let response = "";
+    const user = sessionStorage.getItem("user");
+    if (user) {
+      try {
+        response = await axios.post(
+          "https://editor.c2stem.org/api/deleteProject",
+          { ProjectName: projectName },
+          { withCredentials: true },
+          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+        );
+        if (response.data === "project deleted!") {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.log("the error is ", error);
+      }
+    }
+  },
   /**
    * Green flag run method.
    * Accesses the NetsBloxMorph of C2STEM and runs scripts.

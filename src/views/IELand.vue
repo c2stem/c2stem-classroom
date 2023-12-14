@@ -17,25 +17,25 @@ export default {
   },
   data() {
     return {
-      names: ["Lesson 7", "Lesson 8", "Lesson 9" ],
-      description: [ "", "", ""],
+      names: ["Lesson 7", "Lesson 8", "Lesson 9"],
+      description: ["", "", ""],
       route: ["IE", "IE", "IE"],
       routeParams: [
         {
-        userID: "oele",
-        projectName: "cmise-project-lesson7-manipulate",
-        source: "https://editor.c2stem.org",
-      },
-      {
-        userID: "oele",
-        projectName: "cmise-project-lesson8-manipulate",
-        source: "https://editor.c2stem.org",
-      },
-      {
-        userID: "oele",
-        projectName: "cmise-project-lesson9-manipulate",
-        source: "https://editor.c2stem.org",
-      }
+          userID: "oele",
+          projectName: "cmise-project-lesson7-manipulate",
+          source: "https://editor.c2stem.org",
+        },
+        {
+          userID: "oele",
+          projectName: "cmise-project-lesson8-manipulate",
+          source: "https://editor.c2stem.org",
+        },
+        {
+          userID: "oele",
+          projectName: "cmise-project-lesson8-manipulate", //currently changing this to the same project as lesson 8 so that students can continue thier work in lesson 9.
+          source: "https://editor.c2stem.org",
+        },
       ],
       engineering: false,
     };
