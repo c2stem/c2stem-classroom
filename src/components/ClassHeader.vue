@@ -25,7 +25,6 @@
       </button>
       <div class="bttn-auth ms-2 me-2">
         <reset
-          :projectName="getProjectName"
           v-if="
             loggedIn &&
             (currentRouteName === 'Construct' || currentRouteName === 'IE')

@@ -87,15 +87,12 @@ export default {
       alertMessage: "",
     };
   },
-  props: {
-    projectName: {
-      type: String,
-      required: true,
-    },
-  },
   computed: {
     isActive() {
       return this.cardActive;
+    },
+    projectName() {
+      return sessionStorage.getItem("projectName");
     },
   },
   methods: {

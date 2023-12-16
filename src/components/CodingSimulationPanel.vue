@@ -34,7 +34,7 @@
           <div class="modal-body">
             <design-table
               :header="testHistoryHeader"
-              :contents="activeTableContent"
+              :contents="testHistory"
             ></design-table>
           </div>
           <div class="modal-footer">
@@ -93,7 +93,11 @@ export default {
      * Get the entire test history from the store.
      */
     testHistory() {
-      return this.$store.getters.getTestHistory;
+      if (this.currentRouteName === "IE") {
+        return this.activeTableContent;
+      } else {
+        return this.$store.getters.getTestHistory;
+      }
     },
     currentRouteName() {
       return this.$route.name;
@@ -119,7 +123,7 @@ export default {
       if (this.currentRouteName === "IE") {
         this.testHistoryContent = await visualize.getTestData("manipulate");
         this.activeTableContent = this.testHistoryContent;
-        this.$store.dispatch("addIETestHistory", this.testHistoryContent);
+        // this.$store.dispatch("addIETestHistory", this.testHistoryContent);
       } else {
         this.activeTableContent = this.testHistory;
         this.testHistoryContent = await visualize.getTestData("construct");
