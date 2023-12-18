@@ -7,7 +7,7 @@ export default {
         return "Landing";
       }
     } else if (data.class.includes("SPICE")) {
-      return "Home";
+      return "SpiceLanding";
     }
   },
 
