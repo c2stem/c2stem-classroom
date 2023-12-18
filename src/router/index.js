@@ -14,6 +14,7 @@ import EngineeringDesign from "../views/EngineeringDesign.vue";
 import Login from "../views/Login.vue";
 import TempLanding from "../views/tempLandingPage.vue";
 import Register from "../views/Register.vue";
+import SpiceLanding from "../views/spice/SpiceLand.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -155,6 +156,12 @@ const routes = [
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Engineering" },
   },
   {
+    path: "/spiceLand",
+    name: "SpiceLanding",
+    component: SpiceLanding,
+    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | Home" },
+  },
+  {
     path: "/:NotFound(.*)",
     name: "PageNotFound",
     component: PageNotFound,
@@ -172,6 +179,8 @@ router.beforeEach((to, from, next) => {
   const userClass = sessionStorage.getItem("userClass");
   const userGroup = sessionStorage.getItem("userGroup");
 
+  const spiceGroup = ["Home", "SpiceLanding", "Construct", "Engineering"];
+
   if (to.meta && to.meta.title) {
     document.title = to.meta.title || "C2STEM";
   }
@@ -184,10 +193,9 @@ router.beforeEach((to, from, next) => {
   } else if (
     userClass &&
     userClass.includes("SPICE") &&
-    !to.name.includes("Home")
+    spiceGroup.includes(to.name)
   ) {
-    // restricting router engagement for SPICE class users. Access is allowed to Home view only.
-    router.back();
+    next();
   } else {
     if (to.name === "Landing") {
       if (typeof userGroup !== "undefined" && !userGroup.includes("All")) {
