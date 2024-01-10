@@ -225,10 +225,18 @@ export default {
           const updatedContent = this.formatDate(childContent[j]);
           childObj[header[j - 1] / header[j]] =
             childContent[j - 1] + ". " + updatedContent; //combining design and date
+        } else if (j === 2) {
+          childObj[header[j]] = Number(childContent[j]).toLocaleString(
+            "en-US",
+            { style: "currency", currency: "USD", maximumFractionDigits: 0 }
+          );
+        } else if (j === 3) {
+          childObj[header[j + 1]] = childContent[j + 1];
+          childObj[header[j + 2]] = childContent[j + 2];
+          childObj[header[j]] = childContent[j];
         } else if (j === 4) {
           childObj["Absorption (inches)"] = await this.getTotalAbsorption();
-          childObj[header[j]] = childContent[j];
-        } else if (j !== 0 && j !== 12) {
+        } else if (j !== 0 && j !== 5 && j !== 12) {
           childObj[header[j]] = childContent[j];
         }
       }
