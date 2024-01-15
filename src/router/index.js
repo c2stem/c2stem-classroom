@@ -212,8 +212,10 @@ router.beforeEach((to, from, next) => {
         router.back();
       }
       if (userGroup && typeof to.meta.group !== "undefined") {
-        if (!userGroup.includes(to.meta.group || "All")) {
-          router.back();
+        if (!userGroup.includes(to.meta.group)) {
+          if (!userGroup.includes("All")) {
+            router.back();
+          }
         }
       }
     }
