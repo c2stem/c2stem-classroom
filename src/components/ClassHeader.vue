@@ -121,6 +121,7 @@ export default {
     returnNav() {
       const userClass = sessionStorage.getItem("userClass");
       const userRole = sessionStorage.getItem("userRole");
+      const userGroup = sessionStorage.getItem("userGroup");
       const lastKnown = this.currentRouteName;
       const spiceRoutes = ["SpiceLanding", "AST", "Action View Representation"];
       if (lastKnown === "IE") {
@@ -129,12 +130,15 @@ export default {
       } else if (lastKnown === "EE") {
         // restricting the home button to eeland and EE for users in EE group.
         this.$router.push("/eeLand");
-      } else if (userClass.includes("SPICE") || !userRole.includes("admin")) {
+      } else if (lastKnown === "Engineering") {
+        this.$router.push("/land");
+      } else if (
+        userClass.includes("SPICE") ||
+        (!userRole.includes("admin") && !userGroup.includes("All"))
+      ) {
         // Restricting the users to single page construct view for users in SPICE Class.
         if (userClass.includes("SPICE")) {
           this.$router.push("/spiceLand");
-        } else {
-          return;
         }
       } else if (spiceRoutes.includes(lastKnown)) {
         // restricting the home button to Home for users in SPICE class.
