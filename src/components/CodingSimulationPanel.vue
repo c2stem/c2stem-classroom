@@ -1,18 +1,25 @@
 <template>
   <!-- Simulation Panel Component -->
   <div class="start-panel">
-    <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Run Model</i>
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary codeBttn"
-      data-bs-toggle="modal"
-      data-bs-target="#TestHistoryModal"
-      @click="generateTable"
-    >
-      Test History
-    </button>
+    <div>
+      <button type="button" class="btn btn-success" @click="runModel">
+        <i class="bi bi-flag-fill"> Run Model</i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary codeBttn"
+        data-bs-toggle="modal"
+        data-bs-target="#TestHistoryModal"
+        @click="generateTable"
+      >
+        Test History
+      </button>
+    </div>
+    <div class="title">
+      <h3 class="text-white">
+        <strong>{{ lessonName }}</strong>
+      </h3>
+    </div>
     <div
       class="modal fade"
       id="TestHistoryModal"
@@ -66,6 +73,12 @@ export default {
   name: "Simulation Panel",
   components: {
     DesignTable,
+  },
+  props: {
+    lessonName: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -148,6 +161,11 @@ export default {
 <style scoped>
 .start-panel {
   height: auto;
+  width: 100%;
   margin: 2px 10px 1px 10px;
+  display: flex;
+}
+.title {
+  margin-left: 30%;
 }
 </style>

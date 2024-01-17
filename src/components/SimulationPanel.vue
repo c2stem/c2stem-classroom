@@ -1,9 +1,12 @@
 <template>
-<!-- Simulation Panel Component -->
+  <!-- Simulation Panel Component -->
   <div class="start-panel">
     <button type="button" class="btn btn-success" @click="runModel">
       <i class="bi bi-flag-fill"> Test Model</i>
     </button>
+    <h3>
+      <strong>{{ lessonName }}</strong>
+    </h3>
   </div>
 </template>
 
@@ -16,12 +19,18 @@
 import simulation from "../services/Simulation";
 export default {
   name: "Simulation Panel",
+  props: {
+    lessonName: {
+      type: String,
+      required: true,
+    },
+  },
   methods: {
     /**
      * Run scripts when green flag is pressed.
-     * Extract a stage image after finishing running the script. 
+     * Extract a stage image after finishing running the script.
      */
-     async runModel(event) {
+    async runModel(event) {
       simulation.runProject(event);
       this.sleep(10000).then(() => {
         this.updateData();
@@ -41,5 +50,7 @@ export default {
 .start-panel {
   height: auto;
   margin: 2px 10px 1px 10px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

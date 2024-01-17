@@ -1,7 +1,7 @@
 <template>
   <!--IE view for CMISE-->
   <div class="container">
-    <coding-panel></coding-panel>
+    <coding-panel :lessonName="name"></coding-panel>
     <iframe-loader
       :source="source"
       iframeid="iframe-id"
@@ -58,6 +58,7 @@ export default {
   },
   data() {
     return {
+      name: this.$route.params.name,
       userID: this.$route.params.userID,
       projectName: this.$route.params.projectName,
       source: this.$route.params.source,

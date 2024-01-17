@@ -3,7 +3,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <simulation-panel />
+        <simulation-panel :lessonName="name" />
         <div class="iframe-panel">
           <iframe-loader
             :source="source"
@@ -74,6 +74,7 @@ export default {
   },
   data() {
     return {
+      name: this.$route.params.name,
       userID: this.$route.params.userID,
       projectName: this.$route.params.projectName,
       source: this.$route.params.source,

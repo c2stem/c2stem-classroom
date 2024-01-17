@@ -106,7 +106,7 @@ const routes = [
     },
   },
   {
-    path: "/ee/:userID/:projectName/:source",
+    path: "/ee/:name/:userID/:projectName/:source",
     name: "EE",
     component: EE,
     meta: {
@@ -139,7 +139,7 @@ const routes = [
     },
   },
   {
-    path: "/ie/:userID/:projectName/:source",
+    path: "/ie/:name/:userID/:projectName/:source",
     name: "IE",
     component: IE,
     meta: {
