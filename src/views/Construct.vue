@@ -1,7 +1,7 @@
 <template>
   <!-- Construct View for CMISE -->
   <div class="container">
-    <coding-panel></coding-panel>
+    <coding-panel lessonName="Construct"></coding-panel>
     <iframe-loader
       source="https://editor.c2stem.org"
       iframeid="iframe-id"
