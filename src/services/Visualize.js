@@ -235,7 +235,12 @@ export default {
           childObj[header[j + 2]] = childContent[j + 2];
           childObj[header[j]] = childContent[j];
         } else if (j === 4) {
-          childObj["Absorption (inches)"] = await this.getTotalAbsorption();
+          if (header.includes("absorption limit")) {
+            let absorption = parseFloat(childContent[j + 8]).toFixed(4);
+            childObj["Absorption (inches)"] = String(absorption);
+          } else {
+            childObj["Absorption (inches)"] = await this.getTotalAbsorption();
+          }
         } else if (j !== 0 && j !== 5 && j !== 12) {
           childObj[header[j]] = childContent[j];
         }
