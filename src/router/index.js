@@ -15,6 +15,7 @@ import Login from "../views/Login.vue";
 import TempLanding from "../views/tempLandingPage.vue";
 import Register from "../views/Register.vue";
 import SpiceLanding from "../views/spice/SpiceLand.vue";
+import ConstructLanding from "../views/ConstructLand.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -160,6 +161,12 @@ const routes = [
     name: "SpiceLanding",
     component: SpiceLanding,
     meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | Home" },
+  },
+  {
+    path: "/constructLand",
+    name: "ConstructLanding",
+    component: ConstructLanding,
+    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Home" },
   },
   {
     path: "/:NotFound(.*)",

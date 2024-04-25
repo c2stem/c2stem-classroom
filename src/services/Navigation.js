@@ -17,7 +17,7 @@ export default {
     } else if (userGroup.includes("EE")) {
       return "EELanding";
     } else if (userGroup.includes("Construct")) {
-      return "Construct";
+      return "ConstructLanding";
     } else {
       return "Landing";
     }

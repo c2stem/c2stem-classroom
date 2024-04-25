@@ -46,7 +46,7 @@ export default {
           source: "https://editor.c2stem.org",
         },
       ],
-      engineering: false,
+      engineering: true,
     };
   },
 };

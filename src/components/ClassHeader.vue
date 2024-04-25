@@ -139,6 +139,8 @@ export default {
         // Restricting the users to single page construct view for users in SPICE Class.
         if (userClass.includes("SPICE")) {
           this.$router.push("/spiceLand");
+        } else if (lastKnown === "Construct") {
+          this.$router.push("/ConstructLand");
         }
       } else if (spiceRoutes.includes(lastKnown)) {
         // restricting the home button to Home for users in SPICE class.
