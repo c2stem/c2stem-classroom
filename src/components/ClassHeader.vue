@@ -105,6 +105,7 @@ export default {
   methods: {
     async saveProject() {
       try {
+        this.emitter.emit("start-saving", { status: true });
         let name = this.getProjectName;
         Simulation.saveToCloud(name);
         // let checkList = this.getCheckedDesigns;

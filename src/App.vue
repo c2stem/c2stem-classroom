@@ -1,20 +1,19 @@
 <template>
   <class-header></class-header>
-  <router-view/>
+  <router-view />
 </template>
 
 <script>
-
-import ClassHeader from './components/ClassHeader.vue';
+import ClassHeader from "./components/ClassHeader.vue";
 
 export default {
   name: "App",
   components: {
-    ClassHeader
+    ClassHeader,
   },
-  beforeCreate(){
-    this.$store.dispatch('initializeStorage');
-  }
+  beforeCreate() {
+    this.$store.dispatch("initializeStorage");
+  },
 };
 </script>
 
@@ -25,5 +24,4 @@ body {
   height: 100%;
   max-width: 100%;
 }
-
 </style>

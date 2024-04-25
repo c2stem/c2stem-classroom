@@ -30,13 +30,13 @@
         <div class="modal-content">
           <div class="modal-body">
             <div>
-              <strong>Loading Project... </strong>
+              <strong>{{ getModalText }} </strong>
               <div class="spinner-border text-light" role="status">
                 <span class="visually-hidden">Loading...</span>
               </div>
             </div>
             <button
-              v-if="projectLoaded"
+              v-if="projectLoaded && modalText.includes('Loading')"
               type="button"
               class="btn btn-secondary ms-5"
               data-bs-dismiss="modal"
@@ -81,6 +81,7 @@ export default {
     return {
       loadStatus: false,
       background: "static",
+      modalText: "",
     };
   },
   computed: {
@@ -89,6 +90,9 @@ export default {
     },
     backroundStatus() {
       return this.background;
+    },
+    getModalText() {
+      return this.modalText;
     },
   },
   methods: {
@@ -103,9 +107,13 @@ export default {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
+    this.modalText = "Loading Project....";
     myModal.show();
     iframe.onload = () => {
-      api.addEventListener("projectSaved", this.saveProject);
+      api.addEventListener("projectSaved", () => {
+        myModal.hide();
+        this.emitter.emit("save-project", { status: true });
+      });
       api.addEventListener("action", (e) => {
         if (e.detail.type === "openProject") {
           this.loadStatus = true;
@@ -113,6 +121,12 @@ export default {
         }
       });
     };
+    this.emitter.on("start-saving", (evt) => {
+      if (evt.status) {
+        this.modalText = "Saving Project....";
+        myModal.show();
+      }
+    });
   },
 };
 </script>
