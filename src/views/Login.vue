@@ -30,6 +30,7 @@
       </div>
     </div>
   </div>
+  <AlertBox :message="alertMessage" v-if="isActive"></AlertBox>
 </template>
 
 <script>
@@ -40,13 +41,22 @@
 import auth from "../services/Auth.js";
 import nav from "../services/Navigation.js";
 import Token from "../services/Token";
+import AlertBox from "../components/AlertBox.vue";
 export default {
+  components: { AlertBox },
   data() {
     return {
       username: "",
       password: "",
       ServerURL: "https://editor.c2stem.org",
+      cardActive: false,
+      alertMessage: "",
     };
+  },
+  computed: {
+    isActive() {
+      return this.cardActive;
+    },
   },
   methods: {
     /**
@@ -62,6 +72,14 @@ export default {
           password: this.password,
         })
         .then(({ data }) => {
+          if (data.message) {
+            this.cardActive = true;
+            this.alertMessage = data.message;
+            return;
+          } else if (data.token) {
+            this.cardActive = true;
+            this.alertMessage = "User found. Logging in...";
+          }
           auth
             .netsbloxLogin({
               username: this.username,
@@ -90,6 +108,23 @@ export default {
           console.log(err);
         });
     },
+  },
+  mounted() {
+    this.emitter.on("alert", (evt) => {
+      if (evt.data) {
+        if (document.getElementById("alertID")) {
+          document.getElementById("alertText").innerText = evt.data;
+          document.getElementById("alertID").style.display = "flex";
+        } else {
+          this.alertMessage = evt.data;
+          this.cardActive = true;
+        }
+      }
+    });
+    this.emitter.on("close-alert", () => {
+      this.cardActive = false;
+      this.alertMessage = "";
+    });
   },
 };
 </script>
