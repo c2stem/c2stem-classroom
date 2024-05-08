@@ -6,12 +6,20 @@
         <nav class="nav flex-column pt-5">
           <button
             type="button"
-            class="btn btn-lg mb-3 active"
+            class="btn btn-lg mb-3"
+            :class="{ active: isUserActive }"
             @click="$router.push('/dashboard')"
           >
             Users
           </button>
-          <button type="button" class="btn btn-lg mb-3">User Projects</button>
+          <button
+            type="button"
+            class="btn btn-lg mb-3"
+            :class="{ active: isProjectActive }"
+            @click="$router.push('/dashboard/projects')"
+          >
+            User Projects
+          </button>
         </nav>
       </div>
       <div class="col">
@@ -23,6 +31,14 @@
 <script>
 export default {
   name: "DashboardHome",
+  computed: {
+    isUserActive() {
+      return this.$route.name === "DashboardUsers";
+    },
+    isProjectActive() {
+      return this.$route.name === "DashboardProjects";
+    },
+  },
 };
 </script>
 <style scoped>

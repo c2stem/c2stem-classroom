@@ -48,6 +48,22 @@ export default {
     }
     return projects;
   },
+
+  async getProjectListByUser(username) {
+    if (username) {
+      try {
+        let response = await axios.get(
+          "https://editor.c2stem.org/api/projects/" + username,
+          { withCredentials: true }
+        );
+        return response.data;
+      } catch (error) {
+        console.log("the error is ", error);
+      }
+    }
+    return [];
+  },
+
   async getSharedProjectList() {
     const projects = [];
     const user = sessionStorage.getItem("user");

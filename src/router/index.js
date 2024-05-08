@@ -17,6 +17,7 @@ import Register from "../views/Register.vue";
 import SpiceLanding from "../views/spice/SpiceLand.vue";
 import ConstructLanding from "../views/ConstructLand.vue";
 import DashboardHome from "../views/visualize/DashboardHome.vue";
+import DashboardProjects from "../views/visualize/DashboardProjects.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -71,7 +72,14 @@ const routes = [
     path: "/dashboard",
     name: "DashboardHome",
     component: DashboardHome,
-    children: [{ path: "", name: "DashboardUsers", component: DashboardUsers }],
+    children: [
+      { path: "", name: "DashboardUsers", component: DashboardUsers },
+      {
+        path: "projects",
+        name: "DashboardProjects",
+        component: DashboardProjects,
+      },
+    ],
     meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Dashboard" },
   },
   {
