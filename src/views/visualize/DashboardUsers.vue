@@ -130,7 +130,7 @@
 import visualize from "../../services/Visualize.js";
 import AlertBox from "../../components/AlertBox.vue";
 export default {
-  name: "Dashboard",
+  name: "DashboardUsers",
   components: {
     AlertBox,
   },
