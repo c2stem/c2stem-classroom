@@ -62,7 +62,14 @@
         <tbody>
           <tr v-for="(userDataItems, index) in filteredUserData" :key="index">
             <td v-for="(item, itemIndex) in userDataItems" :key="itemIndex">
-              {{ item }}
+              <span v-if="itemIndex === 'projects'">
+                <li v-for="(project, index) in item" :key="index">
+                  {{ project }}
+                </li>
+              </span>
+              <span v-else>
+                {{ item }}
+              </span>
             </td>
           </tr>
         </tbody>
