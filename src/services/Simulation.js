@@ -103,11 +103,11 @@ export default {
   },
   async getProject(projectName) {
     const iframe = document.getElementById("iframe-id"),
-      // api = new window.EmbeddedNetsBloxAPI(iframe);
-      // var projectResponse = await api.getProjectXML();
-      world = iframe.contentWindow.world,
-      ide = world.children[0];
-    var projectResponse = ide.exportProject(projectName, false);
+      api = new window.EmbeddedNetsBloxAPI(iframe);
+    let projectResponse = await api.getProjectXML();
+    // world = iframe.contentWindow.world,
+    // ide = world.children[0];
+    // var projectResponse = ide.exportProject(projectName, false);
     const user = sessionStorage.getItem("user");
     var currentDate = new Date();
     var datetime =
