@@ -19,6 +19,8 @@ import ConstructLanding from "../views/ConstructLand.vue";
 import DashboardHome from "../views/visualize/DashboardHome.vue";
 import DashboardProjects from "../views/visualize/DashboardProjects.vue";
 
+import UploadDocs from "../views/UploadDocs.vue";
+
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
 
@@ -177,6 +179,12 @@ const routes = [
     name: "ConstructLanding",
     component: ConstructLanding,
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Home" },
+  },
+  {
+    path: "/upload",
+    name: "UploadDocs",
+    component: UploadDocs,
+    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Upload" },
   },
   {
     path: "/:NotFound(.*)",

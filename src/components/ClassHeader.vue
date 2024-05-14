@@ -24,6 +24,20 @@
         Save Project
       </button>
       <div class="bttn-auth ms-2 me-2">
+        <button
+          v-if="
+            loggedIn &&
+            (currentRouteName === 'Construct' ||
+              currentRouteName === 'IE' ||
+              currentRouteName === 'EE' ||
+              currentRouteName === 'Engineering')
+          "
+          type="button"
+          class="btn btn-primary btn-lg me-3"
+          @click="exportProject"
+        >
+          Export Project
+        </button>
         <reset
           v-if="
             loggedIn &&
@@ -77,6 +91,7 @@ import Logout from "./Logout.vue";
 import Formatter from "../helpers/format.js";
 import Simulation from "../services/Simulation";
 import Reset from "./ResetProject.vue";
+import simulation from "../services/Simulation";
 
 export default {
   name: "ClassHeader",
@@ -148,6 +163,9 @@ export default {
       } else {
         this.$router.push("/land");
       }
+    },
+    async exportProject() {
+      await simulation.getProject(this.getProjectName);
     },
   },
   mounted() {

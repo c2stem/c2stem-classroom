@@ -101,10 +101,40 @@ export default {
       return false;
     }
   },
-  async getProject() {
-    const iframe = document.getElementById("iframe-id");
-    const api = new window.EmbeddedNetsBloxAPI(iframe);
-    return await api.getProjectXML();
+  async getProject(projectName) {
+    const iframe = document.getElementById("iframe-id"),
+      // api = new window.EmbeddedNetsBloxAPI(iframe);
+      // var projectResponse = await api.getProjectXML();
+      world = iframe.contentWindow.world,
+      ide = world.children[0];
+    var projectResponse = ide.exportProject(projectName, false);
+    const user = sessionStorage.getItem("user");
+    var currentDate = new Date();
+    var datetime =
+      currentDate.getDate() +
+      "_" +
+      (currentDate.getMonth() + 1) +
+      "_" +
+      currentDate.getFullYear() +
+      "_" +
+      currentDate.getHours() +
+      ":" +
+      currentDate.getMinutes() +
+      ":";
+    const fileName = user + "_" + projectName + "_" + datetime + ".xml";
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:attachment/xml," + encodeURI(projectResponse)
+    );
+    element.setAttribute("download", fileName);
+
+    element.style.display = "none";
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
   },
   async saveToCloud(projectName) {
     const iframe = document.getElementById("iframe-id");
