@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
-import Dashboard from "../views/visualize/Dashboard.vue";
+import DashboardUsers from "../views/visualize/DashboardUsers.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import EE from "../views/EE.vue";
 import EELanding from "../views/EELand.vue";
@@ -16,6 +16,10 @@ import TempLanding from "../views/tempLandingPage.vue";
 import Register from "../views/Register.vue";
 import SpiceLanding from "../views/spice/SpiceLand.vue";
 import ConstructLanding from "../views/ConstructLand.vue";
+import DashboardHome from "../views/visualize/DashboardHome.vue";
+import DashboardProjects from "../views/visualize/DashboardProjects.vue";
+
+import UploadDocs from "../views/UploadDocs.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
@@ -68,8 +72,16 @@ const routes = [
   },
   {
     path: "/dashboard",
-    name: "Dashboard",
-    component: Dashboard,
+    name: "DashboardHome",
+    component: DashboardHome,
+    children: [
+      { path: "", name: "DashboardUsers", component: DashboardUsers },
+      {
+        path: "projects",
+        name: "DashboardProjects",
+        component: DashboardProjects,
+      },
+    ],
     meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Dashboard" },
   },
   {
@@ -167,6 +179,12 @@ const routes = [
     name: "ConstructLanding",
     component: ConstructLanding,
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Home" },
+  },
+  {
+    path: "/upload",
+    name: "UploadDocs",
+    component: UploadDocs,
+    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Upload" },
   },
   {
     path: "/:NotFound(.*)",
