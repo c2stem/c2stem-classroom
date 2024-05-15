@@ -48,7 +48,7 @@ export default {
     return {
       username: "",
       password: "",
-      ServerURL: "https://editor.c2stem.org",
+      ServerURL: "https://editor.c2-stem.org",
       cardActive: false,
       alertMessage: "",
     };

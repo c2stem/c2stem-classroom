@@ -24,20 +24,24 @@
         Save Project
       </button>
       <div class="bttn-auth ms-2 me-2">
-        <button
-          v-if="
-            loggedIn &&
-            (currentRouteName === 'Construct' ||
-              currentRouteName === 'IE' ||
-              currentRouteName === 'EE' ||
-              currentRouteName === 'Engineering')
-          "
-          type="button"
-          class="btn btn-primary btn-lg me-3"
-          @click="exportProject"
-        >
-          Export Project
-        </button>
+        <!--        <button-->
+        <!--          v-if="-->
+        <!--            loggedIn &&-->
+        <!--            (currentRouteName === 'Construct' ||-->
+        <!--              currentRouteName === 'IE' ||-->
+        <!--              currentRouteName === 'EE' ||-->
+        <!--              currentRouteName === 'Engineering')-->
+        <!--          "-->
+        <!--          type="button"-->
+        <!--          class="btn btn-primary btn-lg me-3"-->
+        <!--          @click.exact="exportProject"-->
+        <!--          @click.shift.exact="$router.push('/dashboard')"-->
+        <!--          data-bs-toggle="tooltip"-->
+        <!--          data-bs-placement="bottom"-->
+        <!--          title="Shift press click to upload project files!"-->
+        <!--        >-->
+        <!--          Export Project-->
+        <!--        </button>-->
         <reset
           v-if="
             loggedIn &&
