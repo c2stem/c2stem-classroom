@@ -6,7 +6,7 @@
         <engineering-simulation-panel />
         <div class="iframe-panel">
           <iframe-loader
-            source="https://editor.c2-stem.org"
+            source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
             projectname="cmise-project-engineering"
