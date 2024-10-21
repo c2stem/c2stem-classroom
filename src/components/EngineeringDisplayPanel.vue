@@ -13,6 +13,7 @@
         role="tab"
         aria-controls="instructions"
         aria-selected="false"
+        @click="getInstructions"
       >
         Instructions
       </button>
@@ -139,6 +140,8 @@ import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
 import Instructions from "./Instructions.vue";
+import instructions from "./Instructions.vue";
+import Logger from "../services/Logger";
 
 export default {
   name: "EngineeringDisplayPanel",
@@ -185,6 +188,9 @@ export default {
     };
   },
   computed: {
+    instructions() {
+      return instructions;
+    },
     /**
      * Get the number of tests run by the user from store.
      */
@@ -238,6 +244,7 @@ export default {
      * The history in the store is updated with new design history from c2stem.
      */
     async generateTable() {
+      Logger.consoleLog("Design history clicked");
       this.designHistory_content = await visualize.getData();
       if (this.currentRouteName === "Playground") {
         const dhList = [];
@@ -293,6 +300,14 @@ export default {
           }
         }
       }
+    },
+
+    getInstructions() {
+      Logger.consoleLog("Instructions tab clicked.");
+    },
+
+    compareDesigns() {
+      Logger.consoleLog("Compare tab clicked");
     },
   },
   mounted() {

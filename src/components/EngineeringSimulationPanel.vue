@@ -18,6 +18,7 @@
 import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
+import Logger from "../services/Logger";
 
 export default {
   name: "Simulation Panel",
@@ -41,6 +42,7 @@ export default {
   },
   methods: {
     getDesignData() {
+      Logger.consoleLog("Design Data requested");
       Visualize.getData().then((response) => {
         this.dhLength = Object.keys(response).length;
         this.stateDhLength = this.historyLength;
@@ -63,6 +65,7 @@ export default {
      * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
+      Logger.consoleLog("Running Model (Green flag clicked)");
       simulation.runProject(event);
       this.sleep(10000).then(() => {
         this.processDesignData();

@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import Logger from "../services/Logger";
 export default {
   /**
    * Design Table component
@@ -114,6 +115,12 @@ export default {
      * @param {Event} e Event from the checkbox.
      */
     check(i, e) {
+      Logger.consoleLog(
+        "check status changed for index: " +
+          i +
+          " with status: " +
+          e.target.checked
+      );
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayChecks", {
           index: i,
@@ -128,6 +135,9 @@ export default {
     },
 
     toggleStar(i, status) {
+      Logger.consoleLog(
+        "Star toggled for index: " + i + " with status: " + status
+      );
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayFavs", {
           index: i,

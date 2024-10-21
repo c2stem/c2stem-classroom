@@ -69,6 +69,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
 import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 import { Modal } from "bootstrap";
+import Logger from "../services/Logger";
 
 export default {
   name: "Engineering",
@@ -93,6 +94,7 @@ export default {
   },
   methods: {
     saveProject() {
+      Logger.consoleLog("Project save Initiated");
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {

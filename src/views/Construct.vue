@@ -49,6 +49,7 @@
 import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
 import { Modal } from "bootstrap";
+import Logger from "../services/Logger";
 // import simulation from "../services/Simulation.js";
 
 export default {
@@ -81,6 +82,7 @@ export default {
   },
   methods: {
     saveProject() {
+      Logger.consoleLog("Project save Initiated");
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {

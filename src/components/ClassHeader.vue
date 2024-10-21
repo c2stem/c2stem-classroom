@@ -96,6 +96,7 @@ import Formatter from "../helpers/format.js";
 import Simulation from "../services/Simulation";
 import Reset from "./ResetProject.vue";
 import simulation from "../services/Simulation";
+import Logger from "../services/Logger";
 
 export default {
   name: "ClassHeader",
@@ -145,11 +146,14 @@ export default {
       const spiceRoutes = ["SpiceLanding", "AST", "Action View Representation"];
       if (lastKnown === "IE") {
         // restricting the home button to Ieland and IE for users in IE group.
+        Logger.consoleLog("returning back to IE landing page.");
         this.$router.push("/ieLand");
       } else if (lastKnown === "EE") {
         // restricting the home button to eeland and EE for users in EE group.
+        Logger.consoleLog("returning back to EE landing page.");
         this.$router.push("/eeLand");
       } else if (lastKnown === "Engineering") {
+        Logger.consoleLog("returning back to landing page.");
         this.$router.push("/land");
       } else if (
         userClass.includes("SPICE") ||
@@ -157,14 +161,18 @@ export default {
       ) {
         // Restricting the users to single page construct view for users in SPICE Class.
         if (userClass.includes("SPICE")) {
+          Logger.consoleLog("returning back to SPICE landing page.");
           this.$router.push("/spiceLand");
         } else if (lastKnown === "Construct") {
+          Logger.consoleLog("returning back to Constructor landing page.");
           this.$router.push("/ConstructLand");
         }
       } else if (spiceRoutes.includes(lastKnown)) {
         // restricting the home button to Home for users in SPICE class.
+        Logger.consoleLog("returning back to SPICE landing page.");
         this.$router.push("/spiceLand");
       } else {
+        Logger.consoleLog("returning back to landing page.");
         this.$router.push("/land");
       }
     },

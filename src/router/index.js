@@ -24,6 +24,8 @@ import UploadDocs from "../views/UploadDocs.vue";
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
 
+import Logger from "../services/Logger";
+
 function islogin(to, from, next) {
   if (!sessionStorage.getItem("user")) {
     next();
@@ -206,39 +208,50 @@ router.beforeEach((to, from, next) => {
 
   const spiceGroup = ["Home", "SpiceLanding", "Construct", "Engineering"];
 
+  Logger.consoleLog("changing page from " + from.name);
   if (to.meta && to.meta.title) {
     document.title = to.meta.title || "C2STEM";
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
+    Logger.consoleLog("Not authorized moving to home page");
     next("/");
   }
   if (userRole && userRole.includes("admin")) {
+    Logger.consoleLog("Moving to page " + to.name);
     next();
   } else if (
     userClass &&
     userClass.includes("SPICE") &&
     spiceGroup.includes(to.name)
   ) {
+    Logger.consoleLog("Moving to page " + to.name);
     next();
   } else {
     if (to.name === "Landing") {
       if (typeof userGroup !== "undefined" && !userGroup.includes("All")) {
         if (typeof from.name === "undefined") {
+          Logger.consoleLog("Router cannot complete, moving back to last page");
           router.back();
         } else if (from.name.includes("IE")) {
+          Logger.consoleLog("Moving to IE Landing");
           router.push("/ieland");
         } else if (from.name.includes("EE")) {
+          Logger.consoleLog("Moving to EE Landing");
           router.push("/eeland");
         }
       }
     } else {
       if (userClass && !userClass.includes(to.meta.class)) {
+        Logger.consoleLog("Router cannot complete, moving back to last page");
         router.back();
       }
       if (userGroup && typeof to.meta.group !== "undefined") {
         if (!userGroup.includes(to.meta.group)) {
           if (!userGroup.includes("All")) {
+            Logger.consoleLog(
+              "Router cannot complete, moving back to last page"
+            );
             router.back();
           }
         }

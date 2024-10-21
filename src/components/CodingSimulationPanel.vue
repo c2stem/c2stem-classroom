@@ -68,6 +68,7 @@
 import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+import Logger from "../services/Logger";
 
 export default {
   name: "Simulation Panel",
@@ -122,6 +123,7 @@ export default {
      * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
+      Logger.consoleLog("Run Model");
       simulation.runProject(event);
       let stageImg = await simulation.getImage();
       this.$store.dispatch("addStageImage", stageImg);
@@ -133,6 +135,7 @@ export default {
      * The history in the store is updated with new design history from c2stem.
      */
     async generateTable() {
+      Logger.consoleLog("Generating table");
       if (this.currentRouteName === "IE") {
         this.testHistoryContent = await visualize.getTestData("manipulate");
         this.activeTableContent = this.testHistoryContent;
