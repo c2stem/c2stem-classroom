@@ -24,6 +24,7 @@ import UploadDocs from "../views/UploadDocs.vue";
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
 
+import BuildEnv from "../components/BuildEnv.vue";
 import Logger from "../services/Logger";
 
 function islogin(to, from, next) {
@@ -90,13 +91,15 @@ const routes = [
     path: "/visualize/ast",
     name: "AST",
     component: AST,
-    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | AST" },
+    //meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | AST" },
+    meta: { role: "Admin", title: "C2STEM | AST" },
   },
   {
     path: "/visualize/list",
     name: "Action View Representation",
     component: List,
-    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | List" },
+    //meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | List" },
+    meta: { role: "Admin", title: "C2STEM | List" },
   },
   {
     path: "/eeLand",
@@ -187,6 +190,12 @@ const routes = [
     name: "UploadDocs",
     component: UploadDocs,
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Upload" },
+  },
+  {
+    path: "/build",
+    name: "BuildEnv",
+    component: BuildEnv,
+    meta: { role: "Admin", title: "C2STEM | Build" },
   },
   {
     path: "/:NotFound(.*)",
