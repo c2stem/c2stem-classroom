@@ -14,12 +14,14 @@ export default {
     };
   },
   mounted() {
-    //window.addEventListener("storage", () => {
-    this.data.splice(0, this.data.length);
-    console.log(JSON.parse(window.sessionStorage.getItem("actionList")));
-    this.data.push(...JSON.parse(window.sessionStorage.getItem("actionList")));
-    this.data.reverse();
-    //});
+    window.addEventListener("storage", () => {
+      this.data.splice(0, this.data.length);
+      console.log(JSON.parse(window.sessionStorage.getItem("actionList")));
+      this.data.push(
+        ...JSON.parse(window.sessionStorage.getItem("actionList"))
+      );
+      this.data.reverse();
+    });
   },
 };
 </script>

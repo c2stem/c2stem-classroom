@@ -49,14 +49,14 @@ export default {
   mounted() {
     // eslint-disable-next-line no-undef
     const viz = new Viz();
-    //window.addEventListener("storage", function () {
-    viz.renderSVGElement(generateDOT()).then((el) => {
-      document.getElementById("svg").innerHTML = "";
-      document.getElementById("svg").appendChild(el);
-      // eslint-disable-next-line no-undef
-      svgPanZoom(el);
+    window.addEventListener("storage", function () {
+      viz.renderSVGElement(generateDOT()).then((el) => {
+        document.getElementById("svg").innerHTML = "";
+        document.getElementById("svg").appendChild(el);
+        // eslint-disable-next-line no-undef
+        svgPanZoom(el);
+      });
     });
-    //});
   },
 };
 </script>
