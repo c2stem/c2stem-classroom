@@ -48,6 +48,15 @@
             (currentRouteName === 'Construct' || currentRouteName === 'IE')
           "
         ></reset>
+        <a-s-t-viewer v-if="currentRouteName === 'BuildEnv'"></a-s-t-viewer>
+        <button
+          v-if="currentRouteName === 'BuildEnv'"
+          type="button"
+          class="btn btn-primary btn-lg me-3"
+          @click="$router.push('/dashboard')"
+        >
+          Dashboard
+        </button>
         <button
           v-if="loggedIn && currentRole === 'admin'"
           type="button"
@@ -97,10 +106,12 @@ import Simulation from "../services/Simulation";
 import Reset from "./ResetProject.vue";
 import simulation from "../services/Simulation";
 import Logger from "../services/Logger";
+import ASTViewer from "./ASTViewer.vue";
 
 export default {
   name: "ClassHeader",
   components: {
+    ASTViewer,
     Logout,
     Reset,
   },
