@@ -135,6 +135,11 @@
  * @requires ../services/Visualize.js currently using Google library to generate charts.
  * @requires ./Compare.vue Component to generate a table of selected designs for comparison.
  */
+/** 2025-update
+ * changing the order for the SPICe 2025 study.
+ * The current order is
+ *  design, data, cost, rainfall, absorption limit, runoff, accessible squares, (rest of the materials).
+ * */
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
@@ -150,14 +155,15 @@ export default {
   data() {
     return {
       designHistoryContent: [],
+
       designHistoryHeader: [
         "fav",
         "design/date",
         "cost",
-        "runoff",
-        "accessible squares",
         "rainfall",
         "absorption",
+        "runoff",
+        "accessible squares",
         "concrete",
         "permeable concrete",
         "grass",
@@ -170,10 +176,10 @@ export default {
         "Stage",
         "design/date",
         "cost",
-        "runoff",
-        "accessible squares",
         "rainfall",
         "absorption",
+        "runoff",
+        "accessible squares",
         "concrete",
         "permeable concrete",
         "grass",
@@ -195,7 +201,11 @@ export default {
      * Get the entire design history from the store.
      */
     designHistory() {
-      return this.$store.getters.getDesignHistory;
+      let designHistory = this.$store.getters.getDesignHistory;
+      if (!visualize.isDesignFormatted(designHistory)) {
+        designHistory = visualize.changeDesignFormat(designHistory);
+      }
+      return designHistory;
     },
     /**
      * Get a list of checkbox status in the design history table from the store.

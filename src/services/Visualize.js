@@ -214,6 +214,11 @@ export default {
    * @param {*} content Design history.
    * @returns An Object representation of the design contents.
    */
+  /** 2025-update
+   * changing the order for the SPICe 2025 study.
+   * The current order is
+   *  design, data, cost, rainfall, absorption limit, runoff, accessible squares, (rest of the materials).
+   * */
   async getObject(content) {
     let obj = {};
     let header = content[0].contents;
@@ -230,18 +235,21 @@ export default {
             "en-US",
             { style: "currency", currency: "USD", maximumFractionDigits: 0 }
           );
-        } else if (j === 3) {
-          childObj[header[j + 1]] = childContent[j + 1];
-          childObj[header[j + 2]] = childContent[j + 2];
-          childObj[header[j]] = childContent[j];
+          // 2025-update
+          // } else if (j === 3) {
+          //   childObj[header[j + 1]] = childContent[j + 1];
+          //   childObj[header[j + 2]] = childContent[j + 2];
+          //   childObj[header[j]] = childContent[j];
         } else if (j === 4) {
           if (header.includes("absorption limit")) {
             let absorption = parseFloat(childContent[j + 8]).toFixed(4);
             childObj["Absorption (inches)"] = String(absorption);
+            childObj[header[j]] = childContent[j];
           } else {
             childObj["Absorption (inches)"] = await this.getTotalAbsorption();
+            childObj[header[j]] = childContent[j];
           }
-        } else if (j !== 0 && j !== 5 && j !== 12) {
+        } else if (j !== 0 && j !== 12) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -374,5 +382,47 @@ export default {
     } catch (error) {
       return error;
     }
+  },
+
+  /**
+   * Check if the format fits the 2025 SPICe requirement.
+   * */
+  isDesignFormatted(designHistory) {
+    const index = Object.keys(designHistory[0]).indexOf("rainfall");
+    return index === 3;
+  },
+
+  /**
+   * If the format does not fit the SPICe 2025 study requirement. Then change the format.
+   * */
+  changeDesignFormat(designHistory) {
+    let header = [
+      "design/date",
+      "cost",
+      "rainfall",
+      "absorption",
+      "runoff",
+      "accessible squares",
+      "concrete",
+      "permeable concrete",
+      "grass",
+      "wood chips",
+      "artificial turf",
+      "poured rubber",
+    ];
+
+    let obj = {};
+    for (let i = 0; i < Object.keys(designHistory).length; i++) {
+      let childObj = {};
+      for (let j = 0; j < header.length; j++) {
+        if (j === 0) {
+          childObj[header[j]] = designHistory[i][NaN];
+        } else {
+          childObj[header[j]] = designHistory[i][header[j]];
+        }
+      }
+      obj[i] = childObj;
+    }
+    return obj;
   },
 };
