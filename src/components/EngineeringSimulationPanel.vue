@@ -5,6 +5,7 @@
       <i class="bi bi-flag-fill"> Test Design</i>
     </button>
     <see-code />
+    <submit-design />
   </div>
 </template>
 
@@ -18,11 +19,12 @@
 import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
-
+import SubmitDesign from "./SubmitDesign.vue";
 export default {
   name: "Simulation Panel",
   components: {
     SeeCode,
+    SubmitDesign,
   },
   data() {
     return {

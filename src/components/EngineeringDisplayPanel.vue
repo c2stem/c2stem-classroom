@@ -202,8 +202,10 @@ export default {
      */
     designHistory() {
       let designHistory = this.$store.getters.getDesignHistory;
-      if (!visualize.isDesignFormatted(designHistory)) {
-        designHistory = visualize.changeDesignFormat(designHistory);
+      if (Object.keys(designHistory).length !== 0) {
+        if (!visualize.isDesignFormatted(designHistory)) {
+          designHistory = visualize.changeDesignFormat(designHistory);
+        }
       }
       return designHistory;
     },
