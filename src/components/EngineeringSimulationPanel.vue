@@ -1,11 +1,17 @@
 <template>
   <!-- Simulation Panel Component -->
-  <div class="start-panel">
-    <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Test Design</i>
-    </button>
-    <see-code />
-    <submit-design />
+  <div class="start-panel d-flex bd-highlight">
+    <div class="p-1 bd-highlight">
+      <button type="button" class="btn btn-success" @click="runModel">
+        <i class="bi bi-flag-fill"> Test Design</i>
+      </button>
+    </div>
+    <div class="p-1 bd-highlight">
+      <see-code />
+    </div>
+    <div class="ms-auto p-1 bd-highlight">
+      <submit-design />
+    </div>
   </div>
 </template>
 

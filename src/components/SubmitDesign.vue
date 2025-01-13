@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="btn btn-primary codeBttn"
+    class="btn btn-success custom-btn-size"
     data-bs-toggle="modal"
     data-bs-target="#submitDesign"
   >
@@ -10,6 +10,7 @@
   <div
     class="modal fade"
     id="submitDesign"
+    data-bs-backdrop="static"
     tabindex="-1"
     aria-labelledby="submitDesignLabel"
     aria-hidden="true"
@@ -51,5 +52,9 @@ export default {
 }
 .modal-dialog {
   width: 40%;
+  margin-top: 10%;
+}
+.custom-btn-size {
+  font-size: large;
 }
 </style>

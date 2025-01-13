@@ -2,7 +2,7 @@
   <!-- Simulation Panel Component -->
   <div class="start-panel">
     <div>
-      <button type="button" class="btn btn-success" @click="runModel">
+      <button type="button" class="btn btn-success me-1" @click="runModel">
         <i class="bi bi-flag-fill"> Run Model</i>
       </button>
       <button
@@ -19,6 +19,9 @@
       <h3 class="text-white">
         <strong>{{ lessonName }}</strong>
       </h3>
+    </div>
+    <div class="submit-button">
+      <submit-design />
     </div>
     <div
       class="modal fade"
@@ -68,11 +71,13 @@
 import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
+import SubmitDesign from "./SubmitDesign.vue";
 
 export default {
   name: "Simulation Panel",
   components: {
     DesignTable,
+    SubmitDesign,
   },
   props: {
     lessonName: {
@@ -164,8 +169,12 @@ export default {
   width: 100%;
   margin: 2px 10px 1px 10px;
   display: flex;
+  align-items: center;
 }
 .title {
   margin-left: 30%;
+}
+.submit-button {
+  margin-left: 25%;
 }
 </style>
