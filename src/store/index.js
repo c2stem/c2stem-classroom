@@ -17,6 +17,7 @@ const store = createStore({
     playCheckedStatus: [],
     playFavStatus: [],
     simulationPlayStageImages: [],
+    submittedDesigns: [],
   },
   mutations: {
     initializeStorage(state) {
@@ -167,6 +168,9 @@ const store = createStore({
     resetFavoriteDesigns(state) {
       state.favoriteStatus = [];
     },
+    addSubmittedDesigns(state, data) {
+      state.submittedDesigns.push(data);
+    },
   },
   getters: {
     /**
@@ -240,6 +244,9 @@ const store = createStore({
     getPlayFavs(state) {
       return state.playFavStatus;
     },
+    getSubmittedDesigns(state) {
+      return state.submittedDesigns;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -301,6 +308,9 @@ const store = createStore({
     },
     resetFavoriteDesigns(context) {
       context.commit("resetFavoriteDesigns");
+    },
+    addSubmittedDesigns(context, data) {
+      context.commit("addSubmittedDesigns", data);
     },
   },
   modules: {},
