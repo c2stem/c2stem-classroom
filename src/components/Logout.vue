@@ -3,7 +3,7 @@
   <button
     v-if="loggedIn"
     type="button"
-    class="btn btn-primary btn-lg"
+    class="btn btn-danger btn-lg"
     @click="logout"
   >
     Logout

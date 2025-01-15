@@ -1,10 +1,17 @@
 <template>
   <!-- Simulation Panel Component -->
-  <div class="start-panel">
-    <button type="button" class="btn btn-success" @click="runModel">
-      <i class="bi bi-flag-fill"> Test Design</i>
-    </button>
-    <see-code />
+  <div class="start-panel d-flex bd-highlight">
+    <div class="p-1 bd-highlight">
+      <button type="button" class="btn btn-success" @click="runModel">
+        <i class="bi bi-flag-fill"> Test Design</i>
+      </button>
+    </div>
+    <div class="p-1 bd-highlight">
+      <see-code />
+    </div>
+    <div class="ms-auto p-1 bd-highlight">
+      <submit-design />
+    </div>
   </div>
 </template>
 
@@ -18,11 +25,12 @@
 import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
-
+import SubmitDesign from "./SubmitDesign.vue";
 export default {
   name: "Simulation Panel",
   components: {
     SeeCode,
+    SubmitDesign,
   },
   data() {
     return {

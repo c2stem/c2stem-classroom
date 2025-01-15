@@ -190,6 +190,16 @@ export default {
       }
     }
   },
+
+  async getEngineeringStageMaterials() {
+    try {
+      const iframe = document.getElementById("iframe-id");
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      return await api.getEngineeringStageMaterials();
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   /**
    * Green flag run method.
    * Accesses the NetsBloxMorph of C2STEM and runs scripts.
