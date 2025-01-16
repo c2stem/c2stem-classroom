@@ -48,6 +48,7 @@
  */
 import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
+import ASTController from "../services/AST/ASTController";
 import { Modal } from "bootstrap";
 // import simulation from "../services/Simulation.js";
 
@@ -94,6 +95,11 @@ export default {
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
+    const astController = new ASTController(
+      "blocks",
+      "treeRoots",
+      "actionList"
+    );
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
@@ -104,6 +110,8 @@ export default {
         if (e.detail.type === "openProject") {
           this.loadStatus = true;
           myModal.hide();
+        } else {
+          astController.actionListener(e.detail);
         }
       });
     };
