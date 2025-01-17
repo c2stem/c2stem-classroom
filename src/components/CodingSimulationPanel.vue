@@ -72,6 +72,7 @@ import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import SubmitDesign from "./SubmitDesign.vue";
+import Logger from "../services/Logger";
 
 export default {
   name: "Simulation Panel",
@@ -120,6 +121,9 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+    getProjectName() {
+      return sessionStorage.getItem("projectName");
+    },
   },
   methods: {
     /**
@@ -127,6 +131,14 @@ export default {
      * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
+      await Logger.logUserActions({
+        actionType: "runModel",
+        actionView: this.currentRouteName,
+        args: {
+          activity: "computational modelling",
+          projectName: this.getProjectName,
+        },
+      });
       simulation.runProject(event);
       let stageImg = await simulation.getImage();
       this.$store.dispatch("addStageImage", stageImg);
@@ -156,6 +168,14 @@ export default {
           });
           console.log(thList);
           this.$store.dispatch("addTestHistory", thList);
+          await Logger.logUserActions({
+            actionType: "viewTestHistory",
+            actionView: this.currentRouteName,
+            args: {
+              projectName: this.getProjectName,
+              Model: thList[thList.length - 1],
+            },
+          });
         }
       }
     },

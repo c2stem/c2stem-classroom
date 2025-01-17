@@ -13,6 +13,7 @@
         role="tab"
         aria-controls="instructions"
         aria-selected="false"
+        @click="logAction('viewInstructions')"
       >
         Instructions
       </button>
@@ -38,7 +39,7 @@
         id="visualize-tab"
         data-bs-toggle="modal"
         data-bs-target="#compare"
-        @click="compareDesigns"
+        @click="logAction('compare')"
       >
         Compare
       </button>
@@ -118,6 +119,7 @@
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
+            @click="logAction('closeCompare')"
           >
             Close
           </button>
@@ -144,6 +146,7 @@ import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
 import Instructions from "./Instructions.vue";
+import Logger from "../services/Logger";
 
 export default {
   name: "EngineeringDisplayPanel",
@@ -242,6 +245,9 @@ export default {
     getPlayFavs() {
       return this.$store.getters.getPlayFavs;
     },
+    getProjectName() {
+      return sessionStorage.getItem("projectName");
+    },
   },
   methods: {
     /**
@@ -304,7 +310,29 @@ export default {
             this.$store.dispatch("addCheckedDesigns", checkList);
           }
         }
+        let logDh = [];
+        if (dhList.length > 0) {
+          logDh = dhList[dhList.length - 1];
+        } else {
+          logDh = [];
+        }
+        await Logger.logUserActions({
+          actionType: "viewDesignHistory",
+          actionView: this.currentRouteName,
+          args: {
+            projectName: this.getProjectName,
+            Model: logDh,
+          },
+        });
       }
+    },
+
+    async logAction(actionType) {
+      await Logger.logUserActions({
+        actionType: actionType,
+        actionView: this.currentRouteName,
+        args: {},
+      });
     },
   },
   mounted() {

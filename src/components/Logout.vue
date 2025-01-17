@@ -19,11 +19,16 @@
  */
 import authService from "@/services/Auth.js";
 import userStateService from "@/services/UserState.js";
+import Logger from "../services/Logger";
+
 export default {
   name: "Logout",
   computed: {
     loggedIn() {
       return this.$store.state.user;
+    },
+    currentRouteName() {
+      return this.$route.name;
     },
   },
   methods: {
@@ -34,6 +39,11 @@ export default {
         this.$store.state,
         this.$axios
       );
+      await Logger.logUserActions({
+        actionType: "logout",
+        actionView: this.currentRouteName,
+        args: {},
+      });
       authService.netsbloxLogout();
       this.$store.dispatch("removeCredentials");
     },
