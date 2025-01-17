@@ -157,7 +157,7 @@ export default {
       } else if (lastKnown === "EE") {
         // restricting the home button to eeland and EE for users in EE group.
         this.$router.push("/eeLand");
-      } else if (lastKnown === "Engineering") {
+      } else if (lastKnown === "Engineering" && !userClass.includes("SPICE")) {
         this.$router.push("/land");
       } else if (
         userClass.includes("SPICE") ||
