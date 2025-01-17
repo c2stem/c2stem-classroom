@@ -18,6 +18,7 @@ import SpiceLanding from "../views/spice/SpiceLand.vue";
 import ConstructLanding from "../views/ConstructLand.vue";
 import DashboardHome from "../views/visualize/DashboardHome.vue";
 import DashboardProjects from "../views/visualize/DashboardProjects.vue";
+import Logger from "../services/Logger";
 
 import UploadDocs from "../views/UploadDocs.vue";
 
@@ -198,7 +199,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const loggedIn = sessionStorage.getItem("user");
   const userRole = sessionStorage.getItem("userRole");
   const userClass = sessionStorage.getItem("userClass");
@@ -210,16 +211,48 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title || "C2STEM";
   }
 
+  if (!from.name) {
+    from.name = "Unknown";
+  }
+
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
+    await Logger.logUserActions({
+      actionType: "changeView",
+      actionView: to.name,
+      args: {
+        source: to.name,
+        destination: to.name,
+        redirection: "Home",
+        message: "User is not logged in. Redirecting to Home.",
+      },
+    });
     next("/");
   }
   if (userRole && userRole.includes("admin")) {
+    await Logger.logUserActions({
+      actionType: "changeView",
+      actionView: from.name,
+      args: {
+        source: from.name,
+        destination: to.name,
+        redirection: "None",
+      },
+    });
     next();
   } else if (
     userClass &&
     userClass.includes("SPICE") &&
     spiceGroup.includes(to.name)
   ) {
+    await Logger.logUserActions({
+      actionType: "changeView",
+      actionView: from.name,
+      args: {
+        source: from.name,
+        destination: to.name,
+        redirection: "None",
+      },
+    });
     next();
   } else {
     if (to.name === "Landing") {
@@ -227,8 +260,26 @@ router.beforeEach((to, from, next) => {
         if (typeof from.name === "undefined") {
           router.back();
         } else if (from.name.includes("IE")) {
+          await Logger.logUserActions({
+            actionType: "changeView",
+            actionView: from.name,
+            args: {
+              source: from.name,
+              destination: to.name,
+              redirection: "IELanding",
+            },
+          });
           router.push("/ieland");
         } else if (from.name.includes("EE")) {
+          await Logger.logUserActions({
+            actionType: "changeView",
+            actionView: from.name,
+            args: {
+              source: from.name,
+              destination: to.name,
+              redirection: "EELanding",
+            },
+          });
           router.push("/eeland");
         }
       }

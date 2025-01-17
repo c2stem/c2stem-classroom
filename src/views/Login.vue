@@ -42,6 +42,7 @@ import auth from "../services/Auth.js";
 import nav from "../services/Navigation.js";
 import Token from "../services/Token";
 import AlertBox from "../components/AlertBox.vue";
+import Logger from "../services/Logger";
 export default {
   components: { AlertBox },
   data() {
@@ -57,6 +58,9 @@ export default {
     isActive() {
       return this.cardActive;
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
   },
   methods: {
     /**
@@ -71,14 +75,26 @@ export default {
           username: this.username,
           password: this.password,
         })
-        .then(({ data }) => {
+        .then(async ({ data }) => {
           if (data.message) {
             this.cardActive = true;
             this.alertMessage = data.message;
+            await Logger.logUserActions({
+              username: this.username,
+              actionType: "login",
+              actionView: this.currentRouteName,
+              args: { status: data.message },
+            });
             return;
           } else if (data.token) {
             this.cardActive = true;
             this.alertMessage = "User found. Logging in...";
+            await Logger.logUserActions({
+              username: this.username,
+              actionType: "login",
+              actionView: this.currentRouteName,
+              args: { status: "successful" },
+            });
           }
           auth
             .netsbloxLogin({
