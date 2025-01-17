@@ -9,7 +9,7 @@
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="cmise-project-engineering"
+            projectname="cmise-project-engineering-game"
             :embed="true"
           ></iframe-loader>
         </div>

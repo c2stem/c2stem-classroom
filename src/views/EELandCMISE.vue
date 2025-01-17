@@ -17,24 +17,36 @@ export default {
   },
   data() {
     return {
-      names: ["Alicia's model", "Ben's Model"],
-      description: ["", ""],
-      route: ["EE", "EE"],
+      names: ["Lesson 6", "Lesson 7", "Lesson 8", "Lesson 9"],
+      description: ["", "", "", ""],
+      route: ["EE", "EE", "EE", "EE"],
       routeParams: [
         {
-          name: "Alicia's model",
+          name: "EE: Lesson 6",
           userID: "oele",
-          projectName: "cmise-project-lesson9-explore",
+          projectName: "cmise-project-lesson6-explore",
           source: "https://editor.c2stem.org",
         },
         {
-          name: "Ben's Model",
+          name: "EE: Lesson 7",
           userID: "oele",
           projectName: "cmise-project-lesson7-EE-task2",
           source: "https://editor.c2stem.org",
         },
+        {
+          name: "EE: Lesson 8",
+          userID: "oele",
+          projectName: "cmise-project-lesson8-explore",
+          source: "https://editor.c2stem.org",
+        },
+        {
+          name: "EE: Lesson 9",
+          userID: "oele",
+          projectName: "cmise-project-lesson9-explore",
+          source: "https://editor.c2stem.org",
+        },
       ],
-      engineering: false,
+      engineering: true,
     };
   },
 };

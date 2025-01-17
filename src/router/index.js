@@ -19,6 +19,7 @@ import ConstructLanding from "../views/ConstructLand.vue";
 import DashboardHome from "../views/visualize/DashboardHome.vue";
 import DashboardProjects from "../views/visualize/DashboardProjects.vue";
 import Logger from "../services/Logger";
+import EDMap from "../views/EDMap.vue";
 
 import UploadDocs from "../views/UploadDocs.vue";
 
@@ -186,6 +187,12 @@ const routes = [
     name: "UploadDocs",
     component: UploadDocs,
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Upload" },
+  },
+  {
+    path: "/edMap",
+    name: "EDMap",
+    component: EDMap,
+    meta: { requiresAuth: true, class: "SPICE", title: "SPICE | ED" },
   },
   {
     path: "/:NotFound(.*)",
