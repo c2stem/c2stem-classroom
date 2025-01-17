@@ -120,6 +120,7 @@
 import auth from "../services/Auth.js";
 import AlertBox from "../components/AlertBox.vue";
 import FileHandler from "../components/FileHandler.vue";
+import Logger from "../services/Logger";
 
 export default {
   components: {
@@ -162,10 +163,18 @@ export default {
           group: this.group,
           teacher: this.teacher,
         })
-        .then(() => {
+        .then(async () => {
           this.cardActive = true;
           this.alertMessage =
             " User: " + this.username + " has been registered.";
+          await Logger.logUserActions({
+            actionType: "register",
+            actionView: "Register",
+            args: {
+              registeredUser: this.username,
+              status: "successful",
+            },
+          });
         })
         .catch((error) => {
           this.cardActive = true;

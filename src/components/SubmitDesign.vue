@@ -4,6 +4,7 @@
     class="btn btn-success custom-btn-size"
     data-bs-toggle="modal"
     data-bs-target="#submitDesign"
+    @click="logAction('openSubmitModal')"
   >
     Submit
   </button>
@@ -33,6 +34,7 @@
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
+            @click="logAction('closeSubmitModal')"
           >
             Close
           </button>
@@ -47,6 +49,7 @@
 <script>
 import Simulation from "../services/Simulation";
 import { Modal } from "bootstrap";
+import Logger from "../services/Logger";
 export default {
   name: "SubmitDesign",
   data() {
@@ -80,17 +83,23 @@ export default {
     testHistoryLength() {
       return this.$store.getters.getthLength;
     },
+    getASTTreeRoots() {
+      return JSON.parse(window.sessionStorage.getItem("treeRoots"));
+    },
+    getASTBlocks() {
+      return JSON.parse(window.sessionStorage.getItem("blocks"));
+    },
   },
   methods: {
     async getEnggStageMaterials() {
       this.enggStageMaterials = await Simulation.getEngineeringStageMaterials();
     },
 
-    submitDesign() {
+    async submitDesign() {
       let submitDesign = {};
       if (this.currentRouteName === "Engineering") {
         if (this.historyLength > 0) {
-          this.getEnggStageMaterials();
+          await this.getEnggStageMaterials();
           this.checkedLength = this.getCheckedDesigns.length;
           this.favLength = this.getFavoriteDesigns.length;
           submitDesign["time"] = Date.now();
@@ -102,6 +111,14 @@ export default {
             this.designHistory[this.historyLength - 1];
           submitDesign["StageMaterials"] = this.enggStageMaterials;
           this.$store.dispatch("addSubmittedDesigns", submitDesign);
+          await Logger.logUserActions({
+            actionType: "submitDesign",
+            actionView: this.currentRouteName,
+            args: {
+              activity: "Engineering",
+              submittedDesign: submitDesign,
+            },
+          });
         }
       } else {
         if (this.testHistoryLength > 0) {
@@ -114,10 +131,27 @@ export default {
             this.getFavoriteDesigns[this.favLength - 1];
           submitDesign["testHistory"] =
             this.testHistory[this.testHistoryLength - 1];
+          submitDesign["ASTTreeRoots"] = this.getASTTreeRoots;
+          submitDesign["ASTBlocks"] = this.getASTBlocks;
           this.$store.dispatch("addSubmittedDesigns", submitDesign);
+          await Logger.logUserActions({
+            actionType: "submitDesign",
+            actionView: this.currentRouteName,
+            args: {
+              activity: "Computational Modelling",
+              submittedDesign: submitDesign,
+            },
+          });
         }
       }
       this.myModal.hide();
+    },
+    async logAction(actionType) {
+      await Logger.logUserActions({
+        actionType: actionType,
+        actionView: this.currentRouteName,
+        args: {},
+      });
     },
   },
   mounted() {

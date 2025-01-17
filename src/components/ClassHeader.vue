@@ -96,6 +96,7 @@ import Formatter from "../helpers/format.js";
 import Simulation from "../services/Simulation";
 import Reset from "./ResetProject.vue";
 import simulation from "../services/Simulation";
+import Logger from "../services/Logger";
 
 export default {
   name: "ClassHeader",
@@ -125,6 +126,13 @@ export default {
     async saveProject() {
       try {
         let name = this.getProjectName;
+        await Logger.logUserActions({
+          actionType: "saveProject",
+          actionView: this.currentRouteName,
+          args: {
+            projectName: name,
+          },
+        });
         Simulation.saveToCloud(name);
         // let checkList = this.getCheckedDesigns;
         // let username = this.loggedIn;

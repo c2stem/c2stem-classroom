@@ -26,6 +26,8 @@ import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
 import SubmitDesign from "./SubmitDesign.vue";
+import Logger from "../services/Logger";
+
 export default {
   name: "Simulation Panel",
   components: {
@@ -45,6 +47,9 @@ export default {
     },
     currentRouteName() {
       return this.$route.name;
+    },
+    getProjectName() {
+      return sessionStorage.getItem("projectName");
     },
   },
   methods: {
@@ -71,6 +76,14 @@ export default {
      * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
+      await Logger.logUserActions({
+        actionType: "runModel",
+        actionView: this.currentRouteName,
+        args: {
+          activity: "Engineering",
+          projectName: this.getProjectName,
+        },
+      });
       simulation.runProject(event);
       this.sleep(10000).then(() => {
         this.processDesignData();

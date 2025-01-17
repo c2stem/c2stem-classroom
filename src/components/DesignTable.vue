@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import Logger from "../services/Logger";
 export default {
   /**
    * Design Table component
@@ -112,14 +113,21 @@ export default {
      *
      * @param {Integer} i Index of the clicked design.
      * @param {Event} e Event from the checkbox.
-     */
-    check(i, e) {
+     */ async check(i, e) {
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayChecks", {
           index: i,
           status: e.target.checked,
         });
       } else {
+        await Logger.logUserActions({
+          actionType: "checkBoxToggled",
+          actionView: this.currentRouteName,
+          args: {
+            checkboxIndex: i,
+            status: e.target.checked,
+          },
+        });
         this.$store.dispatch("updateCheckedDesigns", {
           index: i,
           status: e.target.checked,
@@ -127,13 +135,21 @@ export default {
       }
     },
 
-    toggleStar(i, status) {
+    async toggleStar(i, status) {
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayFavs", {
           index: i,
           status: status,
         });
       } else {
+        await Logger.logUserActions({
+          actionType: "starToggled",
+          actionView: this.currentRouteName,
+          args: {
+            checkboxIndex: i,
+            status: status,
+          },
+        });
         this.$store.dispatch("updateFavoriteDesign", {
           index: i,
           status: status,

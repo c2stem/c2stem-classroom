@@ -5,6 +5,7 @@
     data-bs-toggle="modal"
     data-bs-target="#ResetModal"
     aria-hidden="true"
+    @click="logAction('openResetModal')"
   >
     Reset
   </button>
@@ -61,6 +62,7 @@
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
+            @click="logAction('closeResetModal')"
           >
             Close
           </button>
@@ -73,6 +75,7 @@
 import Auth from "../services/Auth.js";
 import simulationService from "../services/Simulation.js";
 import AlertBox from "../components/AlertBox.vue";
+import Logger from "../services/Logger";
 export default {
   name: "ResetProject",
   components: {
@@ -94,39 +97,64 @@ export default {
     projectName() {
       return sessionStorage.getItem("projectName");
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
   },
   methods: {
+    async logAction(actionType, status) {
+      if (status) {
+        await Logger.logUserActions({
+          actionType: actionType,
+          actionView: this.currentRouteName,
+          args: {
+            projectName: this.getProjectName,
+            status: status,
+          },
+        });
+      } else {
+        await Logger.logUserActions({
+          actionType: actionType,
+          actionView: this.currentRouteName,
+          args: {},
+        });
+      }
+    },
     resetProject() {
       Auth.login({ username: this.username, password: this.password })
-        .then(({ data }) => {
+        .then(async ({ data }) => {
           let role = JSON.stringify(data.role)
             .toLowerCase()
             .replace(/["]+/g, "");
           if (this.allowedRoles.includes(role)) {
             simulationService
               .deleteProjectByName(this.projectName)
-              .then((response) => {
+              .then(async (response) => {
                 if (response) {
                   simulationService
                     .projectExists(this.projectName)
-                    .then((response) => {
+                    .then(async (response) => {
                       if (response) {
                         this.cardActive = true;
                         this.alertMessage = "Reset failed try again";
+                        await this.logAction("restProject", "unSuccessful");
                       } else {
                         this.cardActive = true;
                         this.alertMessage = "Reset successful";
+                        await this.logAction("restProject", "successful");
                         this.$router.go();
                       }
                     });
                 } else {
                   this.cardActive = true;
                   this.alertMessage = "Reset failed: Could not reset";
+                  await this.logAction("restProject", "unSuccessful");
                 }
               });
           } else {
             this.cardActive = true;
             this.alertMessage = "Reset failed: No access";
+            await this.logAction("restProject", "unSuccessful");
           }
         })
         .catch((err) => {
