@@ -20,7 +20,9 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="submitDesignLabel">Submit Design</h1>
+          <h1 class="modal-title fs-5" id="submitDesignLabel">
+            {{ getSubmitHeader }}
+          </h1>
           <button
             type="button"
             class="btn-close"
@@ -28,7 +30,7 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">Do you want to submit your current design?</div>
+        <div class="modal-body">{{ getSubmitDescription }}</div>
         <div class="modal-footer">
           <button
             type="button"
@@ -52,6 +54,11 @@ import { Modal } from "bootstrap";
 import Logger from "../services/Logger";
 export default {
   name: "SubmitDesign",
+  props: {
+    designIndex: {
+      type: Number,
+    },
+  },
   data() {
     return {
       enggStageMaterials: {},
@@ -83,16 +90,30 @@ export default {
     testHistoryLength() {
       return this.$store.getters.getthLength;
     },
-    getASTTreeRoots() {
-      return JSON.parse(window.sessionStorage.getItem("treeRoots"));
+    getSubmitDescription() {
+      if (this.currentRouteName === "Engineering") {
+        return "Do you want to submit your current design?";
+      } else {
+        return "Do you want to submit your current MOdel?";
+      }
     },
-    getASTBlocks() {
-      return JSON.parse(window.sessionStorage.getItem("blocks"));
+    getSubmitHeader() {
+      if (this.currentRouteName === "Engineering") {
+        return "Submit Design";
+      } else {
+        return "Submit Model";
+      }
     },
   },
   methods: {
     async getEnggStageMaterials() {
       this.enggStageMaterials = await Simulation.getEngineeringStageMaterials();
+    },
+    getASTTreeRoots() {
+      return JSON.parse(window.sessionStorage.getItem("treeRoots"));
+    },
+    getASTBlocks() {
+      return JSON.parse(window.sessionStorage.getItem("blocks"));
     },
 
     async submitDesign() {
@@ -131,8 +152,8 @@ export default {
             this.getFavoriteDesigns[this.favLength - 1];
           submitDesign["testHistory"] =
             this.testHistory[this.testHistoryLength - 1];
-          submitDesign["ASTTreeRoots"] = this.getASTTreeRoots;
-          submitDesign["ASTBlocks"] = this.getASTBlocks;
+          submitDesign["ASTTreeRoots"] = this.getASTTreeRoots();
+          submitDesign["ASTBlocks"] = this.getASTBlocks();
           this.$store.dispatch("addSubmittedDesigns", submitDesign);
           await Logger.logUserActions({
             actionType: "submitDesign",

@@ -19,7 +19,12 @@
       </thead>
       <tbody>
         <!-- loop over the list of designs and add checkboxes -->
-        <tr v-for="(content, index) in contents" :key="index">
+        <tr
+          v-for="(content, index) in contents"
+          :key="index"
+          @mouseover="submitFinalDesign(index, $event)"
+          @mouseleave="submitFinalDesign(index, $event)"
+        >
           <td v-if="favorite.length" class="table-warning">
             <button
               v-if="favorite[index]"
@@ -54,6 +59,19 @@
               @change="check(index, $event)"
             />
           </td>
+          <td>
+            <p
+              v-if="
+                currentRouteName === 'Engineering' &&
+                index === submitCheckedIndex
+              "
+              data-bs-toggle="tooltip"
+              data-bs-placement="left"
+              title="Submit your Final Design"
+            >
+              <SubmitDesign :designIndex="index" />
+            </p>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -61,7 +79,9 @@
 </template>
 
 <script>
+import { vModelCheckbox } from "vue";
 import Logger from "../services/Logger";
+import SubmitDesign from "./SubmitDesign.vue";
 export default {
   /**
    * Design Table component
@@ -73,6 +93,16 @@ export default {
       </design-table>
    */
   name: "Table",
+  components: {
+    SubmitDesign,
+  },
+  data() {
+    return {
+      // submitCheckedList: [],
+      submitCheckedIndex: -1,
+      checkStatus: vModelCheckbox,
+    };
+  },
   props: {
     /**
      * The Array list of header names
@@ -113,7 +143,8 @@ export default {
      *
      * @param {Integer} i Index of the clicked design.
      * @param {Event} e Event from the checkbox.
-     */ async check(i, e) {
+     */
+    async check(i, e) {
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayChecks", {
           index: i,
@@ -171,6 +202,14 @@ export default {
         return "table-success";
       }
     },
+
+    submitFinalDesign(i, status) {
+      if (status.type === "mouseover") {
+        this.submitCheckedIndex = i;
+      } else {
+        this.submitCheckedIndex = -1;
+      }
+    },
   },
 };
 </script>
@@ -191,7 +230,7 @@ thead {
 }
 th,
 td {
-  padding: 0.2rem !important;
+  padding: 0.1rem !important;
   vertical-align: middle;
 }
 p,
