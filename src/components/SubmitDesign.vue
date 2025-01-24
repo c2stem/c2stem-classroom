@@ -31,6 +31,37 @@
           ></button>
         </div>
         <div class="modal-body">{{ getSubmitDescription }}</div>
+        <table
+          v-if="currentRouteName === 'Engineering'"
+          class="table table-hover table-bordered"
+        >
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Cost</th>
+              <th>Rainfall</th>
+              <th>Absorption</th>
+              <th>Runoff</th>
+              <th>concrete</th>
+              <th>permeable concrete</th>
+              <th>grass</th>
+              <th>wood chips</th>
+              <th>artificial turf</th>
+              <th>poured rubber</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                v-for="(item, i) in getDHSummary"
+                :key="i"
+                class="table-success"
+              >
+                {{ item }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div class="modal-footer">
           <button
             type="button"
@@ -52,6 +83,7 @@
 import Simulation from "../services/Simulation";
 import { Modal } from "bootstrap";
 import Logger from "../services/Logger";
+
 export default {
   name: "SubmitDesign",
   props: {
@@ -105,6 +137,10 @@ export default {
       }
     },
     getDHSummary() {
+      if (this.currentRouteName === "Engineering") {
+        let dhs = this.$store.getters.getDesignHistorySummary;
+        return dhs[this.designIndex].designHistory;
+      }
       return this.$store.getters.getDesignHistorySummary;
     },
   },
@@ -122,23 +158,8 @@ export default {
     async submitDesign() {
       let submitDesign = {};
       if (this.currentRouteName === "Engineering") {
-        // if (this.historyLength > 0) {
-        //   await this.getEnggStageMaterials();
-        //   this.checkedLength = this.getCheckedDesigns.length;
-        //   this.favLength = this.getFavoriteDesigns.length;
-        //   submitDesign["time"] = Date.now();
-        //   submitDesign["checkedStatus"] =
-        //     this.getCheckedDesigns[this.checkedLength - 1];
-        //   submitDesign["favouriteStatus"] =
-        //     this.getFavoriteDesigns[this.favLength - 1];
-        //   submitDesign["designHistory"] =
-        //     this.designHistory[this.historyLength - 1];
-        //   submitDesign["StageMaterials"] = this.enggStageMaterials;
-        //   this.$store.dispatch("addSubmittedDesigns", submitDesign);
-        // }
         let dhSummary = this.$store.getters.getDesignHistorySummary;
-        let selectedDesign = dhSummary[this.designIndex];
-        submitDesign = selectedDesign;
+        submitDesign = dhSummary[this.designIndex];
         this.$store.dispatch("addSubmittedDesigns", submitDesign);
         await Logger.logUserActions({
           actionType: "submitDesign",
@@ -192,10 +213,18 @@ export default {
   background: rgba(0, 0, 0, 0.5);
 }
 .modal-dialog {
-  width: 40%;
+  width: fit-content;
   margin-top: 10%;
+}
+.modal-content {
+  width: fit-content;
 }
 .custom-btn-size {
   font-size: large;
+}
+th,
+td {
+  text-align: center;
+  vertical-align: middle;
 }
 </style>
