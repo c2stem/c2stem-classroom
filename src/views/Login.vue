@@ -113,34 +113,37 @@ export default {
                 let syncflowData = await auth.initializeSyncFLow(data.username);
                 if (syncflowData) {
                   console.log(syncflowData);
-                  const livekitRoom = new Room({
-                    // automatically manage subscribed video quality
-                    adaptiveStream: true,
+                  try {
+                    const livekitRoom = new Room({
+                      // automatically manage subscribed video quality
+                      adaptiveStream: true,
 
-                    // optimize publishing bandwidth and CPU for published tracks
-                    dynacast: true,
+                      // optimize publishing bandwidth and CPU for published tracks
+                      dynacast: true,
 
-                    // default capture settings
-                    videoCaptureDefaults: {
-                      resolution: VideoPresets.h1080.resolution,
-                    },
-                    stopLocalTrackOnUnpublish: true,
-                  });
-                  livekitRoom.prepareConnection(
-                    syncflowData.livekitServerUrl,
-                    syncflowData.token
-                  );
-                  // Add awaits in sequence
-                  await livekitRoom.connect(
-                    syncflowData.livekitServerUrl,
-                    syncflowData.token
-                  );
-                  await livekitRoom.localParticipant.enableCameraAndMicrophone();
-                  await livekitRoom.localParticipant.setScreenShareEnabled(
-                    true
-                  );
+                      // default capture settings
+                      videoCaptureDefaults: {
+                        resolution: VideoPresets.h1080.resolution,
+                      },
+                      stopLocalTrackOnUnpublish: true,
+                    });
+                    livekitRoom.prepareConnection(
+                      syncflowData.livekitServerUrl,
+                      syncflowData.token
+                    );
+                    // Add awaits in sequence
+                    await livekitRoom.connect(
+                      syncflowData.livekitServerUrl,
+                      syncflowData.token
+                    );
+                    await livekitRoom.localParticipant.enableCameraAndMicrophone();
+                    await livekitRoom.localParticipant.setScreenShareEnabled(
+                      true
+                    );
+                  } catch (err) {
+                    console.log(err);
+                  }
                 }
-
                 this.$store.dispatch("updateStore", data.username);
                 this.$store.dispatch("saveCredentials", data).then(() => {
                   const reRoute = nav.routeByClassOnLogin(data);
