@@ -147,7 +147,7 @@ import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
 import Instructions from "./Instructions.vue";
 import Logger from "../services/Logger";
-
+import Simulation from "../services/Simulation";
 export default {
   name: "EngineeringDisplayPanel",
   components: {
@@ -166,7 +166,6 @@ export default {
         "rainfall",
         "absorption",
         "runoff",
-        "accessible squares",
         "concrete",
         "permeable concrete",
         "grass",
@@ -174,6 +173,7 @@ export default {
         "artificial turf",
         "poured rubber",
         "compare",
+        "submit",
       ],
       compareHeader: [
         "Stage",
@@ -303,12 +303,12 @@ export default {
             }
           );
           this.$store.dispatch("addDesignHistory", dhList);
-          if (this.getFavoriteDesigns.length === 0) {
-            this.$store.dispatch("addFavoriteDesigns", favList);
-          }
-          if (this.getCheckedDesigns.length === 0) {
-            this.$store.dispatch("addCheckedDesigns", checkList);
-          }
+          // if (this.getFavoriteDesigns.length === 0) {
+          this.$store.dispatch("addFavoriteDesigns", favList);
+          // }
+          // if (this.getCheckedDesigns.length === 0) {
+          this.$store.dispatch("addCheckedDesigns", checkList);
+          // }
         }
         let logDh = [];
         if (dhList.length > 0) {
@@ -334,6 +334,17 @@ export default {
         args: {},
       });
     },
+
+    async addDSummary() {
+      let dhs = {};
+      let dh = await visualize.getData();
+      let dhIndex = Object.keys(dh).length;
+      dhs["designHistory"] = dh[dhIndex];
+      dhs["checkStatus"] = false;
+      dhs["favoriteStatus"] = false;
+      dhs["stageMaterials"] = await Simulation.getEngineeringStageMaterials();
+      this.$store.dispatch("addDesignHistorySummary", dhs);
+    },
   },
   mounted() {
     /**
@@ -343,9 +354,11 @@ export default {
       packages: ["table", "corechart", "line"],
     });
 
-    this.emitter.on("update-data", (evt) => {
+    this.emitter.on("update-data", async (evt) => {
       if (evt.status) {
         this.generateTable();
+        await Simulation.saveToCloud(this.getProjectName);
+        this.addDSummary();
       }
     });
   },

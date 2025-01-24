@@ -56,7 +56,7 @@ export default {
   name: "SubmitDesign",
   props: {
     designIndex: {
-      type: Number,
+      type: [Number, String],
     },
   },
   data() {
@@ -92,9 +92,9 @@ export default {
     },
     getSubmitDescription() {
       if (this.currentRouteName === "Engineering") {
-        return "Do you want to submit your current design?";
+        return "Do you want to submit the selected design?";
       } else {
-        return "Do you want to submit your current MOdel?";
+        return "Do you want to submit your current Model?";
       }
     },
     getSubmitHeader() {
@@ -103,6 +103,9 @@ export default {
       } else {
         return "Submit Model";
       }
+    },
+    getDHSummary() {
+      return this.$store.getters.getDesignHistorySummary;
     },
   },
   methods: {
@@ -119,28 +122,32 @@ export default {
     async submitDesign() {
       let submitDesign = {};
       if (this.currentRouteName === "Engineering") {
-        if (this.historyLength > 0) {
-          await this.getEnggStageMaterials();
-          this.checkedLength = this.getCheckedDesigns.length;
-          this.favLength = this.getFavoriteDesigns.length;
-          submitDesign["time"] = Date.now();
-          submitDesign["checkedStatus"] =
-            this.getCheckedDesigns[this.checkedLength - 1];
-          submitDesign["favouriteStatus"] =
-            this.getFavoriteDesigns[this.favLength - 1];
-          submitDesign["designHistory"] =
-            this.designHistory[this.historyLength - 1];
-          submitDesign["StageMaterials"] = this.enggStageMaterials;
-          this.$store.dispatch("addSubmittedDesigns", submitDesign);
-          await Logger.logUserActions({
-            actionType: "submitDesign",
-            actionView: this.currentRouteName,
-            args: {
-              activity: "Engineering",
-              submittedDesign: submitDesign,
-            },
-          });
-        }
+        // if (this.historyLength > 0) {
+        //   await this.getEnggStageMaterials();
+        //   this.checkedLength = this.getCheckedDesigns.length;
+        //   this.favLength = this.getFavoriteDesigns.length;
+        //   submitDesign["time"] = Date.now();
+        //   submitDesign["checkedStatus"] =
+        //     this.getCheckedDesigns[this.checkedLength - 1];
+        //   submitDesign["favouriteStatus"] =
+        //     this.getFavoriteDesigns[this.favLength - 1];
+        //   submitDesign["designHistory"] =
+        //     this.designHistory[this.historyLength - 1];
+        //   submitDesign["StageMaterials"] = this.enggStageMaterials;
+        //   this.$store.dispatch("addSubmittedDesigns", submitDesign);
+        // }
+        let dhSummary = this.$store.getters.getDesignHistorySummary;
+        let selectedDesign = dhSummary[this.designIndex];
+        submitDesign = selectedDesign;
+        this.$store.dispatch("addSubmittedDesigns", submitDesign);
+        await Logger.logUserActions({
+          actionType: "submitDesign",
+          actionView: this.currentRouteName,
+          args: {
+            activity: "Engineering",
+            submittedDesign: submitDesign,
+          },
+        });
       } else {
         if (this.testHistoryLength > 0) {
           this.checkedLength = this.getCheckedDesigns.length;

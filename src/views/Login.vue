@@ -109,7 +109,7 @@ export default {
               if (response) {
                 data.username = this.username;
                 Token.setAccessToken(data.token);
-                this.$store.dispatch("updateStore", this.username);
+                this.$store.dispatch("updateStore", data.username);
                 this.$store.dispatch("saveCredentials", data).then(() => {
                   const reRoute = nav.routeByClassOnLogin(data);
                   this.$router.push({ name: reRoute });

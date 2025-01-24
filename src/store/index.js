@@ -18,6 +18,8 @@ const store = createStore({
     playFavStatus: [],
     simulationPlayStageImages: [],
     submittedDesigns: [],
+    designHistorySummary: {},
+    designHistorySummaryLength: 0,
   },
   mutations: {
     initializeStorage(state) {
@@ -119,7 +121,6 @@ const store = createStore({
     },
     async updateStore(state, user) {
       let response = await userStateService.gerUserState(
-        this.$axios,
         user.replaceAll('"', "")
       );
       if (response.length === 0) {
@@ -128,6 +129,9 @@ const store = createStore({
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
+        newState.designHistorySummary = response[0].designHistorySummary;
+        newState.designHistorySummaryLength =
+          response[0].designHistorySummaryLength;
         sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
@@ -170,6 +174,19 @@ const store = createStore({
     },
     addSubmittedDesigns(state, data) {
       state.submittedDesigns.push(data);
+    },
+    addDesignHistorySummary(state, designSummary) {
+      state.designHistorySummary[state.designHistorySummaryLength] =
+        designSummary;
+      state.designHistorySummaryLength += 1;
+
+      // state.designHistoryLength += design.length;
+    },
+    updateDHSummaryCheck(state, data) {
+      state.designHistorySummary[data.index].checkStatus = data.status;
+    },
+    updateDHSummaryFavorite(state, data) {
+      state.designHistorySummary[data.index].favoriteStatus = data.status;
     },
   },
   getters: {
@@ -247,6 +264,12 @@ const store = createStore({
     getSubmittedDesigns(state) {
       return state.submittedDesigns;
     },
+    getdhsLength(state) {
+      return state.designHistorySummaryLength;
+    },
+    getDesignHistorySummary(state) {
+      return state.designHistorySummary;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -311,6 +334,15 @@ const store = createStore({
     },
     addSubmittedDesigns(context, data) {
       context.commit("addSubmittedDesigns", data);
+    },
+    addDesignHistorySummary(context, designSummary) {
+      context.commit("addDesignHistorySummary", designSummary);
+    },
+    updateDHSummaryCheck(context, data) {
+      context.commit("updateDHSummaryCheck", data);
+    },
+    updateDHSummaryFavorite(context, data) {
+      context.commit("updateDHSummaryFavorite", data);
     },
   },
   modules: {},

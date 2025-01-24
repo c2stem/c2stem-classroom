@@ -249,7 +249,7 @@ export default {
             childObj["Absorption (inches)"] = await this.getTotalAbsorption();
             childObj[header[j]] = childContent[j];
           }
-        } else if (j !== 0 && j !== 12) {
+        } else if (j !== 0 && j !== 12 && j !== 5) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -389,7 +389,7 @@ export default {
    * */
   isDesignFormatted(designHistory) {
     const index = Object.keys(designHistory[0]).indexOf("rainfall");
-    return index === 3;
+    return index === 2;
   },
 
   /**
@@ -402,7 +402,6 @@ export default {
       "rainfall",
       "absorption",
       "runoff",
-      "accessible squares",
       "concrete",
       "permeable concrete",
       "grass",
@@ -417,6 +416,8 @@ export default {
       for (let j = 0; j < header.length; j++) {
         if (j === 0) {
           childObj[header[j]] = designHistory[i][NaN];
+        } else if (header[j].includes("absorption")) {
+          childObj[header[j]] = designHistory[i]["Absorption (inches)"];
         } else {
           childObj[header[j]] = designHistory[i][header[j]];
         }

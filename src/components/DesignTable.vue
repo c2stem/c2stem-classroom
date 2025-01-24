@@ -63,7 +63,7 @@
             <p
               v-if="
                 currentRouteName === 'Engineering' &&
-                index === submitCheckedIndex
+                index.includes(submitCheckedIndex)
               "
               data-bs-toggle="tooltip"
               data-bs-placement="left"
@@ -99,7 +99,7 @@ export default {
   data() {
     return {
       // submitCheckedList: [],
-      submitCheckedIndex: -1,
+      submitCheckedIndex: 0,
       checkStatus: vModelCheckbox,
     };
   },
@@ -163,6 +163,10 @@ export default {
           index: i,
           status: e.target.checked,
         });
+        this.$store.dispatch("updateDHSummaryCheck", {
+          index: i,
+          status: e.target.checked,
+        });
       }
     },
 
@@ -182,6 +186,10 @@ export default {
           },
         });
         this.$store.dispatch("updateFavoriteDesign", {
+          index: i,
+          status: status,
+        });
+        this.$store.dispatch("updateDHSummaryFavorite", {
           index: i,
           status: status,
         });
@@ -207,7 +215,7 @@ export default {
       if (status.type === "mouseover") {
         this.submitCheckedIndex = i;
       } else {
-        this.submitCheckedIndex = -1;
+        this.submitCheckedIndex = 0;
       }
     },
   },

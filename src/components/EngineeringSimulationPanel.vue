@@ -9,9 +9,6 @@
     <div class="p-1 bd-highlight">
       <see-code />
     </div>
-    <div class="ms-auto p-1 bd-highlight">
-      <submit-design />
-    </div>
   </div>
 </template>
 
@@ -25,14 +22,12 @@
 import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
-import SubmitDesign from "./SubmitDesign.vue";
 import Logger from "../services/Logger";
 
 export default {
   name: "Simulation Panel",
   components: {
     SeeCode,
-    SubmitDesign,
   },
   data() {
     return {

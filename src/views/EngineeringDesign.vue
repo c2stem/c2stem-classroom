@@ -9,7 +9,7 @@
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="cmise-project-engineering-game"
+            projectname="cmise-project-engineering-gamification"
             :embed="true"
           ></iframe-loader>
         </div>
@@ -81,6 +81,7 @@ export default {
     return {
       loadStatus: false,
       background: "static",
+      projectSaved: true,
     };
   },
   computed: {
@@ -93,17 +94,37 @@ export default {
   },
   methods: {
     saveProject() {
+      this.projectSaved = true;
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {
       return sessionStorage.getItem("user");
     },
   },
+  beforeRouteLeave(to, from, next) {
+    if (this.projectSaved) {
+      next();
+    } else {
+      const answer = window.confirm(
+        "Do you really want to leave? you have unsaved changes!"
+      );
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    }
+  },
   mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
+    this.emitter.on("update-data", (evt) => {
+      if (evt.status) {
+        this.projectSaved = false;
+      }
+    });
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
       api.addEventListener("action", (e) => {
