@@ -50,7 +50,7 @@ export default {
 
   async initializeSyncFLow(username) {
     try {
-      return axios.post("https://sharer-local.syncflow.live/api/token?", {
+      return axios.get("https://sharer-local.syncflow.live/api/token?", {
         params: { identity: username },
       });
     } catch (error) {
