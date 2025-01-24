@@ -43,7 +43,13 @@ import nav from "../services/Navigation.js";
 import Token from "../services/Token";
 import AlertBox from "../components/AlertBox.vue";
 import Logger from "../services/Logger";
-import { Room, VideoPresets } from "livekit-client";
+import {
+  AudioPresets,
+  createLocalAudioTrack,
+  Room,
+  Track,
+  VideoPresets,
+} from "livekit-client";
 export default {
   components: { AlertBox },
   data() {
@@ -110,40 +116,24 @@ export default {
               if (response) {
                 data.username = this.username;
                 Token.setAccessToken(data.token);
-                let syncflowData = await auth.initializeSyncFLow(data.username);
-                if (syncflowData) {
-                  console.log(syncflowData);
-                  try {
-                    const livekitRoom = new Room({
-                      // automatically manage subscribed video quality
-                      adaptiveStream: true,
-
-                      // optimize publishing bandwidth and CPU for published tracks
-                      dynacast: true,
-
-                      // default capture settings
-                      videoCaptureDefaults: {
-                        resolution: VideoPresets.h1080.resolution,
-                      },
-                      stopLocalTrackOnUnpublish: true,
-                    });
-                    livekitRoom.prepareConnection(
-                      syncflowData.livekitServerUrl,
-                      syncflowData.token
-                    );
-                    // Add awaits in sequence
-                    await livekitRoom.connect(
-                      syncflowData.livekitServerUrl,
-                      syncflowData.token
-                    );
-                    await livekitRoom.localParticipant.enableCameraAndMicrophone();
-                    await livekitRoom.localParticipant.setScreenShareEnabled(
-                      true
-                    );
-                  } catch (err) {
-                    console.log(err);
-                  }
+                // let syncflowData = await auth.initializeSyncFLow(data.username);
+                // if (syncflowData) {
+                //   console.log(syncflowData);
+                try {
+                  await this.tryAndPublish(data.username);
+                  // // Add awaits in sequence
+                  // await LivekitRoom.connect(
+                  //   syncflowData.livekitServerUrl,
+                  //   syncflowData.token
+                  // );
+                  // await LivekitRoom.localParticipant.enableCameraAndMicrophone();
+                  // await LivekitRoom.localParticipant.setScreenShareEnabled(
+                  //   true
+                  // );
+                } catch (err) {
+                  console.log(err);
                 }
+                // }
                 this.$store.dispatch("updateStore", data.username);
                 this.$store.dispatch("saveCredentials", data).then(() => {
                   const reRoute = nav.routeByClassOnLogin(data);
@@ -158,6 +148,150 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    async tryAndPublish(identity) {
+      const tokenResponse = await fetch(
+        `https://sharer-local.syncflow.live/api/token?identity=${identity}`
+      );
+
+      if (!tokenResponse.status === 200) {
+        return;
+      }
+
+      const tokenDetails = await tokenResponse.json();
+      const videoDevices = await Room.getLocalDevices("videoinput");
+      const audioDevices = await Room.getLocalDevices("audioinput");
+
+      const selectedMics = audioDevices.filter((audioDevice) => {
+        console.log(audioDevice.kind);
+        console.log(
+          audioDevice.label.toLowerCase().includes("realtek"),
+          "isjack"
+        );
+        console.log(audioDevice.label.toLowerCase().includes("usb"), "isusb");
+
+        if (
+          audioDevice.deviceId === "default" ||
+          audioDevice.deviceId === "communications"
+        ) {
+          return false;
+        }
+
+        return (
+          audioDevice.label.toLowerCase().includes("realtek") ||
+          audioDevice.label.toLowerCase().includes("usb") ||
+          audioDevice.label.toLowerCase().includes("cirrus")
+        );
+      });
+
+      const selectedCamera = videoDevices.find(
+        (videoDevice) =>
+          videoDevice.id !== "default" &&
+          videoDevice.label.toLowerCase().includes("integrated")
+      );
+
+      let videoDeviceId = "default";
+
+      if (selectedCamera) {
+        videoDeviceId = selectedCamera.deviceId;
+      }
+
+      const room = new Room({
+        adaptiveStream: true,
+        dynacast: true,
+        videoCaptureDefaults: {
+          resolution: VideoPresets.h1080.resolution,
+        },
+        audioCaptureDefaults: {
+          sampleRate: AudioPresets.musicHighQuality.maxBitRate,
+        },
+        publishDefaults: {
+          videoCodec: "h264",
+          audioPreset: AudioPresets.MusicHighQuality,
+        },
+        stopLocalTrackOnUnpublish: true,
+      });
+
+      await room.connect(tokenDetails.livekitServerUrl, tokenDetails.token);
+
+      // eslint-disable-next-line no-unused-vars
+      const publication = await room.localParticipant.setScreenShareEnabled(
+        true,
+        {
+          contentHint: "detail",
+          audio: false,
+          resolution: VideoPresets.h1080.resolution,
+          video: { displaySurface: "monitor" },
+        },
+        {
+          videoCodec: "h264",
+          name: `${tokenDetails.identity}'s-screen`,
+          simulcast: true,
+        }
+      );
+
+      // eslint-disable-next-line no-unused-vars
+      const cameraPublication = await room.localParticipant.setCameraEnabled(
+        true,
+        {
+          deviceId: videoDeviceId,
+          resolution: VideoPresets.h1080.resolution,
+        },
+        {
+          videoCodec: "h264",
+          name: `${tokenDetails.identity}-screen`,
+        }
+      );
+
+      const publishedMics = await Promise.all(
+        selectedMics.map((dev) => this.publishAudioTrack(room, dev))
+      );
+
+      try {
+        await fetch(
+          `https://sharer-local.syncflow.live/api/publication_record`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              identity: identity,
+              sessionName: room.name,
+              mics: publishedMics,
+            }),
+          }
+        );
+      } catch {
+        console.log("error");
+      }
+    },
+
+    async publishAudioTrack(room, audioDevice) {
+      const localAudioTrack = await createLocalAudioTrack({
+        deviceId: audioDevice.deviceId,
+        sampleRate: AudioPresets.musicHighQuality.maxBitrate,
+        channelCount: 1,
+      });
+
+      const publication = await room.localParticipant.publishTrack(
+        localAudioTrack,
+        {
+          audioPreset: AudioPresets.musicHighQuality,
+          dtx: false,
+          red: false,
+          source: Track.Source.Microphone,
+          name: `${audioDevice.label}-microphone`,
+        }
+      );
+
+      return {
+        publicationSid:
+          publication.trackSid || publication.trackInfo?.sid || "",
+        deviceId: audioDevice.deviceId,
+        deviceName: `${audioDevice.label}`,
+        kind: "audio",
+      };
     },
   },
   mounted() {

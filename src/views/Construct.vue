@@ -50,6 +50,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
 import ASTController from "../services/AST/ASTController";
 import { Modal } from "bootstrap";
+// import LivekitRoom from "../services/livekitRoom";
 // import simulation from "../services/Simulation.js";
 
 export default {
@@ -87,6 +88,11 @@ export default {
     getUser() {
       return sessionStorage.getItem("user");
     },
+    // publishActions(action) {
+    //   const encoder = new TextEncoder();
+    //   const data = encoder.encode(action);
+    //   LivekitRoom.localParticipant.publishData(data, { reliable: false });
+    // },
   },
   mounted() {
     /**
@@ -107,6 +113,7 @@ export default {
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
       api.addEventListener("action", (e) => {
+        // this.publishActions(e.detail);
         if (e.detail.type === "openProject") {
           this.loadStatus = true;
           myModal.hide();

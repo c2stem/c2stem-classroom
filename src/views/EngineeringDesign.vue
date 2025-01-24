@@ -100,6 +100,11 @@ export default {
     getUser() {
       return sessionStorage.getItem("user");
     },
+    // publishActions(action) {
+    //   const encoder = new TextEncoder();
+    //   const data = encoder.encode(action);
+    //   LivekitRoom.localParticipant.publishData(data, { reliable: false });
+    // },
   },
   beforeRouteLeave(to, from, next) {
     if (this.projectSaved) {
@@ -128,6 +133,7 @@ export default {
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
       api.addEventListener("action", (e) => {
+        // this.publishActions(e.detail);
         if (e.detail.type === "openProject") {
           this.loadStatus = true;
           myModal.hide();
