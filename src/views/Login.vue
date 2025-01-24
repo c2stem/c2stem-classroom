@@ -43,6 +43,7 @@ import nav from "../services/Navigation.js";
 import Token from "../services/Token";
 import AlertBox from "../components/AlertBox.vue";
 import Logger from "../services/Logger";
+import { Room, VideoPresets } from "livekit-client";
 export default {
   components: { AlertBox },
   data() {
@@ -105,10 +106,41 @@ export default {
             .catch((err) => {
               console.log(err);
             })
-            .then((response) => {
+            .then(async (response) => {
               if (response) {
                 data.username = this.username;
                 Token.setAccessToken(data.token);
+                let syncflowData = await auth.initializeSyncFLow(data.username);
+                if (syncflowData) {
+                  console.log(syncflowData);
+                  const livekitRoom = new Room({
+                    // automatically manage subscribed video quality
+                    adaptiveStream: true,
+
+                    // optimize publishing bandwidth and CPU for published tracks
+                    dynacast: true,
+
+                    // default capture settings
+                    videoCaptureDefaults: {
+                      resolution: VideoPresets.h1080.resolution,
+                    },
+                    stopLocalTrackOnUnpublish: true,
+                  });
+                  livekitRoom.prepareConnection(
+                    syncflowData.livekitServerUrl,
+                    syncflowData.token
+                  );
+                  // Add awaits in sequence
+                  await livekitRoom.connect(
+                    syncflowData.livekitServerUrl,
+                    syncflowData.token
+                  );
+                  await livekitRoom.localParticipant.enableCameraAndMicrophone();
+                  await livekitRoom.localParticipant.setScreenShareEnabled(
+                    true
+                  );
+                }
+
                 this.$store.dispatch("updateStore", data.username);
                 this.$store.dispatch("saveCredentials", data).then(() => {
                   const reRoute = nav.routeByClassOnLogin(data);

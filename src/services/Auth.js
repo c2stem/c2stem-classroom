@@ -1,5 +1,6 @@
 import { enc, SHA512 } from "crypto-js";
 import axiosInstance from "./Axios";
+import axios from "axios";
 
 export default {
   login(credentials) {
@@ -45,6 +46,16 @@ export default {
     request.open("POST", serverUrl + "/api/logout", true);
     request.withCredentials = true;
     return this._requestPromise(request);
+  },
+
+  async initializeSyncFLow(username) {
+    try {
+      return axios.post("https://sharer-local.syncflow.live/api/token?", {
+        params: { identity: username },
+      });
+    } catch (error) {
+      return error;
+    }
   },
 
   _requestPromise(request, data) {
