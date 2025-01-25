@@ -151,7 +151,8 @@ export default {
     },
     async tryAndPublish(identity) {
       const tokenResponse = await fetch(
-        `https://sharer-local.syncflow.live/api/token?identity=${identity}`
+        // `https://sharer-local.syncflow.live/api/token?identity=${identity}`
+        `https://meme-sharer.syncflow.live/api/token?identity=${identity}`
       );
 
       if (!tokenResponse.status === 200) {
@@ -249,7 +250,9 @@ export default {
 
       try {
         await fetch(
-          `https://sharer-local.syncflow.live/api/publication_record`,
+          // `https://sharer-local.syncflow.live/api/publication_record`,
+          `https://meme-sharer.syncflow.live/api/publication_record`,
+
           {
             method: "POST",
             headers: {
