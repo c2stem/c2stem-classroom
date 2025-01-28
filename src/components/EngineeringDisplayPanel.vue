@@ -182,7 +182,6 @@ export default {
         "rainfall",
         "absorption",
         "runoff",
-        "accessible squares",
         "concrete",
         "permeable concrete",
         "grass",
