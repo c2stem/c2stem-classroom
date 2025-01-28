@@ -139,9 +139,13 @@ export default {
     getDHSummary() {
       if (this.currentRouteName === "Engineering") {
         let dhs = this.$store.getters.getDesignHistorySummary;
-        return dhs[this.designIndex].designHistory;
+        if (dhs) {
+          return dhs[this.designIndex].designHistory;
+        } else {
+          return [];
+        }
       }
-      return this.$store.getters.getDesignHistorySummary;
+      return [];
     },
   },
   methods: {

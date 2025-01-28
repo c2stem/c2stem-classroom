@@ -18,12 +18,33 @@
           </div>
           <div class="mb-3">
             <label for="passwordId" class="form-label">Password</label>
-            <input
-              v-model="password"
-              type="password"
-              class="form-control"
-              id="passwordId"
-            />
+            <div class="input-group">
+              <input
+                v-if="showPassword"
+                v-model="password"
+                type="text"
+                class="form-control"
+                id="passwordId"
+              />
+              <input
+                v-else
+                v-model="password"
+                type="password"
+                class="form-control"
+                id="passwordId"
+              />
+              <button class="button" type="button" @click="toggleShow">
+                <span class="icon is-small is-right">
+                  <i
+                    class="bi"
+                    :class="{
+                      'bi-eye-slash-fill': showPassword,
+                      'bi-eye-fill': !showPassword,
+                    }"
+                  ></i>
+                </span>
+              </button>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
@@ -59,6 +80,7 @@ export default {
       ServerURL: "https://editor.c2-stem.org",
       cardActive: false,
       alertMessage: "",
+      showPassword: false,
     };
   },
   computed: {
@@ -295,6 +317,10 @@ export default {
         deviceName: `${audioDevice.label}`,
         kind: "audio",
       };
+    },
+
+    toggleShow() {
+      this.showPassword = !this.showPassword;
     },
   },
   mounted() {

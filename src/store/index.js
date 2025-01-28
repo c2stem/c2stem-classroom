@@ -129,9 +129,18 @@ const store = createStore({
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
-        newState.designHistorySummary = response[0].designHistorySummary;
-        newState.designHistorySummaryLength =
-          response[0].designHistorySummaryLength;
+        if (response[0].designHistorySummary) {
+          newState.designHistorySummary = response[0].designHistorySummary;
+        } else {
+          newState.designHistorySummary = {};
+        }
+        if (response[0].designHistorySummaryLength) {
+          newState.designHistorySummaryLength =
+            response[0].designHistorySummaryLength;
+        } else {
+          newState.designHistorySummaryLength = 0;
+        }
+
         sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
