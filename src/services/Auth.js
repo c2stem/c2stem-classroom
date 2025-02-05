@@ -41,7 +41,7 @@ export default {
   },
 
   netsbloxLogout() {
-    const serverUrl = "https://physdev.c2stem.org";
+    const serverUrl = "https://editor.c2-stem.org";
     const request = new XMLHttpRequest();
     request.open("POST", serverUrl + "/api/logout", true);
     request.withCredentials = true;

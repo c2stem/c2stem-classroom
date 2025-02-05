@@ -65,6 +65,7 @@ export default {
       loading: false,
       loadStatus: false,
       background: "static",
+      projectSaved: false,
     };
   },
   computed: {
@@ -75,14 +76,23 @@ export default {
       return this.background;
     },
   },
-  beforeRouteLeave() {
-    const answer = window.confirm(
-      "Do you really want to leave? you have unsaved changes!"
-    );
-    if (!answer) return false;
+  beforeRouteLeave(to, from, next) {
+    if (this.projectSaved) {
+      next();
+    } else {
+      const answer = window.confirm(
+        "Do you really want to leave? you have unsaved changes!"
+      );
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    }
   },
   methods: {
     saveProject() {
+      this.projectSaved = true;
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {

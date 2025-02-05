@@ -81,7 +81,7 @@ export default {
     return {
       loadStatus: false,
       background: "static",
-      projectSaved: true,
+      projectSaved: false,
     };
   },
   computed: {
