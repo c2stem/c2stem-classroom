@@ -69,6 +69,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
 import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
 import { Modal } from "bootstrap";
+import LiveKit from "../services/LiveKit";
 
 export default {
   name: "Engineering",
@@ -90,6 +91,9 @@ export default {
     },
     backroundStatus() {
       return this.background;
+    },
+    getLiveKitRoom() {
+      return this.$store.getters.getLiveKitRoom;
     },
   },
   methods: {
@@ -120,7 +124,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
@@ -140,6 +144,19 @@ export default {
         }
       });
     };
+    try {
+      let roomLiveKit = this.getLiveKitRoom;
+      let localParticipantDevices =
+        roomLiveKit.localParticipant.activeDeviceMap.size;
+      if (!localParticipantDevices) {
+        await LiveKit.tryAndPublish(
+          this.getUser().replaceAll('"', ""),
+          this.$store
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 </script>

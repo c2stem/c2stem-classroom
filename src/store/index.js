@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import userStateService from "@/services/UserState.js";
+import { Room } from "livekit-client";
 
 const store = createStore({
   state: {
@@ -20,6 +21,7 @@ const store = createStore({
     submittedDesigns: [],
     designHistorySummary: {},
     designHistorySummaryLength: 0,
+    livekitRoom: Room,
   },
   mutations: {
     initializeStorage(state) {
@@ -197,6 +199,9 @@ const store = createStore({
     updateDHSummaryFavorite(state, data) {
       state.designHistorySummary[data.index].favoriteStatus = data.status;
     },
+    addLivekitRoom(state, data) {
+      state.livekitRoom = data.room;
+    },
   },
   getters: {
     /**
@@ -279,6 +284,9 @@ const store = createStore({
     getDesignHistorySummary(state) {
       return state.designHistorySummary;
     },
+    getLiveKitRoom(state) {
+      return state.livekitRoom;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -352,6 +360,9 @@ const store = createStore({
     },
     updateDHSummaryFavorite(context, data) {
       context.commit("updateDHSummaryFavorite", data);
+    },
+    addLivekitRoom(context, data) {
+      context.commit("addLivekitRoom", data);
     },
   },
   modules: {},

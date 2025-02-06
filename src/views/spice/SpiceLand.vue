@@ -9,6 +9,7 @@
 
 <script>
 import LessonCard from "../../components/LessonCard.vue";
+import LiveKit from "../../services/LiveKit";
 export default {
   name: "SpiceLanding",
   components: {
@@ -31,6 +32,31 @@ export default {
       route: ["EDMap", "EELanding", "Construct", "Engineering"],
       engineering: false,
     };
+  },
+  computed: {
+    getLiveKitRoom() {
+      return this.$store.getters.getLiveKitRoom;
+    },
+  },
+  methods: {
+    getUser() {
+      return sessionStorage.getItem("user");
+    },
+  },
+  async mounted() {
+    try {
+      let roomLiveKit = this.getLiveKitRoom;
+      let localParticipantDevices =
+        roomLiveKit.localParticipant.activeDeviceMap.size;
+      if (!localParticipantDevices) {
+        await LiveKit.tryAndPublish(
+          this.getUser().replaceAll('"', ""),
+          this.$store
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 </script>

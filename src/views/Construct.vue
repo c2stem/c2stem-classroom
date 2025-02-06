@@ -50,6 +50,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
 import ASTController from "../services/AST/ASTController";
 import { Modal } from "bootstrap";
+import LiveKit from "../services/LiveKit";
 // import LivekitRoom from "../services/livekitRoom";
 // import simulation from "../services/Simulation.js";
 
@@ -74,6 +75,9 @@ export default {
     },
     backroundStatus() {
       return this.background;
+    },
+    getLiveKitRoom() {
+      return this.$store.getters.getLiveKitRoom;
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -104,7 +108,7 @@ export default {
     //   LivekitRoom.localParticipant.publishData(data, { reliable: false });
     // },
   },
-  mounted() {
+  async mounted() {
     /**
      * Import Google Library.
      */
@@ -132,6 +136,15 @@ export default {
         }
       });
     };
+    let roomLiveKit = this.getLiveKitRoom;
+    let localParticipantDevices =
+      roomLiveKit.localParticipant.activeDeviceMap.size;
+    if (!localParticipantDevices) {
+      await LiveKit.tryAndPublish(
+        this.getUser().replaceAll('"', ""),
+        this.$store
+      );
+    }
   },
 };
 </script>
