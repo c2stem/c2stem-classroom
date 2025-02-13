@@ -140,7 +140,8 @@ export default {
       if (this.currentRouteName === "Engineering") {
         let dhs = this.$store.getters.getDesignHistorySummary;
         if (dhs) {
-          return dhs[this.designIndex].designHistory;
+          return this.filterSummary(dhs, this.designIndex);
+          // return dhs[this.designIndex].designHistory;
         } else {
           return [];
         }
@@ -205,6 +206,19 @@ export default {
         actionView: this.currentRouteName,
         args: {},
       });
+    },
+    filterSummary(summary, index) {
+      index = Number(index) + 1;
+      let newSummary = {};
+      Object.keys(summary).forEach((key) => {
+        if (summary[key].designHistory) {
+          let designDT = summary[key].designHistory["NaN"];
+          let designNumber = designDT.split(".")[0];
+          if (!(designNumber in newSummary))
+            newSummary[designNumber] = summary[key].designHistory;
+        }
+      });
+      return newSummary[String(index)] ? newSummary[String(index)] : [];
     },
   },
   mounted() {
