@@ -50,6 +50,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
 import ASTController from "../services/AST/ASTController";
 import { Modal } from "bootstrap";
+import LiveKit from "../services/LiveKit";
 // import LivekitRoom from "../services/livekitRoom";
 // import simulation from "../services/Simulation.js";
 
@@ -65,6 +66,7 @@ export default {
       loading: false,
       loadStatus: false,
       background: "static",
+      projectSaved: false,
     };
   },
   computed: {
@@ -74,15 +76,27 @@ export default {
     backroundStatus() {
       return this.background;
     },
+    getLiveKitRoom() {
+      return this.$store.getters.getLiveKitRoom;
+    },
   },
-  beforeRouteLeave() {
-    const answer = window.confirm(
-      "Do you really want to leave? you have unsaved changes!"
-    );
-    if (!answer) return false;
+  beforeRouteLeave(to, from, next) {
+    if (this.projectSaved) {
+      next();
+    } else {
+      const answer = window.confirm(
+        "Do you really want to leave? you have unsaved changes!"
+      );
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    }
   },
   methods: {
     saveProject() {
+      this.projectSaved = true;
       this.emitter.emit("save-project", { status: true });
     },
     getUser() {
@@ -94,7 +108,7 @@ export default {
     //   LivekitRoom.localParticipant.publishData(data, { reliable: false });
     // },
   },
-  mounted() {
+  async mounted() {
     /**
      * Import Google Library.
      */
@@ -122,6 +136,15 @@ export default {
         }
       });
     };
+    let roomLiveKit = this.getLiveKitRoom;
+    let localParticipantDevices =
+      roomLiveKit.localParticipant.activeDeviceMap.size;
+    if (!localParticipantDevices) {
+      await LiveKit.tryAndPublish(
+        this.getUser().replaceAll('"', ""),
+        this.$store
+      );
+    }
   },
 };
 </script>

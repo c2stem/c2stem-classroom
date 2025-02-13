@@ -65,6 +65,7 @@ import IframeLoader from "../components/IframeLoader.vue";
 import DisplayPanel from "../components/DisplayPanel.vue";
 import SimulationPanel from "../components/SimulationPanel.vue";
 import { Modal } from "bootstrap";
+import LiveKit from "../services/LiveKit";
 
 export default {
   components: {
@@ -89,6 +90,9 @@ export default {
     backroundStatus() {
       return this.background;
     },
+    getLiveKitRoom() {
+      return this.$store.getters.getLiveKitRoom;
+    },
   },
   methods: {
     saveProject() {
@@ -98,7 +102,7 @@ export default {
       return sessionStorage.getItem("user");
     },
   },
-  mounted() {
+  async mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
@@ -112,6 +116,19 @@ export default {
         }
       });
     };
+    try {
+      let roomLiveKit = this.getLiveKitRoom;
+      let localParticipantDevices =
+        roomLiveKit.localParticipant.activeDeviceMap.size;
+      if (!localParticipantDevices) {
+        await LiveKit.tryAndPublish(
+          this.getUser().replaceAll('"', ""),
+          this.$store
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 </script>
