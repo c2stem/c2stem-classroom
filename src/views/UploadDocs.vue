@@ -1,6 +1,6 @@
 <template>
   <iframe
-    src="https://vanderbilt.app.box.com/f/e20c775671a747e0a2b3dbc44229dfe9"
+    src="https://vanderbilt.app.box.com/f/e6e7c55970a74933be339805c74296b7"
     sandbox="allow-scripts
     allow-same-origin"
     height="100%"

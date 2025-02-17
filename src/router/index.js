@@ -186,7 +186,7 @@ const routes = [
     path: "/upload",
     name: "UploadDocs",
     component: UploadDocs,
-    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Upload" },
+    meta: { requiresAuth: false, class: "CMISE", title: "C2STEM | Upload" },
   },
   {
     path: "/edMap",
