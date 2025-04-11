@@ -11,7 +11,8 @@ export default {
   name: "LiveKit",
   async tryAndPublish(identity, store) {
     const tokenResponse = await fetch(
-      `https://sharer-local.syncflow.live/api/token?identity=${identity}`
+      `https://sharer.syncflow.live/api/token?identity=${identity}`
+      // `https://sharer-local.syncflow.live/api/token?identity=${identity}`
       // `https://mime-sharer.syncflow.live/api/token?identity=${identity}`
     );
 
@@ -41,6 +42,7 @@ export default {
       return (
         audioDevice.label.toLowerCase().includes("realtek") ||
         audioDevice.label.toLowerCase().includes("usb") ||
+        audioDevice.label.toLowerCase().includes("cirrus") ||
         audioDevice.label.toLowerCase().includes("cirrus")
       );
     });
@@ -115,7 +117,7 @@ export default {
 
     try {
       await fetch(
-        `https://sharer-local.syncflow.live/api/publication_record`,
+        `https://sharer.syncflow.live/api/publication_record`,
         // `https://mime-sharer.syncflow.live/api/publication_record`,
 
         {
