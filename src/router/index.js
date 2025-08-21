@@ -104,7 +104,7 @@ const routes = [
     component: EELanding,
     meta: {
       requiresAuth: true,
-      class: "SPICE",
+      class: "CMISE",
       title: "C2STEM | EE Landing",
       group: "EE",
     },
@@ -126,7 +126,7 @@ const routes = [
     component: EE,
     meta: {
       requiresAuth: true,
-      class: "SPICE",
+      class: "CMISE",
       title: "C2STEM | EE",
       group: "EE",
     },
@@ -137,7 +137,7 @@ const routes = [
     component: Construct,
     meta: {
       requiresAuth: true,
-      class: "SPICE",
+      class: "CMISE",
       title: "C2STEM | Construct",
       group: "Construct",
     },
@@ -168,7 +168,7 @@ const routes = [
     path: "/engineering",
     name: "Engineering",
     component: EngineeringDesign,
-    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | Engineering" },
+    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Engineering" },
   },
   {
     path: "/spiceLand",

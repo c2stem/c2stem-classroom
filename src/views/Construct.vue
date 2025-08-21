@@ -74,12 +74,12 @@ export default {
       return this.background;
     },
   },
-  beforeRouteLeave() {
-    const answer = window.confirm(
-      "Do you really want to leave? you have unsaved changes!"
-    );
-    if (!answer) return false;
-  },
+  // beforeRouteLeave() {
+  //   const answer = window.confirm(
+  //     "Do you really want to leave? you have unsaved changes!"
+  //   );
+  //   if (!answer) return false;
+  // },
   methods: {
     saveProject() {
       this.emitter.emit("save-project", { status: true });

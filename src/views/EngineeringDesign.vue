@@ -101,20 +101,20 @@ export default {
       return sessionStorage.getItem("user");
     },
   },
-  beforeRouteLeave(to, from, next) {
-    if (this.projectSaved) {
-      next();
-    } else {
-      const answer = window.confirm(
-        "Do you really want to leave? you have unsaved changes!"
-      );
-      if (answer) {
-        next();
-      } else {
-        next(false);
-      }
-    }
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   if (this.projectSaved) {
+  //     next();
+  //   } else {
+  //     const answer = window.confirm(
+  //       "Do you really want to leave? you have unsaved changes!"
+  //     );
+  //     if (answer) {
+  //       next();
+  //     } else {
+  //       next(false);
+  //     }
+  //   }
+  // },
   mounted() {
     const iframe = document.getElementById("iframe-id");
     const api = new window.EmbeddedNetsBloxAPI(iframe);

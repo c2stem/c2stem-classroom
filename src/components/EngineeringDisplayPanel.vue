@@ -357,8 +357,8 @@ export default {
     this.emitter.on("update-data", async (evt) => {
       if (evt.status) {
         this.generateTable();
-        await Simulation.saveToCloud(this.getProjectName);
-        this.addDSummary();
+        // await Simulation.saveToCloud(this.getProjectName);
+        // this.addDSummary();
       }
     });
   },
