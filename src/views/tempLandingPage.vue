@@ -16,9 +16,12 @@ export default {
   },
   data() {
     return {
-      names: ["Computational Model", "IE", "EE" ],
-      description: ["Complete your computational model lessons", "", ""],
-      route: ["Construct", "IELanding", "EELanding"],
+      names: ["Computational Model"],
+      description: ["Complete your computational model lessons"],
+      route: ["Construct"],
+      // names: ["Computational Model", "IE", "EE" ],
+      // description: ["Complete your computational model lessons", "", ""],
+      // route: ["Construct", "IELanding", "EELanding"],
       engineering: true,
     };
   },
