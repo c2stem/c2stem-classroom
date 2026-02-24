@@ -4,7 +4,16 @@
     <div class="row">
       <div class="col">
         <engineering-simulation-panel />
-        <div class="iframe-panel">
+        <div v-if="containsRouteParams" class="iframe-panel">
+          <iframe-loader
+            :source="source"
+            iframeid="iframe-id"
+            :username="userID"
+            :projectname="projectName"
+            :embed="true"
+          ></iframe-loader>
+        </div>
+        <div v-else class="iframe-panel">
           <iframe-loader
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
@@ -79,6 +88,10 @@ export default {
   },
   data() {
     return {
+      name: this.$route.params.name,
+      userID: this.$route.params.userID,
+      projectName: this.$route.params.projectName,
+      source: this.$route.params.source,
       loadStatus: false,
       background: "static",
       projectSaved: true,
@@ -90,6 +103,9 @@ export default {
     },
     backroundStatus() {
       return this.background;
+    },
+    containsRouteParams() {
+      return !!this.$route.params.name;
     },
   },
   methods: {

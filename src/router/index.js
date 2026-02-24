@@ -171,6 +171,12 @@ const routes = [
     meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Engineering" },
   },
   {
+    path: "/engineering-project/:name/:userID/:projectName/:source",
+    name: "EngineeringProject",
+    component: EngineeringDesign,
+    meta: { requiresAuth: true, class: "CMISE", title: "C2STEM | Engineering" },
+  },
+  {
     path: "/spiceLand",
     name: "SpiceLanding",
     component: SpiceLanding,
