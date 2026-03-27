@@ -16,20 +16,10 @@ export default {
   },
   data() {
     return {
-      names: [
-        "Science Lesson",
-        "Lesson 7",
-        "Computational Model",
-        "Engineering Design",
-      ],
-      description: [
-        "",
-        "",
-        "Complete your computational model lessons",
-        "Complete your engineering design lessons",
-      ],
-      route: ["EDMap", "EELanding", "Construct", "Engineering"],
-      engineering: false,
+      names: ["Computational Model"],
+      description: ["Complete your computational model lessons"],
+      route: ["Construct"],
+      engineering: true,
     };
   },
 };
