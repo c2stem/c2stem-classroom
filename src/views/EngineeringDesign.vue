@@ -18,7 +18,7 @@
             source="https://editor.c2-stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="spice-project-ED-gamification-DH"
+            projectname="UVA-ED-project"
             :embed="true"
           ></iframe-loader>
         </div>
@@ -133,23 +133,32 @@ export default {
   // },
   mounted() {
     const iframe = document.getElementById("iframe-id");
-    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    this._api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
-    this.emitter.on("update-data", (evt) => {
+    this._updateDataHandler = (evt) => {
       if (evt.status) {
         this.projectSaved = false;
       }
-    });
-    iframe.onload = () => {
-      api.addEventListener("projectSaved", this.saveProject);
-      api.addEventListener("action", (e) => {
-        if (e.detail.type === "openProject") {
-          this.loadStatus = true;
-          myModal.hide();
-        }
-      });
     };
+    this._actionHandler = (e) => {
+      if (e.detail.type === "openProject") {
+        this.loadStatus = true;
+        myModal.hide();
+      }
+    };
+    this.emitter.on("update-data", this._updateDataHandler);
+    iframe.onload = () => {
+      this._api.addEventListener("projectSaved", this.saveProject);
+      this._api.addEventListener("action", this._actionHandler);
+    };
+  },
+  beforeUnmount() {
+    this.emitter.off("update-data", this._updateDataHandler);
+    if (this._api) {
+      this._api.removeEventListener("projectSaved", this.saveProject);
+      this._api.removeEventListener("action", this._actionHandler);
+    }
   },
 };
 </script>

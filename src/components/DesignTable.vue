@@ -59,7 +59,8 @@
               @change="check(index, $event)"
             />
           </td>
-          <td>
+          <!-- Submit feature disabled -->
+          <!-- <td>
             <p
               v-if="
                 currentRouteName === 'Engineering' &&
@@ -71,7 +72,7 @@
             >
               <SubmitDesign :designIndex="index" />
             </p>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
@@ -81,7 +82,8 @@
 <script>
 import { vModelCheckbox } from "vue";
 import Logger from "../services/Logger";
-import SubmitDesign from "./SubmitDesign.vue";
+// Submit feature disabled
+// import SubmitDesign from "./SubmitDesign.vue";
 export default {
   /**
    * Design Table component
@@ -94,7 +96,7 @@ export default {
    */
   name: "Table",
   components: {
-    SubmitDesign,
+    // SubmitDesign, // Submit feature disabled
   },
   data() {
     return {
@@ -163,10 +165,11 @@ export default {
           index: i,
           status: e.target.checked,
         });
-        this.$store.dispatch("updateDHSummaryCheck", {
-          index: i,
-          status: e.target.checked,
-        });
+        // designHistorySummary feature disabled
+        // this.$store.dispatch("updateDHSummaryCheck", {
+        //   index: i,
+        //   status: e.target.checked,
+        // });
       }
     },
 
@@ -189,10 +192,11 @@ export default {
           index: i,
           status: status,
         });
-        this.$store.dispatch("updateDHSummaryFavorite", {
-          index: i,
-          status: status,
-        });
+        // designHistorySummary feature disabled
+        // this.$store.dispatch("updateDHSummaryFavorite", {
+        //   index: i,
+        //   status: status,
+        // });
       }
     },
 

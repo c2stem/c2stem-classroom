@@ -10,6 +10,8 @@
 </template>
 
 <script>
+// AST feature disabled -- action listener and tree logic commented out below
+/* AST_START
 function normalizeTree(root) {
   if (root.name === "reportGreaterThan") {
     root.name = "reportLessThan";
@@ -496,6 +498,7 @@ const actionListener = (action) => {
   window.sessionStorage.setItem("treeRoots", JSON.stringify(treeRoots));
   window.sessionStorage.setItem("actionList", JSON.stringify(actions));
 };
+AST_END */
 
 export default {
   name: "BuildEnv",
@@ -503,7 +506,8 @@ export default {
     let ifr_window = document.getElementById("iframe-id");
     this.api = new window.EmbeddedNetsBloxAPI(ifr_window);
     ifr_window.onload = () => {
-      this.api.addActionListener(actionListener);
+      // AST feature disabled
+      // this.api.addActionListener(actionListener);
       this.api.addEventListener("startScript", console.log);
     };
   },

@@ -6,7 +6,7 @@
       source="https://editor.c2-stem.org"
       iframeid="iframe-id"
       username="oele"
-      projectname="cmise-project-computational"
+      projectname="Chris Greene Lake Model"
       :embed="false"
     ></iframe-loader>
     <div
@@ -48,7 +48,8 @@
  */
 import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
-import ASTController from "../services/AST/ASTController";
+// AST feature disabled
+// import ASTController from "../services/AST/ASTController";
 import { Modal } from "bootstrap";
 // import simulation from "../services/Simulation.js";
 
@@ -95,26 +96,36 @@ export default {
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
-    const astController = new ASTController(
-      "blocks",
-      "treeRoots",
-      "actionList"
-    );
+    // AST feature disabled
+    // const astController = new ASTController(
+    //   "blocks",
+    //   "treeRoots",
+    //   "actionList"
+    // );
     const iframe = document.getElementById("iframe-id");
-    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    this._api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
-    iframe.onload = () => {
-      api.addEventListener("projectSaved", this.saveProject);
-      api.addEventListener("action", (e) => {
-        if (e.detail.type === "openProject") {
-          this.loadStatus = true;
-          myModal.hide();
-        } else {
-          astController.actionListener(e.detail);
-        }
-      });
+    this._actionHandler = (e) => {
+      if (e.detail.type === "openProject") {
+        this.loadStatus = true;
+        myModal.hide();
+      }
+      // AST feature disabled
+      // else {
+      //   astController.actionListener(e.detail);
+      // }
     };
+    iframe.onload = () => {
+      this._api.addEventListener("projectSaved", this.saveProject);
+      this._api.addEventListener("action", this._actionHandler);
+    };
+  },
+  beforeUnmount() {
+    if (this._api) {
+      this._api.removeEventListener("projectSaved", this.saveProject);
+      this._api.removeEventListener("action", this._actionHandler);
+    }
   },
 };
 </script>

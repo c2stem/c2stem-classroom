@@ -20,9 +20,10 @@
         <strong>{{ lessonName }}</strong>
       </h3>
     </div>
-    <div class="submit-button">
+    <!-- Submit feature disabled -->
+    <!-- <div class="submit-button">
       <submit-design />
-    </div>
+    </div> -->
     <div
       class="modal fade"
       id="TestHistoryModal"
@@ -71,14 +72,15 @@
 import simulation from "../services/Simulation";
 import visualize from "../services/Visualize";
 import DesignTable from "./DesignTable.vue";
-import SubmitDesign from "./SubmitDesign.vue";
+// Submit feature disabled
+// import SubmitDesign from "./SubmitDesign.vue";
 import Logger from "../services/Logger";
 
 export default {
   name: "Simulation Panel",
   components: {
     DesignTable,
-    SubmitDesign,
+    // SubmitDesign, // Submit feature disabled
   },
   props: {
     lessonName: {
@@ -97,6 +99,7 @@ export default {
         "Absorption limit (inches)",
         "Absorption (inches)",
         "Runoff (inches)",
+        "Total Pollution",
       ],
       activeTableContent: this.testHistory,
     };

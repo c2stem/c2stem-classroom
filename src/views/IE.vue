@@ -84,18 +84,25 @@ export default {
   },
   mounted() {
     const iframe = document.getElementById("iframe-id");
-    const api = new window.EmbeddedNetsBloxAPI(iframe);
+    this._api = new window.EmbeddedNetsBloxAPI(iframe);
     const myModal = new Modal(document.getElementById("loadModal"));
     myModal.show();
-    iframe.onload = () => {
-      api.addEventListener("projectSaved", this.saveProject);
-      api.addEventListener("action", (e) => {
-        if (e.detail.type === "openProject") {
-          this.loadStatus = true;
-          myModal.hide();
-        }
-      });
+    this._actionHandler = (e) => {
+      if (e.detail.type === "openProject") {
+        this.loadStatus = true;
+        myModal.hide();
+      }
     };
+    iframe.onload = () => {
+      this._api.addEventListener("projectSaved", this.saveProject);
+      this._api.addEventListener("action", this._actionHandler);
+    };
+  },
+  beforeUnmount() {
+    if (this._api) {
+      this._api.removeEventListener("projectSaved", this.saveProject);
+      this._api.removeEventListener("action", this._actionHandler);
+    }
   },
 };
 </script>

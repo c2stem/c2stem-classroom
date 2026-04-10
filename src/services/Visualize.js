@@ -249,7 +249,8 @@ export default {
             childObj["Absorption (inches)"] = await this.getTotalAbsorption();
             childObj[header[j]] = childContent[j];
           }
-        } else if (j !== 0 && j !== 12 && j !== 5) {
+          childObj[header[13]] = childContent[13];
+        } else if (j !== 0 && j !== 12 && j !== 5 && j !== 13) {
           childObj[header[j]] = childContent[j];
         }
       }

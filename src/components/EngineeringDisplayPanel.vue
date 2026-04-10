@@ -166,6 +166,7 @@ export default {
         "rainfall",
         "absorption",
         "runoff",
+        "total pollution",
         "concrete",
         "permeable concrete",
         "grass",
@@ -173,7 +174,7 @@ export default {
         "artificial turf",
         "poured rubber",
         "compare",
-        "submit",
+        // "submit", // Submit feature disabled
       ],
       compareHeader: [
         "Stage",
@@ -182,7 +183,7 @@ export default {
         "rainfall",
         "absorption",
         "runoff",
-        "accessible squares",
+        "total pollution",
         "concrete",
         "permeable concrete",
         "grass",
@@ -354,13 +355,17 @@ export default {
       packages: ["table", "corechart", "line"],
     });
 
-    this.emitter.on("update-data", async (evt) => {
+    this._updateDataHandler = async (evt) => {
       if (evt.status) {
         this.generateTable();
         // await Simulation.saveToCloud(this.getProjectName);
         // this.addDSummary();
       }
-    });
+    };
+    this.emitter.on("update-data", this._updateDataHandler);
+  },
+  beforeUnmount() {
+    this.emitter.off("update-data", this._updateDataHandler);
   },
 };
 </script>

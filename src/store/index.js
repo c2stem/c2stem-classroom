@@ -17,9 +17,10 @@ const store = createStore({
     playCheckedStatus: [],
     playFavStatus: [],
     simulationPlayStageImages: [],
-    submittedDesigns: [],
-    designHistorySummary: {},
-    designHistorySummaryLength: 0,
+    // submittedDesigns: [],
+    // designHistorySummary feature disabled
+    // designHistorySummary: {},
+    // designHistorySummaryLength: 0,
   },
   mutations: {
     initializeStorage(state) {
@@ -87,6 +88,9 @@ const store = createStore({
      * @param {Image} image stage image after running simulation.
      */
     addStageImage(state, image) {
+      if (state.simulationStageImages.length >= 50) {
+        state.simulationStageImages.shift();
+      }
       state.simulationStageImages.push(image);
     },
     /**
@@ -129,9 +133,9 @@ const store = createStore({
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
-        newState.designHistorySummary = response[0].designHistorySummary;
-        newState.designHistorySummaryLength =
-          response[0].designHistorySummaryLength;
+        // designHistorySummary feature disabled
+        // newState.designHistorySummary = response[0].designHistorySummary;
+        // newState.designHistorySummaryLength = response[0].designHistorySummaryLength;
         sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
@@ -164,6 +168,9 @@ const store = createStore({
       state.playFavStatus[data.index] = data.status;
     },
     addPlayStageImage(state, image) {
+      if (state.simulationPlayStageImages.length >= 50) {
+        state.simulationPlayStageImages.shift();
+      }
       state.simulationPlayStageImages.push(image);
     },
     resetCheckedDesigns(state) {
@@ -172,22 +179,20 @@ const store = createStore({
     resetFavoriteDesigns(state) {
       state.favoriteStatus = [];
     },
-    addSubmittedDesigns(state, data) {
-      state.submittedDesigns.push(data);
-    },
-    addDesignHistorySummary(state, designSummary) {
-      state.designHistorySummary[state.designHistorySummaryLength] =
-        designSummary;
-      state.designHistorySummaryLength += 1;
-
-      // state.designHistoryLength += design.length;
-    },
-    updateDHSummaryCheck(state, data) {
-      state.designHistorySummary[data.index].checkStatus = data.status;
-    },
-    updateDHSummaryFavorite(state, data) {
-      state.designHistorySummary[data.index].favoriteStatus = data.status;
-    },
+    // addSubmittedDesigns(state, data) {
+    //   state.submittedDesigns.push(data);
+    // },
+    // designHistorySummary feature disabled
+    // addDesignHistorySummary(state, designSummary) {
+    //   state.designHistorySummary[state.designHistorySummaryLength] = designSummary;
+    //   state.designHistorySummaryLength += 1;
+    // },
+    // updateDHSummaryCheck(state, data) {
+    //   state.designHistorySummary[data.index].checkStatus = data.status;
+    // },
+    // updateDHSummaryFavorite(state, data) {
+    //   state.designHistorySummary[data.index].favoriteStatus = data.status;
+    // },
   },
   getters: {
     /**
@@ -261,15 +266,16 @@ const store = createStore({
     getPlayFavs(state) {
       return state.playFavStatus;
     },
-    getSubmittedDesigns(state) {
-      return state.submittedDesigns;
-    },
-    getdhsLength(state) {
-      return state.designHistorySummaryLength;
-    },
-    getDesignHistorySummary(state) {
-      return state.designHistorySummary;
-    },
+    // getSubmittedDesigns(state) {
+    //   return state.submittedDesigns;
+    // },
+    // designHistorySummary feature disabled
+    // getdhsLength(state) {
+    //   return state.designHistorySummaryLength;
+    // },
+    // getDesignHistorySummary(state) {
+    //   return state.designHistorySummary;
+    // },
   },
   actions: {
     initializeStorage(context) {
@@ -332,18 +338,19 @@ const store = createStore({
     resetFavoriteDesigns(context) {
       context.commit("resetFavoriteDesigns");
     },
-    addSubmittedDesigns(context, data) {
-      context.commit("addSubmittedDesigns", data);
-    },
-    addDesignHistorySummary(context, designSummary) {
-      context.commit("addDesignHistorySummary", designSummary);
-    },
-    updateDHSummaryCheck(context, data) {
-      context.commit("updateDHSummaryCheck", data);
-    },
-    updateDHSummaryFavorite(context, data) {
-      context.commit("updateDHSummaryFavorite", data);
-    },
+    // addSubmittedDesigns(context, data) {
+    //   context.commit("addSubmittedDesigns", data);
+    // },
+    // designHistorySummary feature disabled
+    // addDesignHistorySummary(context, designSummary) {
+    //   context.commit("addDesignHistorySummary", designSummary);
+    // },
+    // updateDHSummaryCheck(context, data) {
+    //   context.commit("updateDHSummaryCheck", data);
+    // },
+    // updateDHSummaryFavorite(context, data) {
+    //   context.commit("updateDHSummaryFavorite", data);
+    // },
   },
   modules: {},
   // plugins: [vuexLocal.plugin],

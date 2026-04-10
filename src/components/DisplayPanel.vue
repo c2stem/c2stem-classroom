@@ -136,11 +136,15 @@ export default {
     },
   },
   mounted() {
-    this.emitter.on("update-data", (evt) => {
+    this._updateDataHandler = (evt) => {
       if (evt.status) {
         this.generateTable();
       }
-    });
+    };
+    this.emitter.on("update-data", this._updateDataHandler);
+  },
+  beforeUnmount() {
+    this.emitter.off("update-data", this._updateDataHandler);
   },
 };
 </script>

@@ -23,8 +23,9 @@ import EDMap from "../views/EDMap.vue";
 
 import UploadDocs from "../views/UploadDocs.vue";
 
-import AST from "../views/visualize/AST.vue";
-import List from "../views/visualize/List.vue";
+// AST feature disabled
+// import AST from "../views/visualize/AST.vue";
+// import List from "../views/visualize/List.vue";
 
 function islogin(to, from, next) {
   if (!sessionStorage.getItem("user")) {
@@ -86,18 +87,19 @@ const routes = [
     ],
     meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Dashboard" },
   },
-  {
-    path: "/visualize/ast",
-    name: "AST",
-    component: AST,
-    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | AST" },
-  },
-  {
-    path: "/visualize/list",
-    name: "Action View Representation",
-    component: List,
-    meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | List" },
-  },
+  // AST feature disabled
+  // {
+  //   path: "/visualize/ast",
+  //   name: "AST",
+  //   component: AST,
+  //   meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | AST" },
+  // },
+  // {
+  //   path: "/visualize/list",
+  //   name: "Action View Representation",
+  //   component: List,
+  //   meta: { requiresAuth: true, class: "SPICE", title: "C2STEM | List" },
+  // },
   {
     path: "/eeLand",
     name: "EELanding",
@@ -212,7 +214,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   const loggedIn = sessionStorage.getItem("user");
   const userRole = sessionStorage.getItem("userRole");
   const userClass = sessionStorage.getItem("userClass");
@@ -229,7 +231,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
-    await Logger.logUserActions({
+    Logger.logUserActions({
       actionType: "changeView",
       actionView: to.name,
       args: {
@@ -238,11 +240,11 @@ router.beforeEach(async (to, from, next) => {
         redirection: "Home",
         message: "User is not logged in. Redirecting to Home.",
       },
-    });
+    }).catch((e) => console.warn("Logger failed:", e));
     next("/");
   }
   if (userRole && userRole.includes("admin")) {
-    await Logger.logUserActions({
+    Logger.logUserActions({
       actionType: "changeView",
       actionView: from.name,
       args: {
@@ -250,14 +252,14 @@ router.beforeEach(async (to, from, next) => {
         destination: to.name,
         redirection: "None",
       },
-    });
+    }).catch((e) => console.warn("Logger failed:", e));
     next();
   } else if (
     userClass &&
     userClass.includes("SPICE") &&
     spiceGroup.includes(to.name)
   ) {
-    await Logger.logUserActions({
+    Logger.logUserActions({
       actionType: "changeView",
       actionView: from.name,
       args: {
@@ -265,7 +267,7 @@ router.beforeEach(async (to, from, next) => {
         destination: to.name,
         redirection: "None",
       },
-    });
+    }).catch((e) => console.warn("Logger failed:", e));
     next();
   } else {
     if (to.name === "Landing") {
@@ -273,7 +275,7 @@ router.beforeEach(async (to, from, next) => {
         if (typeof from.name === "undefined") {
           router.back();
         } else if (from.name.includes("IE")) {
-          await Logger.logUserActions({
+          Logger.logUserActions({
             actionType: "changeView",
             actionView: from.name,
             args: {
@@ -281,10 +283,10 @@ router.beforeEach(async (to, from, next) => {
               destination: to.name,
               redirection: "IELanding",
             },
-          });
+          }).catch((e) => console.warn("Logger failed:", e));
           router.push("/ieland");
         } else if (from.name.includes("EE")) {
-          await Logger.logUserActions({
+          Logger.logUserActions({
             actionType: "changeView",
             actionView: from.name,
             args: {
@@ -292,7 +294,7 @@ router.beforeEach(async (to, from, next) => {
               destination: to.name,
               redirection: "EELanding",
             },
-          });
+          }).catch((e) => console.warn("Logger failed:", e));
           router.push("/eeland");
         }
       }

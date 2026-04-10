@@ -20,8 +20,19 @@ export default {
       const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
       const stage = await api.getStageImage();
+      const compressed = await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.floor(img.width * 0.5);
+          canvas.height = Math.floor(img.height * 0.5);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.6));
+        };
+        img.src = stage;
+      });
       let image = new Image();
-      image.src = stage;
+      image.src = compressed;
       return image;
     } catch (error) {
       alert(error.message);

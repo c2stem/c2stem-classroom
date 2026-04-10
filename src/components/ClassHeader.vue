@@ -150,7 +150,7 @@ export default {
       const userRole = sessionStorage.getItem("userRole");
       const userGroup = sessionStorage.getItem("userGroup");
       const lastKnown = this.currentRouteName;
-      const spiceRoutes = ["SpiceLanding", "AST", "Action View Representation"];
+      const spiceRoutes = ["SpiceLanding"]; // AST feature disabled: removed "AST", "Action View Representation"
       if (lastKnown === "IE") {
         // restricting the home button to Ieland and IE for users in IE group.
         this.$router.push("/ieLand");
@@ -181,11 +181,15 @@ export default {
     },
   },
   mounted() {
-    this.emitter.on("save-project", (evt) => {
+    this._saveProjectHandler = (evt) => {
       if (evt.status) {
         Simulation.publishProject(this.getProjectName, true);
       }
-    });
+    };
+    this.emitter.on("save-project", this._saveProjectHandler);
+  },
+  beforeUnmount() {
+    this.emitter.off("save-project", this._saveProjectHandler);
   },
 };
 </script>

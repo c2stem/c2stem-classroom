@@ -164,7 +164,7 @@ export default {
     },
   },
   mounted() {
-    this.emitter.on("alert", (evt) => {
+    this._alertHandler = (evt) => {
       if (evt.data) {
         if (document.getElementById("alertID")) {
           document.getElementById("alertText").innerText = evt.data;
@@ -174,11 +174,17 @@ export default {
           this.cardActive = true;
         }
       }
-    });
-    this.emitter.on("close-alert", () => {
+    };
+    this._closeAlertHandler = () => {
       this.cardActive = false;
       this.alertMessage = "";
-    });
+    };
+    this.emitter.on("alert", this._alertHandler);
+    this.emitter.on("close-alert", this._closeAlertHandler);
+  },
+  beforeUnmount() {
+    this.emitter.off("alert", this._alertHandler);
+    this.emitter.off("close-alert", this._closeAlertHandler);
   },
 };
 </script>

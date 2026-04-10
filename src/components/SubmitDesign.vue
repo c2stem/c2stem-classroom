@@ -152,12 +152,13 @@ export default {
     async getEnggStageMaterials() {
       this.enggStageMaterials = await Simulation.getEngineeringStageMaterials();
     },
-    getASTTreeRoots() {
-      return JSON.parse(window.sessionStorage.getItem("treeRoots"));
-    },
-    getASTBlocks() {
-      return JSON.parse(window.sessionStorage.getItem("blocks"));
-    },
+    // AST feature disabled
+    // getASTTreeRoots() {
+    //   return JSON.parse(window.sessionStorage.getItem("treeRoots"));
+    // },
+    // getASTBlocks() {
+    //   return JSON.parse(window.sessionStorage.getItem("blocks"));
+    // },
 
     async submitDesign() {
       let submitDesign = {};
@@ -184,8 +185,9 @@ export default {
             this.getFavoriteDesigns[this.favLength - 1];
           submitDesign["testHistory"] =
             this.testHistory[this.testHistoryLength - 1];
-          submitDesign["ASTTreeRoots"] = this.getASTTreeRoots();
-          submitDesign["ASTBlocks"] = this.getASTBlocks();
+          // AST feature disabled
+          // submitDesign["ASTTreeRoots"] = this.getASTTreeRoots();
+          // submitDesign["ASTBlocks"] = this.getASTBlocks();
           this.$store.dispatch("addSubmittedDesigns", submitDesign);
           await Logger.logUserActions({
             actionType: "submitDesign",
