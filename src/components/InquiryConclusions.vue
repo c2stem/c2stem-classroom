@@ -58,7 +58,7 @@
 
       <!-- Save -->
       <div class="save-row">
-        <button class="save-btn" @click="saveResults">Save My Results</button>
+        <button class="btn btn-primary btn-lg" @click="saveResults">Save My Results</button>
       </div>
 
     </div>
@@ -234,19 +234,4 @@ p{
   margin-top: auto;
 }
 
-.save-btn {
-  background-color: #3a8a3a;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 40px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.save-btn:hover {
-  background-color: #2e6e2e;
-}
 </style>

@@ -63,7 +63,7 @@
         <InquiryHypothesis></InquiryHypothesis>
       </div>
       <div class="tab-pane" id="experiments" aria-labelledby="experiments-tab" role="tabpanel" tabindex="0">
-        <p class="text-muted">My Experiments content coming soon.</p>
+        <InquiryExperiments></InquiryExperiments>
       </div>
       <div class="tab-pane" id="findings" aria-labelledby="findings-tab" role="tabpanel" tabindex="0">
         <p class="text-muted">My Findings content coming soon.</p>
@@ -78,11 +78,13 @@
 <script>
 import InquiryHypothesis from "../components/InquiryHypothesis.vue";
 import InquiryConclusions from "../components/InquiryConclusions.vue";
+import InquiryExperiments from "../components/InquiryExperiments.vue";
 export default {
   name: "Inquiry",
   components: {
     InquiryHypothesis,
     InquiryConclusions,
+    InquiryExperiments,
   }
 }
 </script>
@@ -102,27 +104,31 @@ export default {
 }
 
 .inquiry-tabs .nav-link {
-  color: #444;
-  background-color: #e9ecef;
-  border: 1px solid #adb5bd;
-  border-radius: 20px;
-  padding: 6px 20px;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  transition: all 0.15s ease;
+  color: #fff;
+  background-color: #6c757d;
+  border: 1px solid #6c757d;
+  border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 400;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .inquiry-tabs .nav-link:hover {
-  background-color: #d0d6dd;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  background-color: #5c636a;
+  border-color: #565e64;
 }
 
 .inquiry-tabs .nav-link.active {
   color: #fff;
   background-color: #0d6efd;
+  border-color: #0d6efd;
+  font-weight: 400;
+}
+
+.inquiry-tabs .nav-link.active:hover {
+  background-color: #0b5ed7;
   border-color: #0a58ca;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(13, 110, 253, 0.4);
 }
 
 .inquiry-card {
