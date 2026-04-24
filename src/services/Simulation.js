@@ -33,7 +33,7 @@ export default {
     if (user) {
       try {
         let response = await axios.get(
-          "https://editor.c2-stem.org/api/getProjectList",
+          "https://editor.c2stem.org/api/getProjectList",
           { withCredentials: true }
         );
         const pl = response.data.split(" ");
@@ -53,7 +53,7 @@ export default {
     if (username) {
       try {
         let response = await axios.get(
-          "https://editor.c2-stem.org/api/projects/" + username,
+          "https://editor.c2stem.org/api/projects/" + username,
           { withCredentials: true }
         );
         return response.data;
@@ -70,7 +70,7 @@ export default {
     if (user) {
       try {
         let response = await axios.get(
-          "https://editor.c2-stem.org/api/getSharedProjectList",
+          "https://editor.c2stem.org/api/getSharedProjectList",
           { withCredentials: true }
         );
         const pl = response.data.split(" ");
@@ -175,7 +175,7 @@ export default {
     if (user) {
       try {
         response = await axios.post(
-          "https://editor.c2-stem.org/api/deleteProject",
+          "https://editor.c2stem.org/api/deleteProject",
           { ProjectName: projectName },
           { withCredentials: true },
           { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
