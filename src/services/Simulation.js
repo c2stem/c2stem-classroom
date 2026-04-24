@@ -191,6 +191,36 @@ export default {
     }
   },
 
+  setVariable(key, value) {
+    try {
+      const iframe = document.getElementById("iframe-id");
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      api.setVariable(key, value);
+    } catch (error) {
+      console.log("setVariable error:", error.message);
+    }
+  },
+
+  deleteVariable(key) {
+    try {
+      const iframe = document.getElementById("iframe-id");
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      api.deleteVariable(key);
+    } catch (error) {
+      console.log("deleteVariable error:", error.message);
+    }
+  },
+
+  async getGlobalVariables() {
+    try {
+      const iframe = document.getElementById("iframe-id");
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      return await api.getGlobalVariables();
+    } catch (error) {
+      console.log("getGlobalVariables error:", error.message);
+    }
+  },
+
   async getEngineeringStageMaterials() {
     try {
       const iframe = document.getElementById("iframe-id");

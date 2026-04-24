@@ -25,6 +25,7 @@ import UploadDocs from "../views/UploadDocs.vue";
 
 import AST from "../views/visualize/AST.vue";
 import List from "../views/visualize/List.vue";
+import Inquiry from "../views/Inquiry.vue";
 
 function islogin(to, from, next) {
   if (!sessionStorage.getItem("user")) {
@@ -199,6 +200,12 @@ const routes = [
     name: "EDMap",
     component: EDMap,
     meta: { requiresAuth: true, class: "SPICE", title: "SPICE | ED" },
+  },
+  {
+    path: "/inquiry",
+    name: "Inquiry",
+    component: Inquiry,
+    meta: { requiresAuth: true, class: "SPICE", title: "SPICE | Inquiry" },
   },
   {
     path: "/:NotFound(.*)",

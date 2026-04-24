@@ -20,6 +20,16 @@ const store = createStore({
     submittedDesigns: [],
     designHistorySummary: {},
     designHistorySummaryLength: 0,
+    hypotheses: {
+      1: { effect: [], reason: [] },
+      2: { effect: [], reason: [] },
+      3: { effect: [], reason: [] },
+    },
+    conclusions: {
+      rainfallRate: { claim: "", evidence: "", reasoning: "" },
+      surfaceMaterial: { claim: "", evidence: "", reasoning: "" },
+      rainfallDuration: { claim: "", evidence: "", reasoning: "" },
+    },
   },
   mutations: {
     initializeStorage(state) {
@@ -188,6 +198,12 @@ const store = createStore({
     updateDHSummaryFavorite(state, data) {
       state.designHistorySummary[data.index].favoriteStatus = data.status;
     },
+    updateHypothesis(state, { id, field, value }) {
+      state.hypotheses[id] = { ...state.hypotheses[id], [field]: value };
+    },
+    saveConclusions(state, data) {
+      state.conclusions = data;
+    },
   },
   getters: {
     /**
@@ -270,6 +286,17 @@ const store = createStore({
     getDesignHistorySummary(state) {
       return state.designHistorySummary;
     },
+    getConclusions(state) {
+      return state.conclusions;
+    },
+    getHypotheses(state) {
+      const empty = { effect: [], reason: [] };
+      return {
+        1: { ...empty, ...state.hypotheses[1] },
+        2: { ...empty, ...state.hypotheses[2] },
+        3: { ...empty, ...state.hypotheses[3] },
+      };
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -343,6 +370,12 @@ const store = createStore({
     },
     updateDHSummaryFavorite(context, data) {
       context.commit("updateDHSummaryFavorite", data);
+    },
+    updateHypothesis(context, data) {
+      context.commit("updateHypothesis", data);
+    },
+    saveConclusions(context, data) {
+      context.commit("saveConclusions", data);
     },
   },
   modules: {},
