@@ -118,6 +118,51 @@ export default {
       alert(error.message);
     }
   },
+  async getInquiryCompareData(testNumbers) {
+    try {
+      const gb = await this.getGlobalVariables();
+      const varName = this.getGlobalVariableName(gb, "test history");
+      const thContents = gb.vars[varName].value.contents;
+      const result = {};
+      for (let i = 1; i < Object.keys(thContents).length; i++) {
+        const row = thContents[i].contents;
+        const testNum = Number(row[0]);
+        if (!testNumbers.includes(testNum)) continue;
+        // scan columns for the nested hourly list
+        let hourlyList = null;
+        for (let c = 0; c < row.length; c++) {
+          if (row[c] && typeof row[c] === "object" && row[c].contents) {
+            hourlyList = row[c].contents;
+            break;
+          }
+        }
+        const hourlyData = {};
+        if (hourlyList && hourlyList.length > 1) {
+          for (let h = 1; h < hourlyList.length; h++) {
+            const hr = hourlyList[h].contents;
+            hourlyData[h] = {
+              "Time (hours)": hr[0],
+              "Total Rainfall (in)": hr[1],
+              "Total Absorption (in)": hr[2],
+              "Total Runoff (in)": hr[3],
+            };
+          }
+        }
+        result[testNum] = {
+          testNumber: testNum,
+          time: row[1] ? this.formatDate(row[1]) : "",
+          material: row[2] ?? "",
+          rainfallRate: row[3] ?? "",
+          rainfallDuration: row[4] ?? "",
+          hourlyData,
+        };
+      }
+      return result;
+    } catch (error) {
+      console.error("[compare] error:", error);
+      alert(error.message);
+    }
+  },
   async getInquiryTestData() {
     try {
       const gb = await this.getGlobalVariables();

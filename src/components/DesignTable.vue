@@ -46,16 +46,9 @@
           </td>
           <td v-if="checked.length" class="table-warning">
             <input
-              v-if="checked[index]"
               class="form-check-input mt-0"
               type="checkbox"
-              @change="check(index, $event)"
-              checked
-            />
-            <input
-              v-else
-              class="form-check-input mt-0"
-              type="checkbox"
+              :checked="checked[index]"
               @change="check(index, $event)"
             />
           </td>
@@ -96,6 +89,7 @@ export default {
   components: {
     SubmitDesign,
   },
+  emits: ["check-change"],
   data() {
     return {
       // submitCheckedList: [],
@@ -131,6 +125,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    localOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     currentRouteName() {
@@ -145,6 +143,8 @@ export default {
      * @param {Event} e Event from the checkbox.
      */
     async check(i, e) {
+      this.$emit("check-change", { index: i, status: e.target.checked, event: e });
+      if (this.localOnly) return;
       if (this.currentRouteName === "Playground") {
         this.$store.dispatch("updatePlayChecks", {
           index: i,

@@ -4,17 +4,19 @@
     <!-- Left: Simulation Column -->
     <div class="sim-column">
       <div class="sim-buttons">
-        <button class="btn btn-success btn-sm" @click="runFullStorm" :disabled="loopActive || !selectionReady">Run full storm</button>
-        <button class="btn btn-primary btn-sm" @click="runOneHour" :disabled="(loopActive && hoursLeft === 0) || !selectionReady">
-          {{ loopActive ? `Run hr ${currentHour} of ${rainfallDuration}` : 'Run 1 hr' }}
+        <button class="btn btn-success btn-sm" @click="runFullStorm" :disabled="loopActive || fullStormLoading || !selectionReady">
+          {{ fullStormLoading ? 'Loading…' : 'Run full storm' }}
+        </button>
+        <button class="btn btn-primary btn-sm" @click="runOneHour" :disabled="(loopActive && hoursLeft === 0) || !selectionReady || (loopActive && hourlyLoading) || fullStormLoading">
+          {{ loopActive && hourlyLoading ? `Loading hr ${currentHour}…` : loopActive ? `Run hr ${currentHour + 1} of ${rainfallDuration}` : 'Run 1 hr' }}
         </button>
         <span v-if="loopActive" class="loop-hint">
           {{ hoursLeft }} hr{{ hoursLeft !== 1 ? 's' : '' }} left — keep clicking to advance the storm
         </span>
       </div>
 
-      <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || !selectionReady }">
-        <div v-if="loopActive || !selectionReady" class="iframe-overlay"></div>
+      <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || fullStormLoading || !selectionReady }">
+        <div v-if="loopActive || fullStormLoading || !selectionReady" class="iframe-overlay"></div>
         <iframe-loader
           :source="iframeSrc"
           iframeid="iframe-id"
@@ -24,7 +26,7 @@
         ></iframe-loader>
       </div>
 
-      <div class="sim-sliders" :class="{ 'sliders-frozen': loopActive || !selectionReady }">
+      <div class="sim-sliders" :class="{ 'sliders-frozen': loopActive || fullStormLoading || !selectionReady }">
         <div class="slider-row">
           <div class="slider-label-row">
             <label class="slider-label">Rainfall rate (inch/hour)</label>
@@ -33,7 +35,7 @@
           <div class="slider-track">
             <span class="slider-min">0.1</span>
             <input type="range" class="form-range" v-model.number="rainfallRate"
-                   min="0.1" max="3.0" step="0.1" @change="onSliderChange" :disabled="loopActive || !selectionReady" />
+                   min="0.1" max="3.0" step="0.1" @change="onSliderChange" :disabled="loopActive || fullStormLoading || !selectionReady" />
             <span class="slider-max">3.0</span>
           </div>
         </div>
@@ -45,7 +47,7 @@
           <div class="slider-track">
             <span class="slider-min">1</span>
             <input type="range" class="form-range" v-model.number="rainfallDuration"
-                   min="1" max="24" step="1" @change="onSliderChange" :disabled="loopActive || !selectionReady" />
+                   min="1" max="24" step="1" @change="onSliderChange" :disabled="loopActive || fullStormLoading || !selectionReady" />
             <span class="slider-max">24</span>
           </div>
         </div>
@@ -54,6 +56,20 @@
 
     <!-- Right: Display Column -->
     <div class="display-column">
+
+      <!-- No hypotheses yet -->
+      <div v-if="!hypothesesComplete" class="no-hypothesis-prompt">
+        <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
+        <div>
+          <p class="no-hypothesis-title">No hypotheses found</p>
+          <p class="no-hypothesis-body">
+            Please go to the <strong>My Hypotheses</strong> tab and complete at least one hypothesis before running experiments.
+          </p>
+          <button class="btn btn-primary btn-sm" @click="goToHypotheses">Go to My Hypotheses</button>
+        </div>
+      </div>
+
+      <template v-else>
 
       <div v-if="!selectionReady" class="selection-prompt">
         Select a hypothesis and variable below to unlock the experiment.
@@ -99,8 +115,7 @@
         </li>
         <li class="nav-item">
           <button class="nav-link" id="compare-tab"
-                  data-bs-toggle="pill" data-bs-target="#exp-compare"
-                  type="button" role="tab">
+                  type="button" role="tab" @click="onCompareClick">
             Compare
           </button>
         </li>
@@ -122,7 +137,7 @@
               </div>
               <div class="ct-card-body">
                 <div class="hourly-table-wrap">
-                  <design-table :header="hourlyHeader" :contents="hourlyTableContent"></design-table>
+                  <design-table :header="hourlyHeader" :contents="hourlyTableContent" :local-only="true"></design-table>
                 </div>
               </div>
             </div>
@@ -151,16 +166,84 @@
             :header="testHistoryHeader"
             :contents="testHistoryContent"
             :checked="testHistoryChecked"
+            :local-only="true"
+            @check-change="onTestHistoryCheck"
           ></design-table>
-          <p v-else class="text-muted fst-italic">No test history yet.</p>
+          <p v-if="testHistoryChecked.filter(v => v).length === 2" class="compare-hint">
+            2 tests selected — go to Compare to view side by side.
+          </p>
+          <p v-if="!Object.keys(testHistoryContent).length" class="text-muted fst-italic">No test history yet.</p>
         </div>
         <div class="tab-pane" id="exp-compare" role="tabpanel">
-          <p class="text-muted fst-italic">Compare view will appear here.</p>
+          <div v-if="compareData && Object.keys(compareData).length === 2" class="compare-launch-area">
+            <p class="text-muted fst-italic small mb-2">
+              Tests {{ compareTests.map(t => t.testNumber).join(' & ') }} selected.
+            </p>
+            <button class="btn btn-primary" @click="openCompareModal">
+              <i class="bi bi-arrows-fullscreen me-1"></i> View Full Comparison
+            </button>
+          </div>
+          <p v-else-if="testHistoryChecked.filter(v => v).length < 2" class="text-muted fst-italic">
+            Select exactly 2 tests from the Test history tab to compare.
+          </p>
+          <p v-else class="text-muted fst-italic">Loading compare data…</p>
         </div>
       </div>
 
+      </template>
     </div>
   </div>
+
+  <!-- Compare Full-Screen Modal -->
+  <teleport to="body">
+    <div class="modal fade" id="compareModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog compare-modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header compare-modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-bar-chart-line me-2"></i>
+              Comparing Test {{ compareTests[0]?.testNumber }} vs Test {{ compareTests[1]?.testNumber }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" @click="closeCompareModal"></button>
+          </div>
+          <div class="modal-body compare-modal-body">
+            <div v-for="(test, idx) in compareTests" :key="test.testNumber" class="compare-block">
+              <div class="compare-block-header">
+                Test {{ test.testNumber }}
+                <span class="compare-meta">
+                  {{ test.time }} &nbsp;|&nbsp; {{ test.material }} &nbsp;|&nbsp;
+                  Rate: {{ test.rainfallRate }} in/hr &nbsp;|&nbsp;
+                  Duration: {{ test.rainfallDuration }} hrs
+                </span>
+              </div>
+              <div class="compare-row">
+                <div class="ct-card compare-card-half">
+                  <div class="ct-card-header"><span class="ct-card-title">Hourly Data</span></div>
+                  <div class="ct-card-body">
+                    <div class="hourly-table-wrap">
+                      <design-table
+                        v-if="Object.keys(test.hourlyData).length"
+                        :header="hourlyHeader"
+                        :contents="test.hourlyData"
+                        :local-only="true"
+                      ></design-table>
+                      <p v-else class="text-muted fst-italic small">No hourly data for this test.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="ct-card compare-card-half">
+                  <div class="ct-card-header"><span class="ct-card-title">Runoff Chart</span></div>
+                  <div class="ct-card-body">
+                    <div :id="`compare-modal-chart-${idx}`" class="hourly-chart"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
 </template>
 
 <script>
@@ -191,6 +274,9 @@ export default {
       testHistoryChecked: [],
       tableExpanded: false,
       chartExpanded: false,
+      hourlyLoading: false,
+      fullStormLoading: false,
+      compareData: null,
       questions: [
         { id: 1, key: "rainfallRate",    condition: "If rainfall rate increases" },
         { id: 2, key: "surfaceMaterial", condition: "If we change the surface material" },
@@ -199,11 +285,20 @@ export default {
     };
   },
   computed: {
+    hypothesesComplete() {
+      return Object.values(this.hypotheses).some(
+        (h) => h.effect.length > 0 || h.reason.length > 0
+      );
+    },
     selectionReady() {
       return !!this.selectedHypothesis && !!this.selectedVariable;
     },
     hypotheses() {
       return this.$store.getters.getHypotheses;
+    },
+    compareTests() {
+      if (!this.compareData) return [];
+      return Object.values(this.compareData);
     },
     hypothesisClaims() {
       const claims = {};
@@ -252,18 +347,20 @@ export default {
           Number(row[runoffKey]),
         ]);
       });
+      const w = el.offsetWidth || 400;
+      const h = el.offsetHeight || 280;
       const options = {
-        hAxis: { title: "Time (hours)", minValue: 0 },
-        vAxis: { title: "Amount of Water (inches)", minValue: 0 },
+        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
+        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
         series: {
           0: { color: "#0d6efd" },
           1: { color: "#198754" },
           2: { color: "#dc3545" },
         },
-        legend: { position: "top" },
-        chartArea: { width: "65%", height: "65%" },
-        width: "100%",
-        height: 260,
+        legend: { position: "top", alignment: "center" },
+        chartArea: { left: 60, top: 50, width: w - 80, height: h - 100 },
+        width: w,
+        height: h,
       };
       const chart = new window.google.visualization.LineChart(el);
       chart.draw(data, options);
@@ -279,18 +376,23 @@ export default {
       this.$nextTick(() => this.drawHourlyChart());
     },
     async loadHourlyData(expectedRows) {
+      this.hourlyLoading = true;
+      // Give the simulation a moment to finish writing results before polling
+      await new Promise((r) => setTimeout(r, 1500));
       const maxAttempts = 20;
       const interval = 500;
       for (let i = 0; i < maxAttempts; i++) {
-        await new Promise((r) => setTimeout(r, interval));
         const data = await Visualize.getInquiryHourlyData();
-        if (!data) continue;
-        const rowCount = Object.keys(data).length;
-        if (expectedRows === undefined || rowCount >= expectedRows) {
-          this.hourlyTableContent = data;
-          return;
+        if (data) {
+          const rowCount = Object.keys(data).length;
+          if (expectedRows === undefined || rowCount >= expectedRows) {
+            this.hourlyTableContent = data;
+            break;
+          }
         }
+        await new Promise((r) => setTimeout(r, interval));
       }
+      this.hourlyLoading = false;
     },
     async loadTestHistory() {
       const data = await Visualize.getInquiryTestData();
@@ -299,9 +401,11 @@ export default {
         this.testHistoryChecked = Array(Object.keys(data).length).fill(false);
       }
     },
-    runFullStorm() {
-      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration });
-      this.loadHourlyData(this.rainfallDuration);
+    async runFullStorm() {
+      this.fullStormLoading = true;
+      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration, "full storm": true });
+      await this.loadHourlyData(this.rainfallDuration);
+      this.fullStormLoading = false;
     },
     runOneHour() {
       if (!this.loopActive) {
@@ -312,12 +416,108 @@ export default {
         this.currentHour += 1;
         this.hoursLeft -= 1;
       }
-      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.currentHour });
+      const isLastHour = this.hoursLeft === 0;
+      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.currentHour, "full storm": isLastHour });
       this.loadHourlyData(this.currentHour);
-      if (this.hoursLeft === 0) {
+      if (isLastHour) {
         this.loopActive = false;
         this.currentHour = 0;
       }
+    },
+    onTestHistoryCheck({ index, status, event }) {
+      const checkedCount = this.testHistoryChecked.filter((v) => v).length;
+      if (status && checkedCount >= 2) {
+        event.target.checked = false;
+        return;
+      }
+      const updated = [...this.testHistoryChecked];
+      updated[index] = status;
+      this.testHistoryChecked = updated;
+    },
+    async onCompareClick() {
+      const count = this.testHistoryChecked.filter((v) => v).length;
+      if (count < 2) {
+        alert("Please select exactly 2 tests from the Test history tab to compare.");
+        return;
+      }
+      await this.loadCompareData();
+      this.openCompareModal();
+    },
+    openCompareModal() {
+      const { Modal } = require("bootstrap");
+      const el = document.getElementById("compareModal");
+      if (!this._compareModal) {
+        this._compareModal = new Modal(el, { backdrop: true });
+        el.addEventListener("shown.bs.modal", () => {
+          this.compareTests.forEach((_, idx) => this.drawCompareChart(idx, "compare-modal-chart"));
+        });
+        el.addEventListener("hidden.bs.modal", () => {
+          document.getElementById("test-history-tab")?.click();
+        });
+      }
+      this._compareModal.show();
+    },
+    closeCompareModal() {
+      if (this._compareModal) this._compareModal.hide();
+    },
+    async loadCompareData() {
+      const selectedIndexes = this.testHistoryChecked
+        .map((v, i) => (v ? i : -1))
+        .filter((i) => i !== -1);
+      if (selectedIndexes.length !== 2) return;
+      // DesignTable v-for uses object key as index, which matches testHistoryContent keys directly
+      const testNumbers = selectedIndexes.map((i) => {
+        const row = this.testHistoryContent[i];
+        const testNum = row ? Number(Object.values(row)[0]) : null;
+        return testNum;
+      }).filter((n) => n !== null);
+      if (testNumbers.length !== 2) return;
+      this.compareData = await Visualize.getInquiryCompareData(testNumbers);
+      this.$nextTick(() => {
+        this.compareTests.forEach((_, idx) => this.drawCompareChart(idx));
+      });
+    },
+    drawCompareChart(idx, prefix = "compare-chart") {
+      const el = document.getElementById(`${prefix}-${idx}`);
+      if (!el || !window.google || !window.google.visualization) return;
+      const test = this.compareTests[idx];
+      if (!test || !Object.keys(test.hourlyData).length) return;
+      const rows = Object.values(test.hourlyData);
+      const keys = Object.keys(rows[0]);
+      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+      const data = new window.google.visualization.DataTable();
+      data.addColumn("number", "Time (hours)");
+      data.addColumn("number", "Rainfall (in)");
+      data.addColumn("number", "Absorption (in)");
+      data.addColumn("number", "Runoff (in)");
+      data.addRow([0, 0, 0, 0]);
+      rows.forEach((row) => {
+        data.addRow([
+          Number(row[timeKey]),
+          Number(row[rainfallKey]),
+          Number(row[absorptionKey]),
+          Number(row[runoffKey]),
+        ]);
+      });
+      const w = el.offsetWidth || 400;
+      const h = el.offsetHeight || 300;
+      const options = {
+        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
+        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
+        series: {
+          0: { color: "#0d6efd" },
+          1: { color: "#198754" },
+          2: { color: "#dc3545" },
+        },
+        legend: { position: "top", alignment: "center" },
+        chartArea: { left: 60, top: 50, width: w - 80, height: h - 100 },
+        width: w,
+        height: h,
+      };
+      new window.google.visualization.LineChart(el).draw(data, options);
+    },
+    goToHypotheses() {
+      document.getElementById("hypotheses-tab")?.click();
     },
     onSliderChange() {
       Simulation.setVariable("rainfallRate", this.rainfallRate);
@@ -508,6 +708,139 @@ div{
   pointer-events: none;
 }
 
+.no-hypothesis-prompt {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 12px;
+}
+
+.no-hypothesis-icon {
+  font-size: 2rem;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.no-hypothesis-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 4px;
+}
+
+.no-hypothesis-body {
+  font-size: 0.88rem;
+  color: #78350f;
+  margin-bottom: 10px;
+}
+
+.compare-modal-dialog {
+  max-width: 92vw;
+  width: 92vw;
+  margin: 2.5vh auto;
+}
+
+.compare-modal-dialog .modal-content {
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.compare-modal-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+}
+
+.compare-launch-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.compare-modal-header {
+  background: #0d6efd;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.compare-modal-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.compare-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.compare-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  min-height: 0;
+}
+
+.compare-block-header {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0d6efd;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.compare-meta {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #495057;
+}
+
+.compare-row {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.compare-card-half {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.compare-hint {
+  font-size: 0.8rem;
+  color: #198754;
+  font-style: italic;
+  margin-top: 4px;
+}
+
 .selection-prompt {
   font-size: 1rem;
   font-weight: 700;
@@ -575,8 +908,11 @@ div{
 
 .ct-card-body {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   padding: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .hourly-table-wrap {
