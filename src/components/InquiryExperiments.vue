@@ -286,8 +286,8 @@ export default {
   },
   computed: {
     hypothesesComplete() {
-      return Object.values(this.hypotheses).some(
-        (h) => h.effect.length > 0 || h.reason.length > 0
+      return Object.values(this.hypotheses).every(
+        (h) => h.effect.length > 0 && h.reason.length > 0
       );
     },
     selectionReady() {

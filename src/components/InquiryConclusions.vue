@@ -1,5 +1,19 @@
 <template>
-  <div class="conclusions-wrapper">
+  <div>
+
+    <!-- No hypotheses yet -->
+    <div v-if="!hypothesesComplete" class="no-hypothesis-prompt">
+      <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
+      <div>
+        <p class="no-hypothesis-title">No hypotheses found</p>
+        <p class="no-hypothesis-body">
+          Please go to the <strong>My Hypotheses</strong> tab and complete at least one hypothesis before writing conclusions.
+        </p>
+        <button class="btn btn-primary btn-sm" @click="goToHypotheses">Go to My Hypotheses</button>
+      </div>
+    </div>
+
+  <div v-else class="conclusions-wrapper">
 
     <!-- Left sidebar -->
     <div class="conclusions-sidebar">
@@ -63,6 +77,7 @@
 
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -92,6 +107,9 @@ export default {
     };
   },
   methods: {
+    goToHypotheses() {
+      document.getElementById("hypotheses-tab")?.click();
+    },
     saveResults() {
       const keyMap = { 1: "rainfallRate", 2: "surfaceMaterial", 3: "rainfallDuration" };
       const snapshot = {};
@@ -110,6 +128,11 @@ export default {
     },
   },
   computed: {
+    hypothesesComplete() {
+      return Object.values(this.hypotheses).every(
+        (h) => h.effect.length > 0 && h.reason.length > 0
+      );
+    },
     hypotheses() {
       return this.$store.getters.getHypotheses;
     },
@@ -131,6 +154,36 @@ export default {
 <style scoped>
 p{
   justify-content: flex-start;
+}
+
+.no-hypothesis-prompt {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 12px;
+}
+
+.no-hypothesis-icon {
+  font-size: 2rem;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.no-hypothesis-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 4px;
+}
+
+.no-hypothesis-body {
+  font-size: 0.88rem;
+  color: #78350f;
+  margin-bottom: 10px;
 }
 
 .conclusions-wrapper {
