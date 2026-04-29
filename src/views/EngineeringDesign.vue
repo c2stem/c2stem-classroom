@@ -18,7 +18,7 @@
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="spice-project-ED-gamification-DH"
+            projectname="cmise-project-engineering-gamification"
             :embed="true"
           ></iframe-loader>
         </div>

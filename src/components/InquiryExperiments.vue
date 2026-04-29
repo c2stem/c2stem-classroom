@@ -4,46 +4,60 @@
     <!-- Left: Simulation Column -->
     <div class="sim-column">
       <div class="sim-buttons">
-        <button class="btn btn-success btn-sm" @click="runFullStorm">Run full storm</button>
-        <button class="btn btn-success btn-sm" @click="runOneHour">Run 1 hr</button>
+        <button class="btn btn-success btn-sm" @click="runFullStorm" :disabled="loopActive || !selectionReady">Run full storm</button>
+        <button class="btn btn-primary btn-sm" @click="runOneHour" :disabled="(loopActive && hoursLeft === 0) || !selectionReady">
+          {{ loopActive ? `Run hr ${currentHour} of ${rainfallDuration}` : 'Run 1 hr' }}
+        </button>
+        <span v-if="loopActive" class="loop-hint">
+          {{ hoursLeft }} hr{{ hoursLeft !== 1 ? 's' : '' }} left — keep clicking to advance the storm
+        </span>
       </div>
 
-      <div class="sim-iframe-area">
+      <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || !selectionReady }">
+        <div v-if="loopActive || !selectionReady" class="iframe-overlay"></div>
         <iframe-loader
           :source="iframeSrc"
           iframeid="iframe-id"
           username="oele"
-          projectname="meigs-computational-temporal-expert-shruti"
+          projectname="meigs-cm-inquiry"
           :embed="true"
         ></iframe-loader>
       </div>
 
-      <div class="sim-sliders">
+      <div class="sim-sliders" :class="{ 'sliders-frozen': loopActive || !selectionReady }">
         <div class="slider-row">
-          <label class="slider-label">Rainfall rate (inch/hour)</label>
+          <div class="slider-label-row">
+            <label class="slider-label">Rainfall rate (inch/hour)</label>
+            <span class="slider-value-badge">{{ rainfallRate }} inch/hr</span>
+          </div>
           <div class="slider-track">
             <span class="slider-min">0.1</span>
             <input type="range" class="form-range" v-model.number="rainfallRate"
-                   min="0.1" max="3.0" step="0.1" @change="onSliderChange" />
+                   min="0.1" max="3.0" step="0.1" @change="onSliderChange" :disabled="loopActive || !selectionReady" />
             <span class="slider-max">3.0</span>
           </div>
-          <span class="slider-value">{{ rainfallRate }}</span>
         </div>
         <div class="slider-row">
-          <label class="slider-label">Rainfall duration (hours)</label>
+          <div class="slider-label-row">
+            <label class="slider-label">Rainfall duration (hours)</label>
+            <span class="slider-value-badge">{{ rainfallDuration }} hr{{ rainfallDuration !== 1 ? 's' : '' }}</span>
+          </div>
           <div class="slider-track">
             <span class="slider-min">1</span>
             <input type="range" class="form-range" v-model.number="rainfallDuration"
-                   min="1" max="24" step="1" @change="onSliderChange" />
+                   min="1" max="24" step="1" @change="onSliderChange" :disabled="loopActive || !selectionReady" />
             <span class="slider-max">24</span>
           </div>
-          <span class="slider-value">{{ rainfallDuration }}</span>
         </div>
       </div>
     </div>
 
     <!-- Right: Display Column -->
     <div class="display-column">
+
+      <div v-if="!selectionReady" class="selection-prompt">
+        Select a hypothesis and variable below to unlock the experiment.
+      </div>
 
       <!-- Hypothesis dropdown -->
       <div class="display-row">
@@ -68,18 +82,18 @@
       </div>
 
       <!-- Tabs -->
-      <ul class="nav nav-pills exp-tabs mt-3 gap-2">
+      <ul class="nav nav-pills exp-tabs mt-3 gap-2" :class="{ 'tabs-frozen': !selectionReady }">
         <li class="nav-item">
           <button class="nav-link active" id="current-test-tab"
                   data-bs-toggle="pill" data-bs-target="#current-test"
-                  type="button" role="tab">
+                  type="button" role="tab" @click="loadHourlyData">
             Current test
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" id="test-history-tab"
                   data-bs-toggle="pill" data-bs-target="#exp-test-history"
-                  type="button" role="tab">
+                  type="button" role="tab" @click="loadTestHistory">
             Test history
           </button>
         </li>
@@ -94,10 +108,51 @@
 
       <div class="tab-content exp-tab-content mt-2">
         <div class="tab-pane show active" id="current-test" role="tabpanel">
-          <p class="text-muted fst-italic">Current test results will appear here.</p>
+          <div v-if="Object.keys(hourlyTableContent).length" class="current-test-layout">
+
+            <!-- Table card -->
+            <div class="ct-card" :class="tableExpanded ? 'ct-expanded' : chartExpanded ? 'ct-collapsed' : 'ct-half'">
+              <div class="ct-card-header">
+                <span class="ct-card-title">Hourly Data</span>
+                <div class="ct-card-actions">
+                  <button class="ct-action-btn" @click="toggleTableExpand" :title="tableExpanded ? 'Restore' : 'Expand'">
+                    <i :class="tableExpanded ? 'bi bi-arrows-angle-contract' : 'bi bi-arrows-angle-expand'"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="ct-card-body">
+                <div class="hourly-table-wrap">
+                  <design-table :header="hourlyHeader" :contents="hourlyTableContent"></design-table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart card -->
+            <div class="ct-card" :class="chartExpanded ? 'ct-expanded' : tableExpanded ? 'ct-collapsed' : 'ct-half'">
+              <div class="ct-card-header">
+                <span class="ct-card-title">Runoff Chart</span>
+                <div class="ct-card-actions">
+                  <button class="ct-action-btn" @click="toggleChartExpand" :title="chartExpanded ? 'Restore' : 'Expand'">
+                    <i :class="chartExpanded ? 'bi bi-arrows-angle-contract' : 'bi bi-arrows-angle-expand'"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="ct-card-body">
+                <div id="inquiry-hourly-chart" class="hourly-chart"></div>
+              </div>
+            </div>
+
+          </div>
+          <p v-else class="text-muted fst-italic">Run the simulation to see hourly results.</p>
         </div>
         <div class="tab-pane" id="exp-test-history" role="tabpanel">
-          <p class="text-muted fst-italic">Test history will appear here.</p>
+          <design-table
+            v-if="Object.keys(testHistoryContent).length"
+            :header="testHistoryHeader"
+            :contents="testHistoryContent"
+            :checked="testHistoryChecked"
+          ></design-table>
+          <p v-else class="text-muted fst-italic">No test history yet.</p>
         </div>
         <div class="tab-pane" id="exp-compare" role="tabpanel">
           <p class="text-muted fst-italic">Compare view will appear here.</p>
@@ -110,11 +165,13 @@
 
 <script>
 import IframeLoader from "./IframeLoader.vue";
+import DesignTable from "./DesignTable.vue";
 import Simulation from "../services/Simulation";
+import Visualize from "../services/Visualize";
 
 export default {
   name: "InquiryExperiments",
-  components: { IframeLoader },
+  components: { IframeLoader, DesignTable },
   data() {
     return {
       iframeSrc: "https://editor.c2stem.org",
@@ -124,6 +181,16 @@ export default {
       rainfallDuration: 1,
       selectedHypothesis: "",
       selectedVariable: "",
+      loopActive: false,
+      currentHour: 0,
+      hoursLeft: 0,
+      hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
+      hourlyTableContent: {},
+      testHistoryHeader: ["Test No.", "Time", "Material", "Rainfall Rate", "Rainfall Duration", "Compare"],
+      testHistoryContent: {},
+      testHistoryChecked: [],
+      tableExpanded: false,
+      chartExpanded: false,
       questions: [
         { id: 1, key: "rainfallRate",    condition: "If rainfall rate increases" },
         { id: 2, key: "surfaceMaterial", condition: "If we change the surface material" },
@@ -132,6 +199,9 @@ export default {
     };
   },
   computed: {
+    selectionReady() {
+      return !!this.selectedHypothesis && !!this.selectedVariable;
+    },
     hypotheses() {
       return this.$store.getters.getHypotheses;
     },
@@ -146,17 +216,119 @@ export default {
       return claims;
     },
   },
+  watch: {
+    hourlyTableContent(newVal) {
+      if (Object.keys(newVal).length) {
+        this.$nextTick(() => {
+          window.google.charts.setOnLoadCallback(() => this.drawHourlyChart());
+        });
+      }
+    },
+  },
   methods: {
+    drawHourlyChart() {
+      const el = document.getElementById("inquiry-hourly-chart");
+      if (!el || !window.google || !window.google.visualization) return;
+
+      const rows = Object.values(this.hourlyTableContent);
+      if (!rows.length) return;
+
+      // Use the actual keys from the first row
+      const keys = Object.keys(rows[0]);
+      // keys: [timeKey, rainfallKey, absorptionKey, runoffKey]
+      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+
+      const data = new window.google.visualization.DataTable();
+      data.addColumn("number", "Time (hours)");
+      data.addColumn("number", "Rainfall (in)");
+      data.addColumn("number", "Absorption (in)");
+      data.addColumn("number", "Runoff (in)");
+      data.addRow([0, 0, 0, 0]);
+      rows.forEach((row) => {
+        data.addRow([
+          Number(row[timeKey]),
+          Number(row[rainfallKey]),
+          Number(row[absorptionKey]),
+          Number(row[runoffKey]),
+        ]);
+      });
+      const options = {
+        hAxis: { title: "Time (hours)", minValue: 0 },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0 },
+        series: {
+          0: { color: "#0d6efd" },
+          1: { color: "#198754" },
+          2: { color: "#dc3545" },
+        },
+        legend: { position: "top" },
+        chartArea: { width: "65%", height: "65%" },
+        width: "100%",
+        height: 260,
+      };
+      const chart = new window.google.visualization.LineChart(el);
+      chart.draw(data, options);
+    },
+    toggleTableExpand() {
+      this.tableExpanded = !this.tableExpanded;
+      if (this.tableExpanded) this.chartExpanded = false;
+      this.$nextTick(() => this.drawHourlyChart());
+    },
+    toggleChartExpand() {
+      this.chartExpanded = !this.chartExpanded;
+      if (this.chartExpanded) this.tableExpanded = false;
+      this.$nextTick(() => this.drawHourlyChart());
+    },
+    async loadHourlyData(expectedRows) {
+      const maxAttempts = 20;
+      const interval = 500;
+      for (let i = 0; i < maxAttempts; i++) {
+        await new Promise((r) => setTimeout(r, interval));
+        const data = await Visualize.getInquiryHourlyData();
+        if (!data) continue;
+        const rowCount = Object.keys(data).length;
+        if (expectedRows === undefined || rowCount >= expectedRows) {
+          this.hourlyTableContent = data;
+          return;
+        }
+      }
+    },
+    async loadTestHistory() {
+      const data = await Visualize.getInquiryTestData();
+      if (data) {
+        this.testHistoryContent = data;
+        this.testHistoryChecked = Array(Object.keys(data).length).fill(false);
+      }
+    },
     runFullStorm() {
-      Simulation.runProject();
+      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration });
+      this.loadHourlyData(this.rainfallDuration);
     },
     runOneHour() {
-      Simulation.runProject();
+      if (!this.loopActive) {
+        this.loopActive = true;
+        this.currentHour = 1;
+        this.hoursLeft = this.rainfallDuration - 1;
+      } else {
+        this.currentHour += 1;
+        this.hoursLeft -= 1;
+      }
+      Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.currentHour });
+      this.loadHourlyData(this.currentHour);
+      if (this.hoursLeft === 0) {
+        this.loopActive = false;
+        this.currentHour = 0;
+      }
     },
     onSliderChange() {
       Simulation.setVariable("rainfallRate", this.rainfallRate);
       Simulation.setVariable("rainfallDuration", this.rainfallDuration);
     },
+  },
+  mounted() {
+    window.google.charts.load("current", { packages: ["corechart"] });
+    window.google.charts.setOnLoadCallback(() => {
+      this.googleChartsReady = true;
+    });
   },
 };
 </script>
@@ -186,7 +358,15 @@ div{
 
 .sim-buttons {
   display: flex;
+  align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.loop-hint {
+  font-size: 0.8rem;
+  color: #0d6efd;
+  font-style: italic;
 }
 
 .sim-iframe-area {
@@ -198,6 +378,19 @@ div{
   border-radius: 6px;
   overflow: hidden;
   display: block;
+  position: relative;
+}
+
+.sim-iframe-frozen {
+  border-color: #0d6efd;
+}
+
+.iframe-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(13, 110, 253, 0.08);
+  cursor: not-allowed;
 }
 
 .sim-sliders {
@@ -210,10 +403,21 @@ div{
   background-color: #f8f9fa;
 }
 
+.sliders-frozen {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .slider-row {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .slider-label {
@@ -234,10 +438,15 @@ div{
   white-space: nowrap;
 }
 
-.slider-value {
-  font-size: 0.85rem;
+.slider-value-badge {
+  font-size: 0.8rem;
   font-weight: 600;
-  text-align: right;
+  color: #0d6efd;
+  background-color: #e7f0ff;
+  border: 1px solid #b6d0ff;
+  border-radius: 4px;
+  padding: 1px 7px;
+  white-space: nowrap;
 }
 
 /* Right column */
@@ -292,5 +501,101 @@ div{
   border-radius: 8px;
   padding: 16px;
   background-color: #fff;
+}
+
+.tabs-frozen {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.selection-prompt {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dc3545;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.current-test-layout {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  height: 300px;
+}
+
+/* size states */
+.ct-half     { flex: 1 1 50%; min-width: 0; transition: flex 0.2s ease; }
+.ct-expanded { flex: 1 1 100%; min-width: 0; transition: flex 0.2s ease; }
+.ct-collapsed{ flex: 0 0 0; overflow: hidden; min-width: 0; transition: flex 0.2s ease; }
+
+.ct-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.ct-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: #f0f4ff;
+  border-bottom: 1px solid #dee2e6;
+  flex-shrink: 0;
+}
+
+.ct-card-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.ct-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.ct-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0 2px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.ct-action-btn:hover {
+  color: #0d6efd;
+}
+
+.ct-card-body {
+  flex: 1;
+  overflow: auto;
+  padding: 4px;
+}
+
+.hourly-table-wrap {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.hourly-table-wrap :deep(table) {
+  font-size: 0.68rem;
+}
+
+.hourly-table-wrap :deep(th),
+.hourly-table-wrap :deep(td) {
+  padding: 0.15rem 0.3rem !important;
+  white-space: nowrap;
+}
+
+.hourly-chart {
+  width: 100%;
+  height: 100%;
 }
 </style>

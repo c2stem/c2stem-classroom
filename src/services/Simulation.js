@@ -5,11 +5,12 @@
 import axios from "axios";
 
 export default {
-  runProject() {
+  runProject(variables = {}) {
     try {
       const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
-      api.runProject();
+      const safeVars = (variables && !(variables instanceof Event)) ? variables : {};
+      api.runProject(safeVars);
     } catch (error) {
       alert(error.message);
     }

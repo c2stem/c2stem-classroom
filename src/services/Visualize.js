@@ -41,6 +41,10 @@ export default {
         return globalVariableList.find(
           (element) => element.includes("test") && element.includes("history")
         );
+      case "hourly test history":
+        return globalVariableList.find(
+            (element) => element.includes("hourly") && element.includes("test") && element.includes("history")
+        );
       default:
         break;
     }
@@ -93,6 +97,49 @@ export default {
    * Method to get absorption limit global variable from the NetsBox project.
    * @returns absorption limit in number.
    */
+  async getInquiryHourlyData() {
+    try {
+      const gb = await this.getGlobalVariables();
+      const varName = this.getGlobalVariableName(gb, "hourly test history");
+      const thContents = gb.vars[varName].value.contents;
+      let obj = {};
+      const header = thContents[0].contents;
+      for (let i = 1; i < Object.keys(thContents).length; i++) {
+        const row = thContents[i].contents;
+        obj[i] = {
+          [header[0]]: row[0],
+          "Total Rainfall (in)": row[1],
+          "Total Absorption (in)": row[2],
+          "Total Runoff (in)": row[3],
+        };
+      }
+      return obj;
+    } catch (error) {
+      alert(error.message);
+    }
+  },
+  async getInquiryTestData() {
+    try {
+      const gb = await this.getGlobalVariables();
+      const varName = this.getGlobalVariableName(gb, "test history");
+      const thContents = gb.vars[varName].value.contents;
+      let obj = {};
+      const header = thContents[0].contents;
+      for (let i = 1; i < Object.keys(thContents).length; i++) {
+        const row = thContents[i].contents;
+        obj[i] = {
+          [header[0]]: row[0],
+          "Time": row[1] ? this.formatDate(row[1]) : "",
+          "Material": row[2] !== undefined ? row[2] : "",
+          "Rainfall Rate": row[3] !== undefined ? row[3] : "",
+          "Rainfall Duration": row[4] !== undefined ? row[4] : "",
+        };
+      }
+      return obj;
+    } catch (error) {
+      alert(error.message);
+    }
+  },
   async getAbsorptionLimit() {
     try {
       const gb = await this.getGlobalVariables();

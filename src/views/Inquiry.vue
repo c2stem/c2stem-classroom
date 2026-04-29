@@ -63,7 +63,7 @@
         <InquiryHypothesis></InquiryHypothesis>
       </div>
       <div class="tab-pane" id="experiments" aria-labelledby="experiments-tab" role="tabpanel" tabindex="0">
-        <InquiryExperiments></InquiryExperiments>
+        <InquiryExperiments v-if="activeTab === 'experiments'"></InquiryExperiments>
       </div>
       <div class="tab-pane" id="findings" aria-labelledby="findings-tab" role="tabpanel" tabindex="0">
         <p class="text-muted">My Findings content coming soon.</p>
@@ -85,7 +85,21 @@ export default {
     InquiryHypothesis,
     InquiryConclusions,
     InquiryExperiments,
-  }
+  },
+  data() {
+    return {
+      activeTab: "hypothesis",
+    };
+  },
+  mounted() {
+    const tabs = document.querySelectorAll("#inquiry-list button[data-bs-toggle='pill']");
+    tabs.forEach((btn) => {
+      btn.addEventListener("shown.bs.tab", (e) => {
+        const target = e.target.getAttribute("data-bs-target");
+        this.activeTab = target.replace("#", "");
+      });
+    });
+  },
 }
 </script>
 
