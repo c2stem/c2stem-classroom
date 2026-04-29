@@ -179,6 +179,10 @@ const store = createStore({
     resetFavoriteDesigns(state) {
       state.favoriteStatus = [];
     },
+    resetDesignHistory(state) {
+      state.designHistory = {};
+      state.designHistoryLength = 0;
+    },
     // addSubmittedDesigns(state, data) {
     //   state.submittedDesigns.push(data);
     // },
@@ -337,6 +341,9 @@ const store = createStore({
     },
     resetFavoriteDesigns(context) {
       context.commit("resetFavoriteDesigns");
+    },
+    resetDesignHistory(context) {
+      context.commit("resetDesignHistory");
     },
     // addSubmittedDesigns(context, data) {
     //   context.commit("addSubmittedDesigns", data);

@@ -173,6 +173,7 @@ export default {
         "wood chips",
         "artificial turf",
         "poured rubber",
+        "riparian buffer",
         "compare",
         // "submit", // Submit feature disabled
       ],
@@ -190,6 +191,7 @@ export default {
         "wood chips",
         "artificial turf",
         "poured rubber",
+        "riparian buffer"
       ],
       checkedDesignStatus: [],
     };
@@ -271,52 +273,20 @@ export default {
         this.$store.dispatch("addPlayFavorites", favList);
         this.$store.dispatch("addPlayCheckedStatus", checkList);
       } else {
-        const dhList = [];
-        const checkList = [];
-        const favList = [];
-        let dhLength = Object.keys(this.designHistory_content).length;
-        this.checkedDesignStatus = this.getCheckedDesigns;
-        let checkLength = this.checkedDesignStatus.length;
-        // let favLength = this.favoriteStatus.length;
-        this.favoriteStatus = this.getFavoriteDesigns;
-        let stateDhLength = this.historyLength;
-        if (checkLength > stateDhLength) {
-          if (checkLength === dhLength || checkLength === dhLength - 1) {
-            this.checkedDesignStatus.forEach((element) => {
-              checkList.push(element);
-            });
-            this.favoriteStatus.forEach((element) => {
-              favList.push(element);
-            });
-          } else {
-            this.$store.dispatch("resetCheckedDesigns");
-            this.$store.dispatch("resetFavoriteDesigns");
-          }
-        }
-        if (dhLength > stateDhLength) {
-          Object.values(this.designHistory_content).forEach(
-            (element, index) => {
-              if (index >= stateDhLength && index < dhLength) {
-                dhList.push(element);
-                checkList.push(false);
-                favList.push(false);
-              }
-            }
-          );
-          this.$store.dispatch("addDesignHistory", dhList);
-          // if (this.getFavoriteDesigns.length === 0) {
-          this.$store.dispatch("addFavoriteDesigns", favList);
-          // }
-          // if (this.getCheckedDesigns.length === 0) {
-          this.$store.dispatch("addCheckedDesigns", checkList);
-          // }
-        }
-        let logDh = [];
-        if (dhList.length > 0) {
-          logDh = dhList[dhList.length - 1];
-        } else {
-          logDh = [];
-        }
+        const allDesigns = Object.values(this.designHistory_content);
+        const oldChecked = this.getCheckedDesigns;
+        const oldFavs = this.getFavoriteDesigns;
+        const checkList = allDesigns.map((_, i) => oldChecked[i] ?? false);
+        const favList = allDesigns.map((_, i) => oldFavs[i] ?? false);
+
+        this.$store.dispatch("resetDesignHistory");
+        this.$store.dispatch("resetCheckedDesigns");
+        this.$store.dispatch("resetFavoriteDesigns");
+        this.$store.dispatch("addDesignHistory", allDesigns);
+        this.$store.dispatch("addCheckedDesigns", checkList);
+        this.$store.dispatch("addFavoriteDesigns", favList);
+
+        const logDh = allDesigns.length > 0 ? allDesigns[allDesigns.length - 1] : [];
         await Logger.logUserActions({
           actionType: "viewDesignHistory",
           actionView: this.currentRouteName,

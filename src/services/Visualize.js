@@ -220,41 +220,35 @@ export default {
    *  design, data, cost, rainfall, absorption limit, runoff, accessible squares, (rest of the materials).
    * */
   async getObject(content) {
-    let obj = {};
-    let header = content[0].contents;
-    for (let i = 1; i < Object.keys(content).length; i++) {
-      let childObj = {};
-      let childContent = content[i].contents;
-      for (let j = 0; j < childContent.length; j++) {
-        if (j === 1) {
-          const updatedContent = this.formatDate(childContent[j]);
-          childObj[header[j - 1] / header[j]] =
-            childContent[j - 1] + ". " + updatedContent; //combining design and date
-        } else if (j === 2) {
-          childObj[header[j]] = Number(childContent[j]).toLocaleString(
-            "en-US",
-            { style: "currency", currency: "USD", maximumFractionDigits: 0 }
-          );
-          // 2025-update
-          // } else if (j === 3) {
-          //   childObj[header[j + 1]] = childContent[j + 1];
-          //   childObj[header[j + 2]] = childContent[j + 2];
-          //   childObj[header[j]] = childContent[j];
-        } else if (j === 4) {
-          if (header.includes("absorption limit")) {
-            let absorption = parseFloat(childContent[j + 8]).toFixed(4);
-            childObj["Absorption (inches)"] = String(absorption);
-            childObj[header[j]] = childContent[j];
-          } else {
-            childObj["Absorption (inches)"] = await this.getTotalAbsorption();
-            childObj[header[j]] = childContent[j];
-          }
-          childObj[header[13]] = childContent[13];
-        } else if (j !== 0 && j !== 12 && j !== 5 && j !== 13) {
-          childObj[header[j]] = childContent[j];
-        }
-      }
-      obj[i] = childObj;
+    const obj = {};
+    const header = content[0].contents;
+    const hasAbsorptionLimit = header.includes("absorption limit");
+
+    for (let i = 1; i < content.length; i++) {
+      const c = content[i].contents;
+      const absorption = hasAbsorptionLimit
+        ? String(parseFloat(c[15]).toFixed(4))
+        : String(await this.getTotalAbsorption());
+
+      obj[i] = {
+        "design/date": c[0] + ". " + this.formatDate(c[1]),
+        "cost": Number(c[2]).toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0,
+        }),
+        "rainfall": c[3],
+        "absorption": absorption,
+        "runoff": c[4],
+        "total pollution": c[14],
+        "concrete": c[6],
+        "permeable concrete": c[7],
+        "grass": c[8],
+        "wood chips": c[9],
+        "artificial turf": c[10],
+        "poured rubber": c[11],
+        "riparian buffer": c[12],
+      };
     }
     return obj;
   },
@@ -389,26 +383,27 @@ export default {
    * Check if the format fits the 2025 SPICe requirement.
    * */
   isDesignFormatted(designHistory) {
-    const index = Object.keys(designHistory[0]).indexOf("rainfall");
-    return index === 2;
+    return Object.keys(designHistory[0])[0] === "design/date";
   },
 
   /**
    * If the format does not fit the SPICe 2025 study requirement. Then change the format.
    * */
   changeDesignFormat(designHistory) {
-    let header = [
+    const header = [
       "design/date",
       "cost",
       "rainfall",
       "absorption",
       "runoff",
+      "total pollution",
       "concrete",
       "permeable concrete",
       "grass",
       "wood chips",
       "artificial turf",
       "poured rubber",
+      "riparian buffer",
     ];
 
     let obj = {};
@@ -416,8 +411,8 @@ export default {
       let childObj = {};
       for (let j = 0; j < header.length; j++) {
         if (j === 0) {
-          childObj[header[j]] = designHistory[i][NaN];
-        } else if (header[j].includes("absorption")) {
+          childObj[header[j]] = designHistory[i]["NaN"];
+        } else if (header[j] === "absorption") {
           childObj[header[j]] = designHistory[i]["Absorption (inches)"];
         } else {
           childObj[header[j]] = designHistory[i][header[j]];
