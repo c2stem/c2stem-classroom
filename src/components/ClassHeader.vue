@@ -115,17 +115,17 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
-    getProjectName() {
-      return sessionStorage.getItem("projectName");
-    },
     getCheckedDesigns() {
       return this.$store.getters.getCheckedDesigns;
     },
   },
   methods: {
+    getProjectName() {
+      return sessionStorage.getItem("projectName");
+    },
     async saveProject() {
       try {
-        let name = this.getProjectName;
+        let name = this.getProjectName();
         await Logger.logUserActions({
           actionType: "saveProject",
           actionView: this.currentRouteName,
@@ -177,13 +177,13 @@ export default {
       }
     },
     async exportProject() {
-      await simulation.getProject(this.getProjectName);
+      await simulation.getProject(this.getProjectName());
     },
   },
   mounted() {
     this._saveProjectHandler = (evt) => {
       if (evt.status) {
-        Simulation.publishProject(this.getProjectName, true);
+        Simulation.publishProject(this.getProjectName(), true);
       }
     };
     this.emitter.on("save-project", this._saveProjectHandler);

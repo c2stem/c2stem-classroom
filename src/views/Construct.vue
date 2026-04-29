@@ -61,7 +61,7 @@ export default {
   },
   data() {
     return {
-      projectName: " cmise-project-computational",
+      projectName: "cmise-project-computational",
       loading: false,
       loadStatus: false,
       background: "static",
