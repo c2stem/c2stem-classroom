@@ -66,7 +66,7 @@
         <InquiryExperiments v-if="activeTab === 'experiments'"></InquiryExperiments>
       </div>
       <div class="tab-pane" id="findings" aria-labelledby="findings-tab" role="tabpanel" tabindex="0">
-        <p class="text-muted">My Findings content coming soon.</p>
+        <InquiryFindings v-if="activeTab === 'findings'"></InquiryFindings>
       </div>
       <div class="tab-pane" id="conclusions" aria-labelledby="conclusions-tab" role="tabpanel" tabindex="0">
         <InquiryConclusions></InquiryConclusions>
@@ -79,12 +79,14 @@
 import InquiryHypothesis from "../components/InquiryHypothesis.vue";
 import InquiryConclusions from "../components/InquiryConclusions.vue";
 import InquiryExperiments from "../components/InquiryExperiments.vue";
+import InquiryFindings from "../components/InquiryFindings.vue";
 export default {
   name: "Inquiry",
   components: {
     InquiryHypothesis,
     InquiryConclusions,
     InquiryExperiments,
+    InquiryFindings,
   },
   data() {
     return {

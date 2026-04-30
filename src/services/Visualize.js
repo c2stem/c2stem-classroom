@@ -163,6 +163,56 @@ export default {
       alert(error.message);
     }
   },
+  async getInquiryLastTestRecord(knownDataRows = 0) {
+    try {
+      // Poll until test history has more data rows than knownDataRows (header at index 0 is not counted)
+      const maxAttempts = 20;
+      const interval = 500;
+      let thContents = null;
+      for (let i = 0; i < maxAttempts; i++) {
+        const gb = await this.getGlobalVariables();
+        const varName = this.getGlobalVariableName(gb, "test history");
+        thContents = gb.vars[varName].value.contents;
+        const dataRows = Object.keys(thContents).length - 1;
+        if (dataRows > knownDataRows) break;
+        await new Promise((r) => setTimeout(r, interval));
+        thContents = null;
+      }
+      if (!thContents) return null;
+      const rowCount = Object.keys(thContents).length;
+      if (rowCount < 2) return null;
+      const row = thContents[rowCount - 1].contents;
+      let hourlyList = null;
+      for (let c = 0; c < row.length; c++) {
+        if (row[c] && typeof row[c] === "object" && row[c].contents) {
+          hourlyList = row[c].contents;
+          break;
+        }
+      }
+      const hourlyData = {};
+      if (hourlyList && hourlyList.length > 1) {
+        for (let h = 1; h < hourlyList.length; h++) {
+          const hr = hourlyList[h].contents;
+          hourlyData[h] = {
+            "Time (hours)": hr[0],
+            "Total Rainfall (in)": hr[1],
+            "Total Absorption (in)": hr[2],
+            "Total Runoff (in)": hr[3],
+          };
+        }
+      }
+      return {
+        time: row[1] ? this.formatDate(row[1]) : "",
+        material: row[2] ?? "",
+        rainfallRate: row[3] ?? "",
+        rainfallDuration: row[4] ?? "",
+        hourlyData,
+      };
+    } catch (error) {
+      console.error("[captureTest] error:", error);
+      return null;
+    }
+  },
   async getInquiryTestData() {
     try {
       const gb = await this.getGlobalVariables();

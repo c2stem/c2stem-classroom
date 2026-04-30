@@ -12,6 +12,7 @@ const store = createStore({
     user: "",
     testHistory: {},
     testHistoryLength: 0,
+    inquiryTestHistory: [],
     favoriteStatus: [],
     playHistory: {},
     playCheckedStatus: [],
@@ -29,6 +30,11 @@ const store = createStore({
       rainfallRate: { claim: "", evidence: "", reasoning: "" },
       surfaceMaterial: { claim: "", evidence: "", reasoning: "" },
       rainfallDuration: { claim: "", evidence: "", reasoning: "" },
+    },
+    findings: {
+      rainfallRate:      { hypothesis: "", tests: {}, finding: "" },
+      surfaceMaterial:   { hypothesis: "", tests: {}, finding: "" },
+      rainfallDuration:  { hypothesis: "", tests: {}, finding: "" },
     },
   },
   mutations: {
@@ -204,6 +210,13 @@ const store = createStore({
     saveConclusions(state, data) {
       state.conclusions = data;
     },
+    saveFindings(state, data) {
+      state.findings = { ...state.findings, ...data };
+    },
+    addInquiryTestRecord(state, record) {
+      const testNumber = state.inquiryTestHistory.length + 1;
+      state.inquiryTestHistory.push({ ...record, testNumber });
+    },
   },
   getters: {
     /**
@@ -288,6 +301,12 @@ const store = createStore({
     },
     getConclusions(state) {
       return state.conclusions;
+    },
+    getFindings(state) {
+      return state.findings;
+    },
+    getInquiryTestHistory(state) {
+      return state.inquiryTestHistory;
     },
     getHypotheses(state) {
       const empty = { effect: [], reason: [] };
@@ -376,6 +395,12 @@ const store = createStore({
     },
     saveConclusions(context, data) {
       context.commit("saveConclusions", data);
+    },
+    saveFindings(context, data) {
+      context.commit("saveFindings", data);
+    },
+    addInquiryTestRecord(context, record) {
+      context.commit("addInquiryTestRecord", record);
     },
   },
   modules: {},

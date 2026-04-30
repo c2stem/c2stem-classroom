@@ -270,7 +270,6 @@ export default {
       hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
       hourlyTableContent: {},
       testHistoryHeader: ["Test No.", "Time", "Material", "Rainfall Rate", "Rainfall Duration", "Compare"],
-      testHistoryContent: {},
       testHistoryChecked: [],
       tableExpanded: false,
       chartExpanded: false,
@@ -299,6 +298,22 @@ export default {
     compareTests() {
       if (!this.compareData) return [];
       return Object.values(this.compareData);
+    },
+    inquiryTestHistory() {
+      return this.$store.getters.getInquiryTestHistory;
+    },
+    testHistoryContent() {
+      const content = {};
+      this.inquiryTestHistory.forEach((test, idx) => {
+        content[idx] = {
+          "Test No.": test.testNumber,
+          "Time": test.time,
+          "Material": test.material,
+          "Rainfall Rate": test.rainfallRate,
+          "Rainfall Duration": test.rainfallDuration,
+        };
+      });
+      return content;
     },
     hypothesisClaims() {
       const claims = {};
@@ -394,20 +409,17 @@ export default {
       }
       this.hourlyLoading = false;
     },
-    async loadTestHistory() {
-      const data = await Visualize.getInquiryTestData();
-      if (data) {
-        this.testHistoryContent = data;
-        this.testHistoryChecked = Array(Object.keys(data).length).fill(false);
-      }
+    loadTestHistory() {
+      this.testHistoryChecked = Array(this.inquiryTestHistory.length).fill(false);
     },
     async runFullStorm() {
       this.fullStormLoading = true;
       Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration, "full storm": true });
       await this.loadHourlyData(this.rainfallDuration);
       this.fullStormLoading = false;
+      await this.captureAndStoreTest();
     },
-    runOneHour() {
+    async runOneHour() {
       if (!this.loopActive) {
         this.loopActive = true;
         this.currentHour = 1;
@@ -418,10 +430,11 @@ export default {
       }
       const isLastHour = this.hoursLeft === 0;
       Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.currentHour, "full storm": isLastHour });
-      this.loadHourlyData(this.currentHour);
+      await this.loadHourlyData(this.currentHour);
       if (isLastHour) {
         this.loopActive = false;
         this.currentHour = 0;
+        await this.captureAndStoreTest();
       }
     },
     onTestHistoryCheck({ index, status, event }) {
@@ -434,13 +447,13 @@ export default {
       updated[index] = status;
       this.testHistoryChecked = updated;
     },
-    async onCompareClick() {
+    onCompareClick() {
       const count = this.testHistoryChecked.filter((v) => v).length;
       if (count < 2) {
         alert("Please select exactly 2 tests from the Test history tab to compare.");
         return;
       }
-      await this.loadCompareData();
+      this.loadCompareData();
       this.openCompareModal();
     },
     openCompareModal() {
@@ -460,19 +473,17 @@ export default {
     closeCompareModal() {
       if (this._compareModal) this._compareModal.hide();
     },
-    async loadCompareData() {
+    loadCompareData() {
       const selectedIndexes = this.testHistoryChecked
         .map((v, i) => (v ? i : -1))
         .filter((i) => i !== -1);
       if (selectedIndexes.length !== 2) return;
-      // DesignTable v-for uses object key as index, which matches testHistoryContent keys directly
-      const testNumbers = selectedIndexes.map((i) => {
-        const row = this.testHistoryContent[i];
-        const testNum = row ? Number(Object.values(row)[0]) : null;
-        return testNum;
-      }).filter((n) => n !== null);
-      if (testNumbers.length !== 2) return;
-      this.compareData = await Visualize.getInquiryCompareData(testNumbers);
+      const result = {};
+      selectedIndexes.forEach((i) => {
+        const record = this.inquiryTestHistory[i];
+        if (record) result[record.testNumber] = record;
+      });
+      this.compareData = result;
       this.$nextTick(() => {
         this.compareTests.forEach((_, idx) => this.drawCompareChart(idx));
       });
@@ -515,6 +526,14 @@ export default {
         height: h,
       };
       new window.google.visualization.LineChart(el).draw(data, options);
+    },
+    async captureAndStoreTest() {
+      const result = await Visualize.getInquiryLastTestRecord(this.inquiryTestHistory.length);
+      if (!result) return;
+      this.$store.dispatch("addInquiryTestRecord", result);
+      this.$nextTick(() => {
+        this.testHistoryChecked = Array(this.inquiryTestHistory.length).fill(false);
+      });
     },
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
