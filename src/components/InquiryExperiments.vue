@@ -57,20 +57,6 @@
     <!-- Right: Display Column -->
     <div class="display-column">
 
-      <!-- No hypotheses yet -->
-      <div v-if="!hypothesesComplete" class="no-hypothesis-prompt">
-        <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
-        <div>
-          <p class="no-hypothesis-title">No hypotheses found</p>
-          <p class="no-hypothesis-body">
-            Please go to the <strong>My Hypotheses</strong> tab and complete at least one hypothesis before running experiments.
-          </p>
-          <button class="btn btn-primary btn-sm" @click="goToHypotheses">Go to My Hypotheses</button>
-        </div>
-      </div>
-
-      <template v-else>
-
       <div v-if="!selectionReady" class="selection-prompt">
         Select a hypothesis and variable below to unlock the experiment.
       </div>
@@ -190,7 +176,6 @@
         </div>
       </div>
 
-      </template>
     </div>
   </div>
 
@@ -417,7 +402,7 @@ export default {
       Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration, "full storm": true });
       await this.loadHourlyData(this.rainfallDuration);
       this.fullStormLoading = false;
-      await this.captureAndStoreTest();
+      await this.captureAndStoreTest(this.hourlyTableContent);
     },
     async runOneHour() {
       if (!this.loopActive) {
@@ -434,7 +419,7 @@ export default {
       if (isLastHour) {
         this.loopActive = false;
         this.currentHour = 0;
-        await this.captureAndStoreTest();
+        await this.captureAndStoreTest(this.hourlyTableContent);
       }
     },
     onTestHistoryCheck({ index, status, event }) {
@@ -485,7 +470,7 @@ export default {
       });
       this.compareData = result;
       this.$nextTick(() => {
-        this.compareTests.forEach((_, idx) => this.drawCompareChart(idx));
+        this.compareTests.forEach((_, idx) => this.drawCompareChart(idx, "compare-modal-chart"));
       });
     },
     drawCompareChart(idx, prefix = "compare-chart") {
@@ -527,10 +512,10 @@ export default {
       };
       new window.google.visualization.LineChart(el).draw(data, options);
     },
-    async captureAndStoreTest() {
+    async captureAndStoreTest(hourlyData = {}) {
       const result = await Visualize.getInquiryLastTestRecord(this.inquiryTestHistory.length);
       if (!result) return;
-      this.$store.dispatch("addInquiryTestRecord", result);
+      this.$store.dispatch("addInquiryTestRecord", { ...result, hourlyData });
       this.$nextTick(() => {
         this.testHistoryChecked = Array(this.inquiryTestHistory.length).fill(false);
       });
@@ -553,10 +538,6 @@ export default {
 </script>
 
 <style scoped>
-div{
-  min-height: auto;
-  height: auto;
-}
 .experiments-wrapper {
   display: flex;
   gap: 20px;
@@ -590,14 +571,25 @@ div{
 
 .sim-iframe-area {
   width: 400px;
-  height: 400px;
+  height: 355px;
   min-width: 400px;
-  min-height: 400px;
+  min-height: 355px;
   border: 1px solid #ccc;
   border-radius: 6px;
   overflow: hidden;
   display: block;
   position: relative;
+}
+
+.sim-iframe-area :deep(iframe) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px !important;
+  height: 432px !important;
+  transform: scale(0.83);
+  transform-origin: top left;
+  border: none;
 }
 
 .sim-iframe-frozen {
@@ -727,36 +719,6 @@ div{
   pointer-events: none;
 }
 
-.no-hypothesis-prompt {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  background: #fff8e1;
-  border: 1px solid #ffe082;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 12px;
-}
-
-.no-hypothesis-icon {
-  font-size: 2rem;
-  color: #f59e0b;
-  flex-shrink: 0;
-}
-
-.no-hypothesis-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #92400e;
-  margin-bottom: 4px;
-}
-
-.no-hypothesis-body {
-  font-size: 0.88rem;
-  color: #78350f;
-  margin-bottom: 10px;
-}
-
 .compare-modal-dialog {
   max-width: 92vw;
   width: 92vw;
@@ -764,28 +726,9 @@ div{
 }
 
 .compare-modal-dialog .modal-content {
-  height: 95vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-.compare-modal-body {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f8f9fa;
-}
-
-.compare-launch-area {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px 0;
+  max-height: 95vh;
 }
 
 .compare-modal-header {
@@ -795,6 +738,8 @@ div{
 }
 
 .compare-modal-body {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -803,14 +748,9 @@ div{
   background: #f8f9fa;
 }
 
-.compare-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .compare-block {
-  flex: 1;
+  flex: 0 0 auto;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -818,7 +758,6 @@ div{
   border-radius: 8px;
   padding: 10px;
   background: #fff;
-  min-height: 0;
 }
 
 .compare-block-header {
@@ -840,10 +779,10 @@ div{
 
 .compare-row {
   flex: 1;
+  min-height: 260px;
   display: flex;
   gap: 10px;
   align-items: stretch;
-  min-height: 0;
 }
 
 .compare-card-half {
@@ -851,6 +790,13 @@ div{
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.compare-card-half .ct-card {
+  flex: 1;
+  height: auto;
 }
 
 .compare-hint {
@@ -881,8 +827,9 @@ div{
 .ct-collapsed{ flex: 0 0 0; overflow: hidden; min-width: 0; transition: flex 0.2s ease; }
 
 .ct-card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   overflow: hidden;
@@ -926,8 +873,7 @@ div{
 }
 
 .ct-card-body {
-  flex: 1;
-  overflow: hidden;
+  overflow: auto;
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -935,7 +881,8 @@ div{
 }
 
 .hourly-table-wrap {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -951,6 +898,7 @@ div{
 
 .hourly-chart {
   width: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 </style>

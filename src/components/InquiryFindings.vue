@@ -1,19 +1,7 @@
 <template>
   <div>
 
-    <!-- No hypotheses guard -->
-    <div v-if="!hypothesesComplete" class="no-hypothesis-prompt">
-      <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
-      <div>
-        <p class="no-hypothesis-title">No hypotheses found</p>
-        <p class="no-hypothesis-body">
-          Please go to the  <strong> My Hypotheses </strong> tab and complete all three hypotheses before recording findings.
-        </p>
-        <button class="btn btn-primary btn-sm" @click="goToHypotheses">Go to My Hypotheses</button>
-      </div>
-    </div>
-
-    <div v-else class="findings-wrapper">
+    <div class="findings-wrapper">
 
       <!-- Left column: instruction + textarea + save -->
       <div class="findings-left">
@@ -35,20 +23,6 @@
 
       <!-- Right column: controls + stacked test cards -->
       <div class="findings-right">
-
-        <!-- No iframe warning -->
-        <div v-if="iframeMissing" class="no-hypothesis-prompt">
-          <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
-          <div>
-            <p class="no-hypothesis-title">No experiment data available</p>
-            <p class="no-hypothesis-body">
-              Please visit the <strong>My Experiments</strong> tab and run at least one simulation before recording findings.
-            </p>
-            <button class="btn btn-primary btn-sm" @click="goToExperiments">Go to My Experiments</button>
-          </div>
-        </div>
-
-        <template v-else>
 
         <!-- Hypothesis dropdown -->
         <div class="control-row">
@@ -117,7 +91,6 @@
           </div>
         </div>
 
-        </template>
       </div>
     </div>
   </div>
@@ -354,7 +327,7 @@ p {
   resize: none;
   color: #333;
   box-sizing: border-box;
-  min-height: 0;
+  min-height: calc(100vh - 320px);
   overflow-y: auto;
 }
 

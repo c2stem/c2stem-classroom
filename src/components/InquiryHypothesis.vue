@@ -5,7 +5,8 @@
       <p class="text-muted fst-italic">{{ h.condition }}</p>
       <div class="d-flex align-items-start gap-3 ms-3">
 
-        <template v-if="h.multiSelect">
+        <!-- Box multi-select (question 1) -->
+        <template v-if="h.multiSelect && !h.dropdownSelect">
           <div class="hyp-checkbox-list">
             <label v-for="opt in h.effectOptions" :key="opt"
                    class="hyp-option"
@@ -15,6 +16,30 @@
             </label>
           </div>
         </template>
+
+        <!-- Dropdown multi-select (questions 2 & 3) -->
+        <template v-else-if="h.multiSelect && h.dropdownSelect">
+          <div class="hyp-dropdown">
+            <div class="hyp-dropdown-trigger" @click.stop="toggleDropdown(h.id, 'effect')">
+              <span v-if="hypotheses[h.id].effect.length" class="trigger-text">
+                {{ hypotheses[h.id].effect.join('; ') }}
+              </span>
+              <span v-else class="trigger-placeholder">Select one or more</span>
+              <i class="bi bi-chevron-down trigger-arrow"
+                 :class="{ open: openDropdown === `${h.id}-effect` }"></i>
+            </div>
+            <div v-if="openDropdown === `${h.id}-effect`" class="hyp-dropdown-menu">
+              <label v-for="opt in h.effectOptions" :key="opt"
+                     class="hyp-option"
+                     :class="{ selected: hypotheses[h.id].effect.includes(opt) }"
+                     @click.stop="toggleSelection(h.id, 'effect', opt)">
+                {{ opt }}
+              </label>
+            </div>
+          </div>
+        </template>
+
+        <!-- Single select fallback -->
         <select v-else class="hyp-select"
                 :value="hypotheses[h.id].effect[0] || ''"
                 @change="setSelection(h.id, 'effect', $event.target.value)">
@@ -24,7 +49,8 @@
 
         <span class="fw-500">because</span>
 
-        <template v-if="h.multiSelect">
+        <!-- Box multi-select (question 1) -->
+        <template v-if="h.multiSelect && !h.dropdownSelect">
           <div class="hyp-checkbox-list">
             <label v-for="opt in h.reasonOptions" :key="opt"
                    class="hyp-option"
@@ -34,6 +60,30 @@
             </label>
           </div>
         </template>
+
+        <!-- Dropdown multi-select (questions 2 & 3) -->
+        <template v-else-if="h.multiSelect && h.dropdownSelect">
+          <div class="hyp-dropdown">
+            <div class="hyp-dropdown-trigger" @click.stop="toggleDropdown(h.id, 'reason')">
+              <span v-if="hypotheses[h.id].reason.length" class="trigger-text">
+                {{ hypotheses[h.id].reason.join('; ') }}
+              </span>
+              <span v-else class="trigger-placeholder">Select one or more</span>
+              <i class="bi bi-chevron-down trigger-arrow"
+                 :class="{ open: openDropdown === `${h.id}-reason` }"></i>
+            </div>
+            <div v-if="openDropdown === `${h.id}-reason`" class="hyp-dropdown-menu">
+              <label v-for="opt in h.reasonOptions" :key="opt"
+                     class="hyp-option"
+                     :class="{ selected: hypotheses[h.id].reason.includes(opt) }"
+                     @click.stop="toggleSelection(h.id, 'reason', opt)">
+                {{ opt }}
+              </label>
+            </div>
+          </div>
+        </template>
+
+        <!-- Single select fallback -->
         <select v-else class="hyp-select"
                 :value="hypotheses[h.id].reason[0] || ''"
                 @change="setSelection(h.id, 'reason', $event.target.value)">
@@ -49,31 +99,16 @@
 <script>
 export default {
   name: "InquiryHypothesis",
-  computed: {
-    hypotheses() {
-      return this.$store.getters.getHypotheses;
-    },
-  },
-  methods: {
-    toggleSelection(id, field, value) {
-      const current = [...this.hypotheses[id][field]];
-      const idx = current.indexOf(value);
-      if (idx === -1) current.push(value);
-      else current.splice(idx, 1);
-      this.$store.dispatch("updateHypothesis", { id, field, value: current });
-    },
-    setSelection(id, field, value) {
-      this.$store.dispatch("updateHypothesis", { id, field, value: [value] });
-    },
-  },
   data() {
     return {
+      openDropdown: null,
       questions: [
         {
           id: 1,
           question: "How does rainfall rate affect runoff?",
           condition: "If rainfall rate increases …",
           multiSelect: true,
+          dropdownSelect: false,
           effectOptions: [
             "Runoff will decrease",
             "Runoff will increase",
@@ -94,7 +129,8 @@ export default {
           id: 2,
           question: "How does surface material affect runoff?",
           condition: "If we change the surface material …",
-          multiSelect: false,
+          multiSelect: true,
+          dropdownSelect: true,
           effectOptions: [
             "Runoff will increase",
             "Runoff will decrease",
@@ -117,7 +153,8 @@ export default {
           id: 3,
           question: "How does rainfall duration affect runoff?",
           condition: "If rain continues for a long time …",
-          multiSelect: false,
+          multiSelect: true,
+          dropdownSelect: true,
           effectOptions: [
             "Runoff will increase",
             "Runoff will decrease",
@@ -137,6 +174,36 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    hypotheses() {
+      return this.$store.getters.getHypotheses;
+    },
+  },
+  methods: {
+    toggleSelection(id, field, value) {
+      const current = [...this.hypotheses[id][field]];
+      const idx = current.indexOf(value);
+      if (idx === -1) current.push(value);
+      else current.splice(idx, 1);
+      this.$store.dispatch("updateHypothesis", { id, field, value: current });
+    },
+    setSelection(id, field, value) {
+      this.$store.dispatch("updateHypothesis", { id, field, value: [value] });
+    },
+    toggleDropdown(id, field) {
+      const key = `${id}-${field}`;
+      this.openDropdown = this.openDropdown === key ? null : key;
+    },
+    closeAllDropdowns() {
+      this.openDropdown = null;
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.closeAllDropdowns);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.closeAllDropdowns);
   },
 };
 </script>
@@ -164,6 +231,63 @@ export default {
   padding: 4px;
 }
 
+.hyp-dropdown {
+  position: relative;
+  min-width: 280px;
+}
+
+.hyp-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 10px;
+  background-color: #fdf6e3;
+  border: 1px solid #c8b89a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  min-height: 36px;
+}
+
+.trigger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.trigger-placeholder {
+  color: #999;
+  flex: 1;
+}
+
+.trigger-arrow {
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.trigger-arrow.open {
+  transform: rotate(180deg);
+}
+
+.hyp-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background-color: #fdf6e3;
+  border: 1px solid #c8b89a;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
 .hyp-option {
   display: flex;
   align-items: center;
@@ -184,11 +308,12 @@ export default {
   color: #fff;
   border-radius: 6px;
 }
-div{
+
+div {
   height: auto;
 }
 
-p{
+p {
   justify-content: flex-start;
 }
 </style>

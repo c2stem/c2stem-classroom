@@ -1,19 +1,7 @@
 <template>
   <div>
 
-    <!-- No hypotheses yet -->
-    <div v-if="!hypothesesComplete" class="no-hypothesis-prompt">
-      <i class="bi bi-exclamation-triangle-fill no-hypothesis-icon"></i>
-      <div>
-        <p class="no-hypothesis-title">No hypotheses found</p>
-        <p class="no-hypothesis-body">
-          Please go to the <strong>My Hypotheses</strong> tab and complete at least one hypothesis before writing conclusions.
-        </p>
-        <button class="btn btn-primary btn-sm" @click="goToHypotheses">Go to My Hypotheses</button>
-      </div>
-    </div>
-
-  <div v-else class="conclusions-wrapper">
+  <div class="conclusions-wrapper">
 
     <!-- Left sidebar -->
     <div class="conclusions-sidebar">
@@ -51,7 +39,9 @@
       <div class="section">
         <h5 class="section-title">Evidence</h5>
         <p class="section-subtitle">(From my findings)</p>
-        <div class="info-box placeholder-text">(auto-populate from my findings page)</div>
+        <div class="info-box" :class="{ 'placeholder-text': !activeFinding }">
+          {{ activeFinding || '(No findings saved yet for this question)' }}
+        </div>
       </div>
 
       <!-- Reasoning -->
@@ -106,6 +96,13 @@ export default {
       ],
     };
   },
+  mounted() {
+    const keyMap = { 1: "rainfallRate", 2: "surfaceMaterial", 3: "rainfallDuration" };
+    const saved = this.$store.getters.getConclusions;
+    Object.entries(keyMap).forEach(([id, key]) => {
+      if (saved[key]?.reasoning) this.reasoning[Number(id)] = saved[key].reasoning;
+    });
+  },
   methods: {
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
@@ -120,7 +117,7 @@ export default {
         const reasons = h.reason.length ? h.reason.join(" or ") : "…";
         snapshot[key] = {
           claim: `${q.condition}, ${effects} because ${reasons}`,
-          evidence: "",
+          evidence: this.findings[key]?.finding || "",
           reasoning: this.reasoning[q.id] || "",
         };
       });
@@ -136,6 +133,9 @@ export default {
     hypotheses() {
       return this.$store.getters.getHypotheses;
     },
+    findings() {
+      return this.$store.getters.getFindings;
+    },
     activeQuestion() {
       return this.questions.find((q) => q.id === this.activeId);
     },
@@ -146,6 +146,10 @@ export default {
     reasonList() {
       const h = this.hypotheses[this.activeId];
       return h.reason.length ? h.reason : ["…"];
+    },
+    activeFinding() {
+      const keyMap = { 1: "rainfallRate", 2: "surfaceMaterial", 3: "rainfallDuration" };
+      return this.findings[keyMap[this.activeId]]?.finding || "";
     },
   },
 };
