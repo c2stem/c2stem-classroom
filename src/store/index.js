@@ -12,7 +12,7 @@ const store = createStore({
     user: "",
     testHistory: {},
     testHistoryLength: 0,
-    inquiryTestHistory: [],
+    inquiryExperimentHistory: [],
     favoriteStatus: [],
     playHistory: {},
     playCheckedStatus: [],
@@ -146,8 +146,11 @@ const store = createStore({
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
         newState.designHistorySummary = response[0].designHistorySummary;
-        newState.designHistorySummaryLength =
-          response[0].designHistorySummaryLength;
+        newState.designHistorySummaryLength = response[0].designHistorySummaryLength;
+        if (response[0].hypotheses) newState.hypotheses = response[0].hypotheses;
+        if (response[0].findings) newState.findings = response[0].findings;
+        if (response[0].conclusions) newState.conclusions = response[0].conclusions;
+        if (response[0].inquiryExperimentHistory) newState.inquiryExperimentHistory = response[0].inquiryExperimentHistory;
         sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
@@ -214,8 +217,8 @@ const store = createStore({
       state.findings = { ...state.findings, ...data };
     },
     addInquiryTestRecord(state, record) {
-      const testNumber = state.inquiryTestHistory.length + 1;
-      state.inquiryTestHistory.push({ ...record, testNumber });
+      const testNumber = state.inquiryExperimentHistory.length + 1;
+      state.inquiryExperimentHistory.push({ ...record, testNumber });
     },
   },
   getters: {
@@ -306,7 +309,7 @@ const store = createStore({
       return state.findings;
     },
     getInquiryTestHistory(state) {
-      return state.inquiryTestHistory;
+      return state.inquiryExperimentHistory;
     },
     getHypotheses(state) {
       const empty = { effect: [], reason: [] };

@@ -17,9 +17,9 @@ export default {
   },
   data() {
     return {
-      names: ["Computational Model", "Scientific Inquiry"],
-      description: ["Complete your computational model lessons", "Water runoff virtual lab"],
-      route: ["Construct", "Inquiry"],
+      names: ["Scientific Inquiry", "Computational Model"],
+      description: ["Water runoff virtual lab", "Complete your computational model lessons"],
+      route: ["Inquiry", "Construct"],
       routeParams: [{}],
       // names: ["Computational Model", "IE", "EE" ],
       // description: ["Complete your computational model lessons", "", ""],

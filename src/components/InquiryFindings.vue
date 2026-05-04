@@ -98,6 +98,7 @@
 
 <script>
 import DesignTable from "./DesignTable.vue";
+import Logger from "../services/Logger.js";
 
 export default {
   name: "InquiryFindings",
@@ -134,12 +135,12 @@ export default {
       });
       return claims;
     },
-    inquiryTestHistory() {
+    inquiryExperimentHistory() {
       return this.$store.getters.getInquiryTestHistory;
     },
     testHistoryContent() {
       const content = {};
-      this.inquiryTestHistory.forEach((test, idx) => {
+      this.inquiryExperimentHistory.forEach((test, idx) => {
         content[idx] = {
           "Test No.": test.testNumber,
           "Time": test.time,
@@ -153,13 +154,13 @@ export default {
     compareData() {
       const data = {};
       this.selectedTestKeys.forEach((key) => {
-        const record = this.inquiryTestHistory[Number(key)];
+        const record = this.inquiryExperimentHistory[Number(key)];
         if (record) data[key] = record;
       });
       return data;
     },
     iframeMissing() {
-      return this.inquiryTestHistory.length === 0;
+      return this.inquiryExperimentHistory.length === 0;
     },
   },
   watch: {
@@ -210,24 +211,24 @@ export default {
           Number(row[runoffKey]),
         ]);
       });
-      const w = el.offsetWidth || 400;
-      const h = el.offsetHeight || 260;
+      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
       const options = {
-        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
-        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
+        hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0 },
         series: {
           0: { color: "#0d6efd" },
           1: { color: "#198754" },
           2: { color: "#dc3545" },
         },
-        legend: { position: "top", alignment: "center" },
-        chartArea: { left: 60, top: 50, width: w - 80, height: h - 100 },
-        width: w,
-        height: h,
+        legend: { position: "top" },
+        chartArea: { width: "65%", height: "65%" },
+        width: "100%",
+        height: 260,
       };
       new window.google.visualization.LineChart(el).draw(data, options);
     },
-    saveFindings() {
+    async saveFindings() {
       if (!this.selectedHypothesis) {
         alert("Please select a hypothesis before saving.");
         return;
@@ -244,7 +245,33 @@ export default {
         },
       };
       this.$store.dispatch("saveFindings", snapshot);
-      alert("Findings saved!");
+      const tests = this.selectedTestKeys.map((key) => {
+        const t = this.testHistoryContent[key];
+        const full = this.inquiryExperimentHistory[Number(key)];
+        const hourlyData = Object.values(full?.hourlyData || {}).map((row) => ({
+          hour: row["test"],
+          totalRainfall: row["Total Rainfall (in)"],
+          totalAbsorption: row["Total Absorption (in)"],
+          totalRunoff: row["Total Runoff (in)"],
+        }));
+        return {
+          testNo: t["Test No."],
+          time: t["Time"],
+          material: t["Material"],
+          rainfallRate: t["Rainfall Rate"],
+          rainfallDuration: t["Rainfall Duration"],
+          hourlyData,
+        };
+      });
+      await Logger.logUserActions({
+        actionType: "inquiryFindings",
+        actionView: "InquiryFindings",
+        args: {
+          hypothesis: this.hypothesisClaims[this.selectedHypothesis] || "",
+          tests,
+          finding: this.findingText,
+        },
+      });
     },
   },
   mounted() {
@@ -297,11 +324,10 @@ p {
   align-items: stretch;
 }
 
-/* Left column: fixed width, full height, textarea + save */
+/* Left column: 20% width, full height, textarea + save */
 .findings-left {
-  width: 220px;
-  min-width: 180px;
-  flex-shrink: 0;
+  flex: 0 0 20%;
+  max-width: 20%;
   display: flex;
   flex-direction: column;
   align-self: stretch;
@@ -434,22 +460,24 @@ p {
   display: flex;
   gap: 8px;
   padding: 8px;
-  height: 200px;
+  min-height: 250px;
+  height: auto;
 }
 
 .findings-card-half {
   flex: 1 1 50%;
   min-width: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .findings-card-half :deep(table) {
-  font-size: 0.68rem;
+  font-size: 0.9rem;
 }
 
 .findings-card-half :deep(th),
 .findings-card-half :deep(td) {
-  padding: 0.15rem 0.3rem !important;
+  padding: 0.3rem 0.4rem !important;
   white-space: nowrap;
 }
 

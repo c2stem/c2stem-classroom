@@ -20,6 +20,14 @@
           >
             User Projects
           </button>
+          <button
+            type="button"
+            class="btn btn-lg mb-3"
+            :class="{ active: isInquiryActive }"
+            @click="$router.push('/dashboard/inquiry')"
+          >
+            User Inquiry
+          </button>
         </nav>
       </div>
       <div class="col">
@@ -37,6 +45,9 @@ export default {
     },
     isProjectActive() {
       return this.$route.name === "DashboardProjects";
+    },
+    isInquiryActive() {
+      return this.$route.name === "DashboardInquiry";
     },
   },
 };

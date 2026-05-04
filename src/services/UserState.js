@@ -5,12 +5,20 @@ export default {
     const favList = state.favoriteStatus;
     const dhSummary = state.designHistorySummary;
     const dhSummaryLength = state.designHistorySummaryLength;
+    const hypotheses = state.hypotheses;
+    const findings = state.findings;
+    const conclusions = state.conclusions;
+    const inquiryExperimentHistory = state.inquiryExperimentHistory;
     let response = await axiosInstance.post("state/setState", {
       username: user,
       checkList: checkList,
       favList: favList,
       designHistorySummary: dhSummary,
       designHistorySummaryLength: dhSummaryLength,
+      hypotheses,
+      findings,
+      conclusions,
+      inquiryExperimentHistory,
     });
     if (response) {
       console.log("successfully saved state: ", response);

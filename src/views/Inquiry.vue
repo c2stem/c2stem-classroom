@@ -80,6 +80,7 @@ import InquiryHypothesis from "../components/InquiryHypothesis.vue";
 import InquiryConclusions from "../components/InquiryConclusions.vue";
 import InquiryExperiments from "../components/InquiryExperiments.vue";
 import InquiryFindings from "../components/InquiryFindings.vue";
+import Logger from "../services/Logger.js";
 export default {
   name: "Inquiry",
   components: {
@@ -93,6 +94,15 @@ export default {
       activeTab: "hypothesis",
     };
   },
+  methods: {
+    logHypotheses() {
+      Logger.logUserActions({
+        actionType: "inquiryHypotheses",
+        actionView: "InquiryHypothesis",
+        args: this.$store.getters.getHypotheses,
+      });
+    },
+  },
   mounted() {
     const tabs = document.querySelectorAll("#inquiry-list button[data-bs-toggle='pill']");
     tabs.forEach((btn) => {
@@ -100,7 +110,16 @@ export default {
         const target = e.target.getAttribute("data-bs-target");
         this.activeTab = target.replace("#", "");
       });
+      btn.addEventListener("hide.bs.tab", (e) => {
+        const leaving = e.target.getAttribute("data-bs-target");
+        if (leaving === "#hypothesis") {
+          this.logHypotheses();
+        }
+      });
     });
+  },
+  beforeUnmount() {
+    this.logHypotheses();
   },
 }
 </script>

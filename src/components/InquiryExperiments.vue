@@ -15,6 +15,22 @@
         </span>
       </div>
 
+      <!-- Live simulation values -->
+      <div class="sim-info-box">
+        <div class="sim-info-row">
+          <span class="sim-info-label">Current Material</span>
+          <span class="sim-info-value">{{ simMaterial || '—' }}</span>
+        </div>
+        <div class="sim-info-row">
+          <span class="sim-info-label">Total Absorption (inches)</span>
+          <span class="sim-info-value">{{ simAbsorption !== null ? simAbsorption : '—' }}</span>
+        </div>
+        <div class="sim-info-row">
+          <span class="sim-info-label">Absorption rate (in/hr)</span>
+          <span class="sim-info-value">{{ simAbsorptionLimit !== null ? simAbsorptionLimit : '—' }}</span>
+        </div>
+      </div>
+
       <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || fullStormLoading || !selectionReady }">
         <div v-if="loopActive || fullStormLoading || !selectionReady" class="iframe-overlay"></div>
         <iframe-loader
@@ -236,6 +252,7 @@ import IframeLoader from "./IframeLoader.vue";
 import DesignTable from "./DesignTable.vue";
 import Simulation from "../services/Simulation";
 import Visualize from "../services/Visualize";
+import Logger from "../services/Logger.js";
 
 export default {
   name: "InquiryExperiments",
@@ -261,6 +278,9 @@ export default {
       hourlyLoading: false,
       fullStormLoading: false,
       compareData: null,
+      simMaterial: null,
+      simAbsorption: null,
+      simAbsorptionLimit: null,
       questions: [
         { id: 1, key: "rainfallRate",    condition: "If rainfall rate increases" },
         { id: 2, key: "surfaceMaterial", condition: "If we change the surface material" },
@@ -284,12 +304,12 @@ export default {
       if (!this.compareData) return [];
       return Object.values(this.compareData);
     },
-    inquiryTestHistory() {
+    inquiryExperimentHistory() {
       return this.$store.getters.getInquiryTestHistory;
     },
     testHistoryContent() {
       const content = {};
-      this.inquiryTestHistory.forEach((test, idx) => {
+      this.inquiryExperimentHistory.forEach((test, idx) => {
         content[idx] = {
           "Test No.": test.testNumber,
           "Time": test.time,
@@ -305,8 +325,7 @@ export default {
       this.questions.forEach((q) => {
         const h = this.hypotheses[q.id];
         const effects = h.effect.length ? h.effect.join(" or ") : "…";
-        const reasons = h.reason.length ? h.reason.join(" or ") : "…";
-        claims[q.key] = `${q.condition}, ${effects} because ${reasons}`;
+        claims[q.key] = `${q.condition}, ${effects}`;
       });
       return claims;
     },
@@ -347,20 +366,20 @@ export default {
           Number(row[runoffKey]),
         ]);
       });
-      const w = el.offsetWidth || 400;
-      const h = el.offsetHeight || 280;
+      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
       const options = {
-        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
-        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
+        hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0 },
         series: {
           0: { color: "#0d6efd" },
           1: { color: "#198754" },
           2: { color: "#dc3545" },
         },
-        legend: { position: "top", alignment: "center" },
-        chartArea: { left: 60, top: 50, width: w - 80, height: h - 100 },
-        width: w,
-        height: h,
+        legend: { position: "top" },
+        chartArea: { width: "65%", height: "65%" },
+        width: "100%",
+        height: 260,
       };
       const chart = new window.google.visualization.LineChart(el);
       chart.draw(data, options);
@@ -395,7 +414,7 @@ export default {
       this.hourlyLoading = false;
     },
     loadTestHistory() {
-      this.testHistoryChecked = Array(this.inquiryTestHistory.length).fill(false);
+      this.testHistoryChecked = Array(this.inquiryExperimentHistory.length).fill(false);
     },
     async runFullStorm() {
       this.fullStormLoading = true;
@@ -465,7 +484,7 @@ export default {
       if (selectedIndexes.length !== 2) return;
       const result = {};
       selectedIndexes.forEach((i) => {
-        const record = this.inquiryTestHistory[i];
+        const record = this.inquiryExperimentHistory[i];
         if (record) result[record.testNumber] = record;
       });
       this.compareData = result;
@@ -495,29 +514,42 @@ export default {
           Number(row[runoffKey]),
         ]);
       });
-      const w = el.offsetWidth || 400;
-      const h = el.offsetHeight || 300;
+      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
       const options = {
-        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
-        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
+        hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0 },
         series: {
           0: { color: "#0d6efd" },
           1: { color: "#198754" },
           2: { color: "#dc3545" },
         },
-        legend: { position: "top", alignment: "center" },
-        chartArea: { left: 60, top: 50, width: w - 80, height: h - 100 },
-        width: w,
-        height: h,
+        legend: { position: "top" },
+        chartArea: { width: "65%", height: "65%" },
+        width: "100%",
+        height: 260,
       };
       new window.google.visualization.LineChart(el).draw(data, options);
     },
     async captureAndStoreTest(hourlyData = {}) {
-      const result = await Visualize.getInquiryLastTestRecord(this.inquiryTestHistory.length);
+      const result = await Visualize.getInquiryLastTestRecord(this.inquiryExperimentHistory.length);
       if (!result) return;
-      this.$store.dispatch("addInquiryTestRecord", { ...result, hourlyData });
+      const record = { ...result, hourlyData };
+      this.$store.dispatch("addInquiryTestRecord", record);
       this.$nextTick(() => {
-        this.testHistoryChecked = Array(this.inquiryTestHistory.length).fill(false);
+        this.testHistoryChecked = Array(this.inquiryExperimentHistory.length).fill(false);
+      });
+      Logger.logUserActions({
+        actionType: "inquiryExperiments",
+        actionView: "InquiryExperiments",
+        args: {
+          hypothesis: this.hypothesisClaims[this.selectedHypothesis] || this.selectedHypothesis,
+          variable: this.selectedVariable,
+          rainfallRate: this.rainfallRate,
+          rainfallDuration: this.rainfallDuration,
+          currentMaterial: this.simMaterial,
+          test: record,
+        },
       });
     },
     goToHypotheses() {
@@ -533,6 +565,43 @@ export default {
     window.google.charts.setOnLoadCallback(() => {
       this.googleChartsReady = true;
     });
+
+    const iframe = document.getElementById("iframe-id");
+    if (iframe) {
+      this._nbApi = new window.EmbeddedNetsBloxAPI(iframe);
+      iframe.onload = () => {
+        // Load initial values when project is opened
+        this._nbApi.addEventListener("action", async (e) => {
+          if (e.detail.type === "openProject") {
+            try {
+              const gb = await this._nbApi.getGlobalVariables();
+              const vars = gb.vars;
+              const keys = Object.keys(vars);
+              const materialKey = keys.find((k) => k.includes("current material"));
+              const absorptionKey = keys.find((k) => k.includes("total absorption amount"));
+              const limitKey = keys.find((k) => k.includes("hourly absorption limit"));
+              if (materialKey) this.simMaterial = vars[materialKey].value || null;
+              if (absorptionKey) this.simAbsorption = vars[absorptionKey].value ?? 0;
+              if (limitKey) this.simAbsorptionLimit = vars[limitKey].value ?? 0;
+            } catch (e) {
+              console.warn("[simInfo] could not load initial values", e);
+            }
+          }
+        });
+
+        // Listen for live global variable updates
+        this._nbApi.addEventListener("globalVariableChanged", (e) => {
+          const { variable, value } = e.detail;
+          if (variable === "current material") this.simMaterial = value || null;
+          else if (variable === "total absorption amount") this.simAbsorption = value;
+          else if (variable === "hourly absorption limit") this.simAbsorptionLimit = value;
+        });
+
+      };
+    }
+  },
+  beforeUnmount() {
+    this._nbApi = null;
   },
 };
 </script>
@@ -567,6 +636,41 @@ export default {
   font-size: 0.8rem;
   color: #0d6efd;
   font-style: italic;
+}
+
+.sim-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid #c8b89a;
+  border-radius: 8px;
+  background-color: #fdf6e3;
+}
+
+.sim-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-info-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.sim-info-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0d6efd;
+  background: #e7f0ff;
+  border: 1px solid #b6d0ff;
+  border-radius: 4px;
+  padding: 1px 8px;
+  min-width: 60px;
+  text-align: center;
 }
 
 .sim-iframe-area {
@@ -887,12 +991,12 @@ export default {
 }
 
 .hourly-table-wrap :deep(table) {
-  font-size: 0.68rem;
+  font-size: 0.9rem;
 }
 
 .hourly-table-wrap :deep(th),
 .hourly-table-wrap :deep(td) {
-  padding: 0.15rem 0.3rem !important;
+  padding: 0.3rem 0.4rem !important;
   white-space: nowrap;
 }
 

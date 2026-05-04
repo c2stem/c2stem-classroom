@@ -18,6 +18,7 @@ import SpiceLanding from "../views/spice/SpiceLand.vue";
 import ConstructLanding from "../views/ConstructLand.vue";
 import DashboardHome from "../views/visualize/DashboardHome.vue";
 import DashboardProjects from "../views/visualize/DashboardProjects.vue";
+import DashboardInquiry from "../views/visualize/DashboardInquiry.vue";
 import Logger from "../services/Logger";
 import EDMap from "../views/EDMap.vue";
 
@@ -83,6 +84,11 @@ const routes = [
         path: "projects",
         name: "DashboardProjects",
         component: DashboardProjects,
+      },
+      {
+        path: "inquiry",
+        name: "DashboardInquiry",
+        component: DashboardInquiry,
       },
     ],
     meta: { requiresAuth: true, role: "Admin", title: "C2STEM | Dashboard" },

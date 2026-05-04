@@ -52,12 +52,9 @@
               @change="check(index, $event)"
             />
           </td>
-          <td>
+          <td v-if="currentRouteName === 'Engineering'">
             <p
-              v-if="
-                currentRouteName === 'Engineering' &&
-                index.includes(submitCheckedIndex)
-              "
+              v-if="index.includes(submitCheckedIndex)"
               data-bs-toggle="tooltip"
               data-bs-placement="left"
               title="Submit your Final Design"
@@ -224,7 +221,7 @@ export default {
 
 <style>
 table {
-  font-size: 1.1vw;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
@@ -235,10 +232,12 @@ thead {
 .header {
   position: sticky;
   top: 0;
+  white-space: normal;
+  word-break: break-word;
 }
 th,
 td {
-  padding: 0.1rem !important;
+  padding: 0.3rem 0.4rem !important;
   vertical-align: middle;
 }
 p,

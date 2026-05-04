@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import Logger from "../services/Logger.js";
 export default {
   name: "InquiryConclusions",
   data() {
@@ -122,6 +123,15 @@ export default {
         };
       });
       this.$store.dispatch("saveConclusions", snapshot);
+      const logArgs = {};
+      this.questions.forEach((q) => {
+        logArgs[q.id] = snapshot[keyMap[q.id]];
+      });
+      Logger.logUserActions({
+        actionType: "inquiryConclusions",
+        actionView: "InquiryConclusions",
+        args: logArgs,
+      });
     },
   },
   computed: {

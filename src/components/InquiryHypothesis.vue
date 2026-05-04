@@ -1,97 +1,54 @@
 <template>
   <div class="container py-3">
-    <div v-for="(h, index) in questions" :key="h.id" class="mb-5">
-      <h5 class="fw-bold">{{ index + 1 }}. {{ h.question }}</h5>
-      <p class="text-muted fst-italic">{{ h.condition }}</p>
-      <div class="d-flex align-items-start gap-3 ms-3">
+    <div v-for="(h, index) in questions" :key="h.id" class="accordion-card mb-4">
 
-        <!-- Box multi-select (question 1) -->
-        <template v-if="h.multiSelect && !h.dropdownSelect">
-          <div class="hyp-checkbox-list">
-            <label v-for="opt in h.effectOptions" :key="opt"
-                   class="hyp-option"
-                   :class="{ selected: hypotheses[h.id].effect.includes(opt) }"
-                   @click="toggleSelection(h.id, 'effect', opt)">
-              {{ opt }}
-            </label>
-          </div>
-        </template>
+      <!-- Accordion Header -->
+      <div class="accordion-header" :class="{ expanded: openQuestion === h.id }" @click="toggleQuestion(h.id)">
+        <div class="accordion-title">
+          <span class="question-number" :class="{ answered: isAnswered(h.id) }">{{ index + 1 }}</span>
+          <span class="question-text">{{ h.question }}</span>
+        </div>
+        <div class="accordion-hint">
+          <span class="click-hint" v-if="openQuestion !== h.id">Click to answer</span>
+          <i :class="['bi', 'accordion-chevron', openQuestion === h.id ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+        </div>
+      </div>
 
-        <!-- Dropdown multi-select (questions 2 & 3) -->
-        <template v-else-if="h.multiSelect && h.dropdownSelect">
-          <div class="hyp-dropdown">
-            <div class="hyp-dropdown-trigger" @click.stop="toggleDropdown(h.id, 'effect')">
-              <span v-if="hypotheses[h.id].effect.length" class="trigger-text">
-                {{ hypotheses[h.id].effect.join('; ') }}
-              </span>
-              <span v-else class="trigger-placeholder">Select one or more</span>
-              <i class="bi bi-chevron-down trigger-arrow"
-                 :class="{ open: openDropdown === `${h.id}-effect` }"></i>
-            </div>
-            <div v-if="openDropdown === `${h.id}-effect`" class="hyp-dropdown-menu">
+      <!-- Accordion Body -->
+      <div v-if="openQuestion === h.id" class="accordion-body">
+        <p class="condition-text">{{ h.condition }}</p>
+
+        <div class="options-row">
+          <!-- Effect options -->
+          <div class="options-group">
+            <div class="options-label">Runoff will…</div>
+            <div class="hyp-checkbox-list">
               <label v-for="opt in h.effectOptions" :key="opt"
                      class="hyp-option"
                      :class="{ selected: hypotheses[h.id].effect.includes(opt) }"
-                     @click.stop="toggleSelection(h.id, 'effect', opt)">
+                     @click="toggleSelection(h.id, 'effect', opt)">
                 {{ opt }}
               </label>
             </div>
           </div>
-        </template>
 
-        <!-- Single select fallback -->
-        <select v-else class="hyp-select"
-                :value="hypotheses[h.id].effect[0] || ''"
-                @change="setSelection(h.id, 'effect', $event.target.value)">
-          <option value="" disabled>Select one</option>
-          <option v-for="opt in h.effectOptions" :key="opt" :value="opt">{{ opt }}</option>
-        </select>
+          <span class="because-label">because</span>
 
-        <span class="fw-500">because</span>
-
-        <!-- Box multi-select (question 1) -->
-        <template v-if="h.multiSelect && !h.dropdownSelect">
-          <div class="hyp-checkbox-list">
-            <label v-for="opt in h.reasonOptions" :key="opt"
-                   class="hyp-option"
-                   :class="{ selected: hypotheses[h.id].reason.includes(opt) }"
-                   @click="toggleSelection(h.id, 'reason', opt)">
-              {{ opt }}
-            </label>
-          </div>
-        </template>
-
-        <!-- Dropdown multi-select (questions 2 & 3) -->
-        <template v-else-if="h.multiSelect && h.dropdownSelect">
-          <div class="hyp-dropdown">
-            <div class="hyp-dropdown-trigger" @click.stop="toggleDropdown(h.id, 'reason')">
-              <span v-if="hypotheses[h.id].reason.length" class="trigger-text">
-                {{ hypotheses[h.id].reason.join('; ') }}
-              </span>
-              <span v-else class="trigger-placeholder">Select one or more</span>
-              <i class="bi bi-chevron-down trigger-arrow"
-                 :class="{ open: openDropdown === `${h.id}-reason` }"></i>
-            </div>
-            <div v-if="openDropdown === `${h.id}-reason`" class="hyp-dropdown-menu">
+          <!-- Reason options -->
+          <div class="options-group">
+            <div class="options-label">Reason…</div>
+            <div class="hyp-checkbox-list">
               <label v-for="opt in h.reasonOptions" :key="opt"
                      class="hyp-option"
                      :class="{ selected: hypotheses[h.id].reason.includes(opt) }"
-                     @click.stop="toggleSelection(h.id, 'reason', opt)">
+                     @click="toggleSelection(h.id, 'reason', opt)">
                 {{ opt }}
               </label>
             </div>
           </div>
-        </template>
-
-        <!-- Single select fallback -->
-        <select v-else class="hyp-select"
-                :value="hypotheses[h.id].reason[0] || ''"
-                @change="setSelection(h.id, 'reason', $event.target.value)">
-          <option value="" disabled>Select one</option>
-          <option v-for="opt in h.reasonOptions" :key="opt" :value="opt">{{ opt }}</option>
-        </select>
-
+        </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -101,14 +58,13 @@ export default {
   name: "InquiryHypothesis",
   data() {
     return {
-      openDropdown: null,
+      openQuestion: null,
       questions: [
         {
           id: 1,
           question: "How does rainfall rate affect runoff?",
           condition: "If rainfall rate increases …",
           multiSelect: true,
-          dropdownSelect: false,
           effectOptions: [
             "Runoff will decrease",
             "Runoff will increase",
@@ -130,7 +86,6 @@ export default {
           question: "How does surface material affect runoff?",
           condition: "If we change the surface material …",
           multiSelect: true,
-          dropdownSelect: true,
           effectOptions: [
             "Runoff will increase",
             "Runoff will decrease",
@@ -154,7 +109,6 @@ export default {
           question: "How does rainfall duration affect runoff?",
           condition: "If rain continues for a long time …",
           multiSelect: true,
-          dropdownSelect: true,
           effectOptions: [
             "Runoff will increase",
             "Runoff will decrease",
@@ -181,6 +135,13 @@ export default {
     },
   },
   methods: {
+    toggleQuestion(id) {
+      this.openQuestion = this.openQuestion === id ? null : id;
+    },
+    isAnswered(id) {
+      const h = this.hypotheses[id];
+      return h && h.effect.length > 0 && h.reason.length > 0;
+    },
     toggleSelection(id, field, value) {
       const current = [...this.hypotheses[id][field]];
       const idx = current.indexOf(value);
@@ -188,132 +149,176 @@ export default {
       else current.splice(idx, 1);
       this.$store.dispatch("updateHypothesis", { id, field, value: current });
     },
-    setSelection(id, field, value) {
-      this.$store.dispatch("updateHypothesis", { id, field, value: [value] });
-    },
-    toggleDropdown(id, field) {
-      const key = `${id}-${field}`;
-      this.openDropdown = this.openDropdown === key ? null : key;
-    },
-    closeAllDropdowns() {
-      this.openDropdown = null;
-    },
-  },
-  mounted() {
-    document.addEventListener("click", this.closeAllDropdowns);
-  },
-  beforeUnmount() {
-    document.removeEventListener("click", this.closeAllDropdowns);
   },
 };
 </script>
 
 <style scoped>
-.hyp-select {
-  min-width: 280px;
-  padding: 0;
-  background-color: #fdf6e3;
-  border: 1px solid #c8b89a;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.hyp-select option {
-  padding: 4px 8px;
-}
-
-.hyp-checkbox-list {
-  min-width: 280px;
-  border: 1px solid #c8b89a;
-  border-radius: 4px;
-  background-color: #fdf6e3;
+/* Accordion card */
+.accordion-card {
+  border: 2px solid #c8b89a;
+  border-radius: 10px;
   overflow: hidden;
-  padding: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
 }
 
-.hyp-dropdown {
-  position: relative;
-  min-width: 280px;
+.accordion-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
 }
 
-.hyp-dropdown-trigger {
+/* Header */
+.accordion-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 5px 10px;
+  padding: 14px 18px;
   background-color: #fdf6e3;
-  border: 1px solid #c8b89a;
-  border-radius: 4px;
   cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  gap: 12px;
+}
+
+.accordion-header:hover {
+  background-color: #f5ecd0;
+}
+
+.accordion-header.expanded {
+  background-color: #e8dfc8;
+  border-bottom: 2px solid #c8b89a;
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.question-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #0d6efd;
+  color: #fff;
+  font-weight: 700;
   font-size: 1rem;
-  min-height: 36px;
-}
-
-.trigger-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.trigger-placeholder {
-  color: #999;
-  flex: 1;
-}
-
-.trigger-arrow {
-  font-size: 0.75rem;
   flex-shrink: 0;
-  transition: transform 0.15s ease;
+  transition: background-color 0.25s ease;
 }
 
-.trigger-arrow.open {
-  transform: rotate(180deg);
+.question-number.answered {
+  background-color: #198754;
 }
 
-.hyp-dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 200;
-  background-color: #fdf6e3;
+.question-text {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #2c2c2c;
+}
+
+.accordion-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.click-hint {
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
+}
+
+.accordion-chevron {
+  font-size: 1.15rem;
+  color: #555;
+  transition: transform 0.2s ease;
+}
+
+/* Body */
+.accordion-body {
+  padding: 18px 20px;
+  background-color: #fffdf7;
+}
+
+.condition-text {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+}
+
+.options-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.options-group {
+  flex: 1;
+  min-width: 240px;
+}
+
+.options-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.because-label {
+  font-weight: 500;
+  font-size: 1.05rem;
+  padding-top: 28px;
+  flex-shrink: 0;
+  color: #444;
+}
+
+/* Option boxes */
+.hyp-checkbox-list {
   border: 1px solid #c8b89a;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  max-height: 220px;
-  overflow-y: auto;
+  border-radius: 6px;
+  background-color: #fdf6e3;
+  overflow: hidden;
   padding: 4px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
 }
 
 .hyp-option {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 8px 12px;
   cursor: pointer;
   user-select: none;
   font-weight: normal;
-  margin: 0;
+  font-size: 1.05rem;
+  margin: 2px 0;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.hyp-option input[type="checkbox"] {
-  display: none;
+.hyp-option:hover {
+  background-color: #f0e6cc;
+  border-color: #c8b89a;
 }
 
 .hyp-option.selected {
   background-color: #0d6efd;
   color: #fff;
-  border-radius: 6px;
+  border-color: #0a58ca;
+  border-radius: 4px;
 }
 
 div {
   height: auto;
-}
-
-p {
-  justify-content: flex-start;
 }
 </style>
