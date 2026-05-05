@@ -340,6 +340,36 @@ export default {
     },
   },
   methods: {
+    interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey) {
+      const points = [{ t: 0, r: 0, a: 0, ru: 0 }];
+      rows.forEach((row) => {
+        points.push({
+          t: Number(row[timeKey]),
+          r: Number(row[rainfallKey]),
+          a: Number(row[absorptionKey]),
+          ru: Number(row[runoffKey]),
+        });
+      });
+      const interpolated = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i];
+        const p1 = points[i + 1];
+        const steps = Math.round((p1.t - p0.t) / 0.1);
+        for (let s = 0; s < steps; s++) {
+          const frac = s / steps;
+          interpolated.push([
+            Math.round((p0.t + frac * (p1.t - p0.t)) * 10) / 10,
+            p0.r + frac * (p1.r - p0.r),
+            p0.a + frac * (p1.a - p0.a),
+            p0.ru + frac * (p1.ru - p0.ru),
+          ]);
+        }
+      }
+      // push the final point
+      const last = points[points.length - 1];
+      interpolated.push([last.t, last.r, last.a, last.ru]);
+      return interpolated;
+    },
     drawHourlyChart() {
       const el = document.getElementById("inquiry-hourly-chart");
       if (!el || !window.google || !window.google.visualization) return;
@@ -347,9 +377,7 @@ export default {
       const rows = Object.values(this.hourlyTableContent);
       if (!rows.length) return;
 
-      // Use the actual keys from the first row
       const keys = Object.keys(rows[0]);
-      // keys: [timeKey, rainfallKey, absorptionKey, runoffKey]
       const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
 
       const data = new window.google.visualization.DataTable();
@@ -357,15 +385,10 @@ export default {
       data.addColumn("number", "Rainfall (in)");
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
-      data.addRow([0, 0, 0, 0]);
-      rows.forEach((row) => {
-        data.addRow([
-          Number(row[timeKey]),
-          Number(row[rainfallKey]),
-          Number(row[absorptionKey]),
-          Number(row[runoffKey]),
-        ]);
-      });
+
+      const interpolated = this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey);
+      interpolated.forEach((pt) => data.addRow(pt));
+
       const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
       const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
       const options = {
@@ -505,15 +528,10 @@ export default {
       data.addColumn("number", "Rainfall (in)");
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
-      data.addRow([0, 0, 0, 0]);
-      rows.forEach((row) => {
-        data.addRow([
-          Number(row[timeKey]),
-          Number(row[rainfallKey]),
-          Number(row[absorptionKey]),
-          Number(row[runoffKey]),
-        ]);
-      });
+
+      const interpolated = this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey);
+      interpolated.forEach((pt) => data.addRow(pt));
+
       const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
       const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
       const options = {
@@ -578,7 +596,7 @@ export default {
               const vars = gb.vars;
               const keys = Object.keys(vars);
               const materialKey = keys.find((k) => k.includes("current material"));
-              const absorptionKey = keys.find((k) => k.includes("total absorption amount"));
+              const absorptionKey = keys.find((k) => k.includes("absorption limit"));
               const limitKey = keys.find((k) => k.includes("hourly absorption limit"));
               if (materialKey) this.simMaterial = vars[materialKey].value || null;
               if (absorptionKey) this.simAbsorption = vars[absorptionKey].value ?? 0;
@@ -592,8 +610,9 @@ export default {
         // Listen for live global variable updates
         this._nbApi.addEventListener("globalVariableChanged", (e) => {
           const { variable, value } = e.detail;
+          console.log(e.detail);
           if (variable === "current material") this.simMaterial = value || null;
-          else if (variable === "total absorption amount") this.simAbsorption = value;
+          else if (variable === "absorption limit") this.simAbsorption = value;
           else if (variable === "hourly absorption limit") this.simAbsorptionLimit = value;
         });
 
