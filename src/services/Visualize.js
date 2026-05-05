@@ -103,11 +103,10 @@ export default {
       const varName = this.getGlobalVariableName(gb, "hourly test history");
       const thContents = gb.vars[varName].value.contents;
       let obj = {};
-      const header = thContents[0].contents;
       for (let i = 1; i < Object.keys(thContents).length; i++) {
         const row = thContents[i].contents;
         obj[i] = {
-          [header[0]]: row[0],
+          "Time (hours)": row[0],
           "Total Rainfall (in)": row[1],
           "Total Absorption (in)": row[2],
           "Total Runoff (in)": row[3],

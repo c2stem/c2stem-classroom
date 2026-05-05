@@ -53,13 +53,14 @@
       class="float-panel"
       :style="panelStyle('table')"
       ref="tablePanel"
+      @mousedown="focusPanel('table')"
     >
       <div class="float-panel-header" @mousedown="startDrag($event, 'table')">
         <span class="float-panel-title">Hourly Test History</span>
         <button class="float-close-btn" @click.stop="closePanel('table')">&times;</button>
       </div>
       <div class="float-panel-body">
-        <p v-if="!latestHourlyRows.length" class="float-empty">
+        <p v-if="!hourlyRows.length" class="float-empty">
           No test data available. Run a test first.
         </p>
         <table v-else class="float-table">
@@ -72,7 +73,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row, i) in latestHourlyRows" :key="i">
+            <tr v-for="(row, i) in hourlyRows" :key="i">
               <td>{{ row['Time (hours)'] }}</td>
               <td>{{ row['Total Rainfall (in)'] }}</td>
               <td>{{ row['Total Absorption (in)'] }}</td>
@@ -89,6 +90,7 @@
       class="float-panel"
       :style="panelStyle('chart')"
       ref="chartPanel"
+      @mousedown="focusPanel('chart')"
     >
       <div class="float-panel-header" @mousedown="startDrag($event, 'chart')">
         <span class="float-panel-title">Hourly Test Chart</span>
@@ -109,6 +111,7 @@
 import IframeLoader from "../components/IframeLoader.vue";
 import CodingPanel from "../components/CodingSimulationPanel.vue";
 import ASTController from "../services/AST/ASTController";
+import Visualize from "../services/Visualize";
 import { Modal } from "bootstrap";
 
 export default {
@@ -125,10 +128,13 @@ export default {
       background: "static",
       panelOpen: { table: false, chart: false },
       panelPos: {
-        table: { x: 60, y: 80 },
-        chart: { x: 100, y: 120 },
+        table: { x: 60, y: 60 },
+        chart: { x: 80, y: 80 },
       },
       dragState: null,
+      hourlyTableData: {},
+      pollInterval: null,
+      focusedPanel: null,
     };
   },
   computed: {
@@ -138,14 +144,15 @@ export default {
     backroundStatus() {
       return this.background;
     },
-    inquiryTestHistory() {
-      return this.$store.getters.getInquiryTestHistory;
+    hourlyRows() {
+      return Object.values(this.hourlyTableData);
     },
-    latestHourlyRows() {
-      const history = this.inquiryTestHistory;
-      if (!history.length) return [];
-      const last = history[history.length - 1];
-      return Object.values(last.hourlyData || {});
+  },
+  watch: {
+    hourlyRows(newRows) {
+      if (this.panelOpen.chart && newRows.length) {
+        this.$nextTick(() => this.drawFloatChart());
+      }
     },
   },
   methods: {
@@ -159,18 +166,43 @@ export default {
       return {
         left: this.panelPos[key].x + "px",
         top: this.panelPos[key].y + "px",
+        zIndex: this.focusedPanel === key ? 1070 : 1060,
       };
     },
-    openPanel(key) {
+    focusPanel(key) {
+      this.focusedPanel = key;
+    },
+    async openPanel(key) {
+      if (this.panelOpen[key]) {
+        this.panelOpen[key] = false;
+        if (!this.panelOpen.table && !this.panelOpen.chart) this.stopPolling();
+        return;
+      }
       this.panelOpen[key] = true;
+      this.focusedPanel = key;
+      const data = await Visualize.getInquiryHourlyData();
+      if (data) this.hourlyTableData = data;
       if (key === "chart") {
         this.$nextTick(() => {
           window.google.charts.setOnLoadCallback(() => this.drawFloatChart());
         });
       }
+      this.startPolling();
     },
     closePanel(key) {
       this.panelOpen[key] = false;
+      if (!this.panelOpen.table && !this.panelOpen.chart) this.stopPolling();
+    },
+    startPolling() {
+      if (this.pollInterval) return;
+      this.pollInterval = setInterval(async () => {
+        const data = await Visualize.getInquiryHourlyData();
+        if (data) this.hourlyTableData = data;
+      }, 3000);
+    },
+    stopPolling() {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
     },
     startDrag(e, key) {
       e.preventDefault();
@@ -196,11 +228,13 @@ export default {
     drawFloatChart() {
       const el = document.getElementById("construct-float-chart");
       if (!el || !window.google?.visualization) return;
-      const rows = this.latestHourlyRows;
+      const rows = this.hourlyRows;
       if (!rows.length) {
         el.innerHTML = '<p style="color:#888;font-style:italic;padding:12px;font-size:0.88rem;">No test data available. Run a test first.</p>';
         return;
       }
+      const keys = Object.keys(rows[0]);
+      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
@@ -209,26 +243,27 @@ export default {
       data.addRow([0, 0, 0, 0]);
       rows.forEach((row) => {
         data.addRow([
-          Number(row["Time (hours)"]),
-          Number(row["Total Rainfall (in)"]),
-          Number(row["Total Absorption (in)"]),
-          Number(row["Total Runoff (in)"]),
+          Number(row[timeKey]),
+          Number(row[rainfallKey]),
+          Number(row[absorptionKey]),
+          Number(row[runoffKey]),
         ]);
       });
-      const w = el.offsetWidth || 480;
-      const h = el.offsetHeight || 300;
+      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
+      const w = el.offsetWidth || 680;
       const options = {
-        hAxis: { title: "Time (hours)", minValue: 0, titleTextStyle: { italic: false } },
-        vAxis: { title: "Amount (in)", minValue: 0, titleTextStyle: { italic: false } },
+        hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks, titleTextStyle: { italic: false } },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0, titleTextStyle: { italic: false } },
         series: {
           0: { color: "#0d6efd" },
           1: { color: "#198754" },
           2: { color: "#dc3545" },
         },
-        legend: { position: "top", alignment: "center" },
-        chartArea: { left: 60, top: 50, width: w - 80, height: h - 90 },
+        legend: { position: "top" },
+        chartArea: { left: 70, top: 45, width: "75%", height: "65%" },
         width: w,
-        height: h,
+        height: 320,
       };
       new window.google.visualization.LineChart(el).draw(data, options);
     },
@@ -259,6 +294,7 @@ export default {
     };
   },
   beforeUnmount() {
+    this.stopPolling();
     document.removeEventListener("mousemove", this.onDrag);
     document.removeEventListener("mouseup", this.endDrag);
   },
@@ -314,7 +350,7 @@ strong {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #0d6efd;
+  background: #7a6aab;
   border: none;
   color: #fff;
   font-size: 1.25rem;
@@ -322,27 +358,27 @@ strong {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  transition: background 0.15s;
+  box-shadow: 0 0 8px 2px rgba(180, 150, 255, 0.8), 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s, box-shadow 0.15s;
 }
 
 .fab-btn:hover {
-  background: #0b5ed7;
+  background: #6a5a9b;
+  box-shadow: 0 0 14px 4px rgba(180, 150, 255, 1), 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 /* Floating panels */
 .float-panel {
   position: fixed;
-  width: 520px;
-  height: 360px;
+  width: 720px;
+  height: 420px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
-  z-index: 1060;
   resize: both;
   overflow: hidden;
-  min-width: 300px;
-  min-height: 200px;
+  min-width: 400px;
+  min-height: 240px;
 }
 
 .float-panel-header {
@@ -354,7 +390,7 @@ strong {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #0d6efd;
+  background: #7a6aab;
   color: #fff;
   padding: 0 14px;
   border-radius: 8px 8px 0 0;
@@ -402,6 +438,11 @@ strong {
   overflow: hidden;
 }
 
+#construct-float-chart {
+  display: block;
+  width: 100%;
+}
+
 .float-empty {
   color: #888;
   font-style: italic;
@@ -417,7 +458,7 @@ strong {
 
 .float-table th {
   background: #f0f4ff;
-  color: #0d6efd;
+  color: #7a6aab;
   font-weight: 700;
   padding: 6px 8px;
   text-align: left;

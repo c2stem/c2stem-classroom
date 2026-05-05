@@ -88,17 +88,9 @@ export default {
   },
   data() {
     return {
-      testHistoryContent: [],
-      testHistoryHeader: [
-        "Test #",
-        "Date",
-        "Rainfall (inches)",
-        "Surface Material",
-        "Absorption limit (inches)",
-        "Absorption (inches)",
-        "Runoff (inches)",
-      ],
-      activeTableContent: this.testHistory,
+      testHistoryContent: {},
+      testHistoryHeader: ["Test No.", "Time", "Material", "Rainfall Rate", "Rainfall Duration"],
+      activeTableContent: {},
     };
   },
   computed: {
@@ -115,7 +107,7 @@ export default {
       if (this.currentRouteName === "IE") {
         return this.activeTableContent;
       } else {
-        return this.$store.getters.getTestHistory;
+        return this.testHistoryContent;
       }
     },
     currentRouteName() {
@@ -155,28 +147,12 @@ export default {
         this.activeTableContent = this.testHistoryContent;
         // this.$store.dispatch("addIETestHistory", this.testHistoryContent);
       } else {
-        this.activeTableContent = this.testHistory;
-        this.testHistoryContent = await visualize.getTestData("construct");
-        let thLength = Object.keys(this.testHistoryContent).length;
-        let stateThLength = this.testHistoryLength;
-        if (thLength > stateThLength) {
-          const thList = [];
-          Object.values(this.testHistoryContent).forEach((element, index) => {
-            if (index >= stateThLength && index < thLength) {
-              thList.push(element);
-            }
-          });
-          console.log(thList);
-          this.$store.dispatch("addTestHistory", thList);
-          await Logger.logUserActions({
-            actionType: "viewTestHistory",
-            actionView: this.currentRouteName,
-            args: {
-              projectName: this.getProjectName,
-              Model: thList[thList.length - 1],
-            },
-          });
-        }
+        this.testHistoryContent = await visualize.getInquiryTestData() || {};
+        await Logger.logUserActions({
+          actionType: "viewTestHistory",
+          actionView: this.currentRouteName,
+          args: { projectName: this.getProjectName },
+        });
       }
     },
   },
