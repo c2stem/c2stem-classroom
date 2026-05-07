@@ -75,26 +75,7 @@
               <div class="snapshot-row"><span class="snapshot-label">Variable</span><span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.variable || '—' }}</span></div>
               <div class="snapshot-row"><span class="snapshot-label">Rainfall Rate</span><span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.rainfallRate }} in/hr</span></div>
               <div class="snapshot-row"><span class="snapshot-label">Rainfall Duration</span><span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.rainfallDuration }} hrs</span></div>
-              <div class="snapshot-row"><span class="snapshot-label">Material</span><span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.currentMaterial || '—' }}</span></div>
-              <div v-if="inquiryData.inquiryExperiments.args.test" class="snapshot-row">
-                <span class="snapshot-label">Test No.</span>
-                <span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.test.testNumber }}</span>
-              </div>
-              <div v-if="inquiryData.inquiryExperiments.args.test && Object.keys(inquiryData.inquiryExperiments.args.test.hourlyData || {}).length" class="hourly-section">
-                <div class="snapshot-label mb-1">Hourly Data</div>
-                <table class="hourly-table">
-                  <thead>
-                    <tr>
-                      <th v-for="col in hourlyColumns(inquiryData.inquiryExperiments.args.test)" :key="col">{{ col }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(row, idx) in inquiryData.inquiryExperiments.args.test.hourlyData" :key="idx">
-                      <td v-for="col in hourlyColumns(inquiryData.inquiryExperiments.args.test)" :key="col">{{ row[col] }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <div class="snapshot-row"><span class="snapshot-label">Material</span><span class="snapshot-value">{{ inquiryData.inquiryExperiments.args.material || '—' }}</span></div>
             </div>
           </div>
         </div>
@@ -116,33 +97,12 @@
             </div>
             <div v-if="inquiryData.inquiryFindings.args.tests && inquiryData.inquiryFindings.args.tests.length">
               <div class="snapshot-label mb-1">Tests used</div>
-              <div v-for="test in inquiryData.inquiryFindings.args.tests" :key="test.testNo" class="snapshot-card mt-2">
-                <div class="snapshot-card-header">Test {{ test.testNo }}</div>
+              <div v-for="test in inquiryData.inquiryFindings.args.tests" :key="test.testNumber" class="snapshot-card mt-2">
+                <div class="snapshot-card-header">Test {{ test.testNumber }}</div>
                 <div class="snapshot-card-body">
                   <div class="snapshot-row"><span class="snapshot-label">Material</span><span class="snapshot-value">{{ test.material }}</span></div>
                   <div class="snapshot-row"><span class="snapshot-label">Rainfall Rate</span><span class="snapshot-value">{{ test.rainfallRate }} in/hr</span></div>
                   <div class="snapshot-row"><span class="snapshot-label">Rainfall Duration</span><span class="snapshot-value">{{ test.rainfallDuration }} hrs</span></div>
-                  <div v-if="test.hourlyData && test.hourlyData.length" class="hourly-section">
-                    <div class="snapshot-label mb-1">Hourly Data</div>
-                    <table class="hourly-table">
-                      <thead>
-                        <tr>
-                          <th>Hour</th>
-                          <th>Total Rainfall (in)</th>
-                          <th>Total Absorption (in)</th>
-                          <th>Total Runoff (in)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="row in test.hourlyData" :key="row.hour">
-                          <td>{{ row.hour }}</td>
-                          <td>{{ row.totalRainfall }}</td>
-                          <td>{{ row.totalAbsorption }}</td>
-                          <td>{{ row.totalRunoff }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </div>
             </div>
@@ -161,6 +121,10 @@
                 <div class="snapshot-row">
                   <span class="snapshot-label">Claim</span>
                   <span class="snapshot-value">{{ conclusionFor(q.id).claim || '—' }}</span>
+                </div>
+                <div class="snapshot-row">
+                  <span class="snapshot-label">Claim Updated</span>
+                  <span class="snapshot-value">{{ conclusionFor(q.id).updatedClaim ? 'Yes' : 'No' }}</span>
                 </div>
                 <div class="snapshot-row">
                   <span class="snapshot-label">Evidence</span>
@@ -254,7 +218,10 @@ export default {
       return findings.hypothesis === key ? findings : null;
     },
     conclusionFor(id) {
-      return this.inquiryData.inquiryConclusions?.args?.[String(id)] || null;
+      const args = this.inquiryData.inquiryConclusions?.args;
+      if (!args) return null;
+      if (args.questionId === id) return args;
+      return args[String(id)] || null;
     },
     hourlyColumns(test) {
       const rows = Object.values(test.hourlyData);

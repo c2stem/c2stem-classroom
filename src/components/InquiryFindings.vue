@@ -38,7 +38,7 @@
         <!-- Test selector -->
         <div class="control-row mt-2">
           <label class="control-label fw-bold">Select your tests:</label>
-          <select class="form-select form-select-sm" @change="onTestSelect" :value="''">
+          <select class="form-select form-select-sm" v-model="testSelectValue" @change="onTestSelect">
             <option value="" disabled>Select a test</option>
             <option
               v-for="(row, key) in testHistoryContent"
@@ -46,7 +46,7 @@
               :value="key"
               :disabled="selectedTestKeys.length >= 2 && !selectedTestKeys.includes(String(key))"
             >
-              Test {{ Object.values(row)[0] }} — {{ row['Material'] }} | Rate: {{ row['Rainfall Rate'] }} | Duration: {{ row['Rainfall Duration'] }}
+              Test {{ Object.values(row)[0] }} — {{ row['Material'] }} | Rainfall Rate: {{ row['Rainfall Rate'] }} | Rainfall Duration: {{ row['Rainfall Duration'] }}
             </option>
           </select>
         </div>
@@ -107,6 +107,7 @@ export default {
     return {
       selectedHypothesis: "",
       selectedTestKeys: [],
+      testSelectValue: "",
       findingText: "",
       hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
       questions: [
@@ -125,9 +126,13 @@ export default {
         (h) => h.effect.length > 0 && h.reason.length > 0
       );
     },
+    currentQuestion() {
+      return this.$store.getters.getCurrentQuestion;
+    },
     hypothesisClaims() {
       const claims = {};
       this.questions.forEach((q) => {
+        if (q.id > this.currentQuestion) return;
         const h = this.hypotheses[q.id];
         const effects = h.effect.length ? h.effect.join(" or ") : "…";
         const reasons = h.reason.length ? h.reason.join(" or ") : "…";
@@ -138,9 +143,15 @@ export default {
     inquiryExperimentHistory() {
       return this.$store.getters.getInquiryTestHistory;
     },
+    filteredTests() {
+      if (!this.selectedHypothesis) return [];
+      return this.inquiryExperimentHistory.filter(
+        (t) => t.hypothesisKey === this.selectedHypothesis
+      );
+    },
     testHistoryContent() {
       const content = {};
-      this.inquiryExperimentHistory.forEach((test, idx) => {
+      this.filteredTests.forEach((test, idx) => {
         content[idx] = {
           "Test No.": test.testNumber,
           "Time": test.time,
@@ -154,7 +165,7 @@ export default {
     compareData() {
       const data = {};
       this.selectedTestKeys.forEach((key) => {
-        const record = this.inquiryExperimentHistory[Number(key)];
+        const record = this.filteredTests[Number(key)];
         if (record) data[key] = record;
       });
       return data;
@@ -164,6 +175,10 @@ export default {
     },
   },
   watch: {
+    selectedHypothesis() {
+      this.selectedTestKeys = [];
+      this.testSelectValue = "";
+    },
     selectedTestKeys(newKeys) {
       this.$nextTick(() => {
         window.google.charts.setOnLoadCallback(() => {
@@ -181,10 +196,10 @@ export default {
     },
     onTestSelect(e) {
       const key = String(e.target.value);
+      this.testSelectValue = "";
       if (!key || this.selectedTestKeys.includes(key)) return;
       if (this.selectedTestKeys.length >= 2) return;
       this.selectedTestKeys = [...this.selectedTestKeys, key];
-      e.target.value = "";
     },
     removeTest(key) {
       this.selectedTestKeys = this.selectedTestKeys.filter((k) => k !== key);
@@ -247,20 +262,11 @@ export default {
       this.$store.dispatch("saveFindings", snapshot);
       const tests = this.selectedTestKeys.map((key) => {
         const t = this.testHistoryContent[key];
-        const full = this.inquiryExperimentHistory[Number(key)];
-        const hourlyData = Object.values(full?.hourlyData || {}).map((row) => ({
-          hour: row["test"],
-          totalRainfall: row["Total Rainfall (in)"],
-          totalAbsorption: row["Total Absorption (in)"],
-          totalRunoff: row["Total Runoff (in)"],
-        }));
         return {
-          testNo: t["Test No."],
-          time: t["Time"],
+          testNumber: t["Test No."],
           material: t["Material"],
           rainfallRate: t["Rainfall Rate"],
           rainfallDuration: t["Rainfall Duration"],
-          hourlyData,
         };
       });
       await Logger.logUserActions({

@@ -1,21 +1,27 @@
 <template>
   <div class="container py-3">
-    <div v-for="(h, index) in questions" :key="h.id" class="accordion-card mb-4">
+    <div v-for="(h, index) in questions" :key="h.id" class="accordion-card mb-4"
+         :class="{ 'accordion-locked': isLocked(h.id) }">
 
       <!-- Accordion Header -->
-      <div class="accordion-header" :class="{ expanded: openQuestion === h.id }" @click="toggleQuestion(h.id)">
+      <div class="accordion-header" :class="{ expanded: openQuestion === h.id, locked: isLocked(h.id) }"
+           @click="!isLocked(h.id) && toggleQuestion(h.id)">
         <div class="accordion-title">
-          <span class="question-number" :class="{ answered: isAnswered(h.id) }">{{ index + 1 }}</span>
+          <span class="question-number" :class="{ answered: isAnswered(h.id), completed: isCompleted(h.id) }">{{ index + 1 }}</span>
           <span class="question-text">{{ h.question }}</span>
         </div>
         <div class="accordion-hint">
-          <span class="click-hint" v-if="openQuestion !== h.id">Click to answer</span>
-          <i :class="['bi', 'accordion-chevron', openQuestion === h.id ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+          <span v-if="isCompleted(h.id)" class="completed-hint"><i class="bi bi-check-circle-fill"></i> Completed</span>
+          <span v-else-if="isLocked(h.id)" class="locked-hint"><i class="bi bi-lock-fill"></i> Complete question {{ h.id - 1 }} first</span>
+          <template v-else>
+            <span class="click-hint" v-if="openQuestion !== h.id">Click to answer</span>
+            <i :class="['bi', 'accordion-chevron', openQuestion === h.id ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+          </template>
         </div>
       </div>
 
       <!-- Accordion Body -->
-      <div v-if="openQuestion === h.id" class="accordion-body">
+      <div v-if="openQuestion === h.id && !isLocked(h.id)" class="accordion-body">
         <p class="condition-text">{{ h.condition }}</p>
 
         <div class="options-row">
@@ -26,7 +32,7 @@
               <label v-for="opt in h.effectOptions" :key="opt"
                      class="hyp-option"
                      :class="{ selected: hypotheses[h.id].effect.includes(opt) }"
-                     @click="toggleSelection(h.id, 'effect', opt)">
+                     @click="selectSingle(h.id, 'effect', opt)">
                 {{ opt }}
               </label>
             </div>
@@ -133,6 +139,12 @@ export default {
     hypotheses() {
       return this.$store.getters.getHypotheses;
     },
+    currentQuestion() {
+      return this.$store.getters.getCurrentQuestion;
+    },
+    completedQuestions() {
+      return this.$store.getters.getCompletedQuestions;
+    },
   },
   methods: {
     toggleQuestion(id) {
@@ -141,6 +153,17 @@ export default {
     isAnswered(id) {
       const h = this.hypotheses[id];
       return h && h.effect.length > 0 && h.reason.length > 0;
+    },
+    isLocked(id) {
+      return id > this.currentQuestion;
+    },
+    isCompleted(id) {
+      return this.completedQuestions.includes(id);
+    },
+    selectSingle(id, field, value) {
+      const current = this.hypotheses[id][field];
+      const newVal = current.includes(value) ? [] : [value];
+      this.$store.dispatch("updateHypothesis", { id, field, value: newVal });
     },
     toggleSelection(id, field, value) {
       const current = [...this.hypotheses[id][field]];
@@ -213,6 +236,40 @@ export default {
 
 .question-number.answered {
   background-color: #198754;
+}
+
+.question-number.completed {
+  background-color: #198754;
+}
+
+.accordion-locked {
+  opacity: 0.55;
+}
+
+.accordion-header.locked {
+  cursor: not-allowed;
+}
+
+.accordion-header.locked:hover {
+  background-color: #fdf6e3;
+}
+
+.locked-hint {
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.completed-hint {
+  font-size: 0.9rem;
+  color: #198754;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .question-text {
