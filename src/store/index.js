@@ -36,6 +36,8 @@ const store = createStore({
       surfaceMaterial:   { hypothesis: "", tests: {}, finding: "" },
       rainfallDuration:  { hypothesis: "", tests: {}, finding: "" },
     },
+    currentQuestion: 1,
+    completedQuestions: [],
   },
   mutations: {
     initializeStorage(state) {
@@ -216,8 +218,25 @@ const store = createStore({
     saveFindings(state, data) {
       state.findings = { ...state.findings, ...data };
     },
+    completeQuestion(state, questionId) {
+      if (!state.completedQuestions.includes(questionId)) {
+        state.completedQuestions.push(questionId);
+      }
+      if (questionId < 3) {
+        state.currentQuestion = questionId + 1;
+      }
+    },
+    resetQuestion(state, questionId) {
+      state.completedQuestions = state.completedQuestions.filter((id) => id !== questionId);
+      if (state.currentQuestion > questionId) {
+        state.currentQuestion = questionId;
+      }
+    },
     addInquiryTestRecord(state, record) {
-      const testNumber = state.inquiryExperimentHistory.length + 1;
+      const countForHypothesis = state.inquiryExperimentHistory.filter(
+        (t) => t.hypothesisKey === record.hypothesisKey
+      ).length;
+      const testNumber = countForHypothesis + 1;
       state.inquiryExperimentHistory.push({ ...record, testNumber });
     },
   },
@@ -319,6 +338,21 @@ const store = createStore({
         3: { ...empty, ...state.hypotheses[3] },
       };
     },
+    getCurrentQuestion(state) {
+      return state.currentQuestion;
+    },
+    getCompletedQuestions(state) {
+      return state.completedQuestions;
+    },
+    getTestsByHypothesis(state) {
+      const grouped = {};
+      state.inquiryExperimentHistory.forEach((test) => {
+        const key = test.hypothesisKey || "unknown";
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(test);
+      });
+      return grouped;
+    },
   },
   actions: {
     initializeStorage(context) {
@@ -401,6 +435,12 @@ const store = createStore({
     },
     saveFindings(context, data) {
       context.commit("saveFindings", data);
+    },
+    completeQuestion(context, questionId) {
+      context.commit("completeQuestion", questionId);
+    },
+    resetQuestion(context, questionId) {
+      context.commit("resetQuestion", questionId);
     },
     addInquiryTestRecord(context, record) {
       context.commit("addInquiryTestRecord", record);

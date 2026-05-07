@@ -163,18 +163,38 @@
           <p v-else class="text-muted fst-italic">Run the simulation to see hourly results.</p>
         </div>
         <div class="tab-pane" id="exp-test-history" role="tabpanel">
-          <design-table
-            v-if="Object.keys(testHistoryContent).length"
-            :header="testHistoryHeader"
-            :contents="testHistoryContent"
-            :checked="testHistoryChecked"
-            :local-only="true"
-            @check-change="onTestHistoryCheck"
-          ></design-table>
-          <p v-if="testHistoryChecked.filter(v => v).length === 2" class="compare-hint">
-            2 tests selected — go to Compare to view side by side.
-          </p>
-          <p v-if="!Object.keys(testHistoryContent).length" class="text-muted fst-italic">No test history yet.</p>
+          <p v-if="!inquiryExperimentHistory.length" class="text-muted fst-italic">No test history yet.</p>
+
+          <div v-for="q in unlockedQuestions" :key="q.key" class="th-accordion mb-3">
+            <!-- Accordion header -->
+            <div class="th-accordion-header" :class="{ expanded: openHistoryKey === q.key }"
+                 @click="openHistoryKey = openHistoryKey === q.key ? null : q.key">
+              <div class="th-accordion-title">
+                <span class="th-hyp-label">{{ hypothesisClaims[q.key] || q.condition }}</span>
+                <span class="th-test-count">{{ (testsByHypothesis[q.key] || []).length }} test(s)</span>
+              </div>
+              <i :class="['bi', openHistoryKey === q.key ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+            </div>
+
+            <!-- Accordion body -->
+            <div v-if="openHistoryKey === q.key" class="th-accordion-body">
+              <p v-if="!(testsByHypothesis[q.key] || []).length" class="text-muted fst-italic small">
+                No tests run for this hypothesis yet.
+              </p>
+              <template v-else>
+                <design-table
+                  :header="testHistoryHeader"
+                  :contents="hypothesisTableContents[q.key] || {}"
+                  :checked="hypothesisChecked[q.key] || []"
+                  :local-only="true"
+                  @check-change="(e) => onHypothesisTestCheck(q.key, e)"
+                ></design-table>
+                <p v-if="totalChecked >= 2" class="compare-hint">
+                  2 tests selected — go to Compare to view side by side.
+                </p>
+              </template>
+            </div>
+          </div>
         </div>
         <div class="tab-pane" id="exp-compare" role="tabpanel">
           <div v-if="compareData && Object.keys(compareData).length === 2" class="compare-launch-area">
@@ -203,14 +223,14 @@
           <div class="modal-header compare-modal-header">
             <h5 class="modal-title">
               <i class="bi bi-bar-chart-line me-2"></i>
-              Comparing Test {{ compareTests[0]?.testNumber }} vs Test {{ compareTests[1]?.testNumber }}
+              Comparing Hypothesis {{ hypothesisNumber(compareTests[0]?.hypothesisKey) }} Test {{ compareTests[0]?.testNumber }} vs Hypothesis {{ hypothesisNumber(compareTests[1]?.hypothesisKey) }} Test {{ compareTests[1]?.testNumber }}
             </h5>
             <button type="button" class="btn-close btn-close-white" @click="closeCompareModal"></button>
           </div>
           <div class="modal-body compare-modal-body">
             <div v-for="(test, idx) in compareTests" :key="test.testNumber" class="compare-block">
               <div class="compare-block-header">
-                Test {{ test.testNumber }}
+                Hypothesis {{ hypothesisNumber(test.hypothesisKey) }} Test {{ test.testNumber }}
                 <span class="compare-meta">
                   {{ test.time }} &nbsp;|&nbsp; {{ test.material }} &nbsp;|&nbsp;
                   Rate: {{ test.rainfallRate }} in/hr &nbsp;|&nbsp;
@@ -273,6 +293,9 @@ export default {
       hourlyTableContent: {},
       testHistoryHeader: ["Test No.", "Time", "Material", "Rainfall Rate", "Rainfall Duration", "Compare"],
       testHistoryChecked: [],
+      hypothesisChecked: { rainfallRate: [], surfaceMaterial: [], rainfallDuration: [] },
+      netsbloxTestCount: 0,
+      openHistoryKey: null,
       tableExpanded: false,
       chartExpanded: false,
       hourlyLoading: false,
@@ -320,9 +343,40 @@ export default {
       });
       return content;
     },
+    currentQuestion() {
+      return this.$store.getters.getCurrentQuestion;
+    },
+    testsByHypothesis() {
+      return this.$store.getters.getTestsByHypothesis;
+    },
+    unlockedQuestions() {
+      return this.questions.filter((q) => q.id <= this.currentQuestion);
+    },
+    totalChecked() {
+      return Object.values(this.hypothesisChecked).flat().filter((v) => v).length;
+    },
+    hypothesisTableContents() {
+      const result = {};
+      this.questions.forEach((q) => {
+        const tests = this.testsByHypothesis[q.key] || [];
+        const content = {};
+        tests.forEach((test, idx) => {
+          content[idx] = {
+            "Test No.": test.testNumber,
+            "Time": test.time,
+            "Material": test.material,
+            "Rainfall Rate": test.rainfallRate,
+            "Rainfall Duration": test.rainfallDuration,
+          };
+        });
+        result[q.key] = content;
+      });
+      return result;
+    },
     hypothesisClaims() {
       const claims = {};
       this.questions.forEach((q) => {
+        if (q.id > this.currentQuestion) return;
         const h = this.hypotheses[q.id];
         const effects = h.effect.length ? h.effect.join(" or ") : "…";
         claims[q.key] = `${q.condition}, ${effects}`;
@@ -337,6 +391,20 @@ export default {
           window.google.charts.setOnLoadCallback(() => this.drawHourlyChart());
         });
       }
+    },
+    testsByHypothesis: {
+      deep: true,
+      handler(newVal) {
+        const updated = { ...this.hypothesisChecked };
+        this.questions.forEach((q) => {
+          const count = (newVal[q.key] || []).length;
+          const existing = updated[q.key] || [];
+          if (existing.length !== count) {
+            updated[q.key] = Array(count).fill(false);
+          }
+        });
+        this.hypothesisChecked = updated;
+      },
     },
   },
   methods: {
@@ -438,6 +506,21 @@ export default {
     },
     loadTestHistory() {
       this.testHistoryChecked = Array(this.inquiryExperimentHistory.length).fill(false);
+      // Reset per-hypothesis checked arrays to match current test counts
+      this.questions.forEach((q) => {
+        const tests = this.testsByHypothesis[q.key] || [];
+        this.hypothesisChecked[q.key] = Array(tests.length).fill(false);
+      });
+    },
+    onHypothesisTestCheck(hypothesisKey, { index, status, event }) {
+      const allChecked = Object.values(this.hypothesisChecked).flat().filter((v) => v);
+      if (status && allChecked.length >= 2) {
+        event.target.checked = false;
+        return;
+      }
+      const updated = [...(this.hypothesisChecked[hypothesisKey] || [])];
+      updated[index] = status;
+      this.hypothesisChecked = { ...this.hypothesisChecked, [hypothesisKey]: updated };
     },
     async runFullStorm() {
       this.fullStormLoading = true;
@@ -475,8 +558,7 @@ export default {
       this.testHistoryChecked = updated;
     },
     onCompareClick() {
-      const count = this.testHistoryChecked.filter((v) => v).length;
-      if (count < 2) {
+      if (this.totalChecked < 2) {
         alert("Please select exactly 2 tests from the Test history tab to compare.");
         return;
       }
@@ -501,14 +583,18 @@ export default {
       if (this._compareModal) this._compareModal.hide();
     },
     loadCompareData() {
-      const selectedIndexes = this.testHistoryChecked
-        .map((v, i) => (v ? i : -1))
-        .filter((i) => i !== -1);
-      if (selectedIndexes.length !== 2) return;
+      const selected = [];
+      this.questions.forEach((q) => {
+        const tests = this.testsByHypothesis[q.key] || [];
+        const checked = this.hypothesisChecked[q.key] || [];
+        checked.forEach((v, i) => {
+          if (v && tests[i]) selected.push(tests[i]);
+        });
+      });
+      if (selected.length !== 2) return;
       const result = {};
-      selectedIndexes.forEach((i) => {
-        const record = this.inquiryExperimentHistory[i];
-        if (record) result[record.testNumber] = record;
+      selected.forEach((record, idx) => {
+        result[idx] = record;
       });
       this.compareData = result;
       this.$nextTick(() => {
@@ -550,9 +636,10 @@ export default {
       new window.google.visualization.LineChart(el).draw(data, options);
     },
     async captureAndStoreTest(hourlyData = {}) {
-      const result = await Visualize.getInquiryLastTestRecord(this.inquiryExperimentHistory.length);
+      const result = await Visualize.getInquiryLastTestRecord(this.netsbloxTestCount);
       if (!result) return;
-      const record = { ...result, hourlyData };
+      this.netsbloxTestCount += 1;
+      const record = { ...result, hourlyData, hypothesisKey: this.selectedHypothesis };
       this.$store.dispatch("addInquiryTestRecord", record);
       this.$nextTick(() => {
         this.testHistoryChecked = Array(this.inquiryExperimentHistory.length).fill(false);
@@ -565,10 +652,13 @@ export default {
           variable: this.selectedVariable,
           rainfallRate: this.rainfallRate,
           rainfallDuration: this.rainfallDuration,
-          currentMaterial: this.simMaterial,
-          test: record,
+          material: this.simMaterial,
         },
       });
+    },
+    hypothesisNumber(hypothesisKey) {
+      const q = this.questions.find((q) => q.key === hypothesisKey);
+      return q ? q.id : "?";
     },
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
@@ -612,8 +702,20 @@ export default {
           const { variable, value } = e.detail;
           console.log(e.detail);
           if (variable === "current material") this.simMaterial = value || null;
-          else if (variable === "absorption limit") this.simAbsorption = value;
-          else if (variable === "hourly absorption limit") this.simAbsorptionLimit = value;
+          // else if (variable === "absorption limit") this.simAbsorption = value;
+          // else if (variable === "hourly absorption limit") this.simAbsorptionLimit = value;
+        });
+
+        this._nbApi.addEventListener("rpcCalled", (e) => {
+          console.log("[rpcCalled]", e.detail);
+          const value = e.detail?.params?.value;
+          if (Array.isArray(value) && value[0] === "MaterialUpdated") {
+            const pairs = value[1] || [];
+            pairs.forEach(([key, val]) => {
+              if (key === "absorption limit") this.simAbsorption = val;
+              else if (key === "hourly absorption limit") this.simAbsorptionLimit = val;
+            });
+          }
         });
 
       };
@@ -1023,5 +1125,71 @@ export default {
   width: 100%;
   flex: 1;
   min-height: 0;
+}
+
+/* Test history accordion */
+.th-accordion {
+  border: 2px solid #c8b89a;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+.th-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #fdf6e3;
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+  transition: background-color 0.15s ease;
+}
+
+.th-accordion-header:hover {
+  background-color: #f5ecd0;
+}
+
+.th-accordion-header.expanded {
+  background-color: #e8dfc8;
+  border-bottom: 2px solid #c8b89a;
+}
+
+.th-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.th-hyp-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.th-test-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0d6efd;
+  background: #e7f0ff;
+  border: 1px solid #b6d0ff;
+  border-radius: 12px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.th-accordion-body {
+  padding: 12px;
+  background: #fffdf7;
+  overflow-x: auto;
 }
 </style>
