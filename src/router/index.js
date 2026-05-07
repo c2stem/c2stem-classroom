@@ -211,7 +211,7 @@ const routes = [
     path: "/inquiry",
     name: "Inquiry",
     component: Inquiry,
-    meta: { requiresAuth: true, class: "SPICE", title: "SPICE | Inquiry" },
+    meta: { requiresAuth: true, class: "CMISE", title: "SPICE | Inquiry" },
   },
   {
     path: "/:NotFound(.*)",
