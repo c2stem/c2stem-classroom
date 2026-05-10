@@ -18,7 +18,17 @@
 - The numbers in my data show …
 - The graph shows that …"
         ></textarea>
-        <button class="btn btn-success mt-3 w-100" @click="saveFindings">Save My Findings</button>
+        <button class="btn mt-3 w-100 save-btn" :class="saveSuccess ? 'btn-saved' : 'btn-success'" @click="saveFindings">
+          <i :class="saveSuccess ? 'bi bi-check-lg' : 'bi bi-floppy'"></i>
+          {{ saveSuccess ? 'Saved!' : 'Save My Findings' }}
+        </button>
+        <button
+          class="goto-btn mt-2"
+          :disabled="!hasSaved"
+          @click="goToConclusions"
+        >
+          Go to Conclusions <i class="bi bi-arrow-right-circle"></i>
+        </button>
       </div>
 
       <!-- Right column: controls + stacked test cards -->
@@ -109,6 +119,8 @@ export default {
       selectedTestKeys: [],
       testSelectValue: "",
       findingText: "",
+      saveSuccess: false,
+      hasSaved: false,
       hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
       questions: [
         { id: 1, key: "rainfallRate",     condition: "If rainfall rate increases" },
@@ -191,6 +203,9 @@ export default {
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
     },
+    goToConclusions() {
+      document.getElementById("conclusions-tab")?.click();
+    },
     goToExperiments() {
       document.getElementById("experiments-tab")?.click();
     },
@@ -208,26 +223,38 @@ export default {
       const el = document.getElementById(`findings-chart-${key}`);
       if (!el || !window.google || !window.google.visualization) return;
       const test = this.compareData[key];
-      if (!test || !Object.keys(test.hourlyData).length) return;
-      const rows = Object.values(test.hourlyData);
-      const keys = Object.keys(rows[0]);
-      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+      if (!test) return;
+
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
-      data.addRow([0, 0, 0, 0]);
-      rows.forEach((row) => {
-        data.addRow([
-          Number(row[timeKey]),
-          Number(row[rainfallKey]),
-          Number(row[absorptionKey]),
-          Number(row[runoffKey]),
-        ]);
-      });
-      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
-      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
+
+      let maxTime = 1;
+
+      if (test.fineGrainData && test.fineGrainData.length) {
+        test.fineGrainData.forEach((pt) => data.addRow(pt));
+        maxTime = test.fineGrainData[test.fineGrainData.length - 1][0];
+      } else if (test.hourlyData && Object.keys(test.hourlyData).length) {
+        const rows = Object.values(test.hourlyData);
+        const keys = Object.keys(rows[0]);
+        const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+        data.addRow([0, 0, 0, 0]);
+        rows.forEach((row) => {
+          data.addRow([
+            Number(row[timeKey]),
+            Number(row[rainfallKey]),
+            Number(row[absorptionKey]),
+            Number(row[runoffKey]),
+          ]);
+        });
+        maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      } else {
+        return;
+      }
+
+      const hTicks = Array.from({ length: Math.round(maxTime) + 1 }, (_, i) => i);
       const options = {
         hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
         vAxis: { title: "Amount of Water (inches)", minValue: 0 },
@@ -278,6 +305,9 @@ export default {
           finding: this.findingText,
         },
       });
+      this.saveSuccess = true;
+      this.hasSaved = true;
+      setTimeout(() => { this.saveSuccess = false; }, 2500);
     },
   },
   mounted() {
@@ -490,5 +520,49 @@ p {
 .findings-chart {
   width: 100%;
   height: 100%;
+}
+
+.save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-saved {
+  background-color: #0f6b3d;
+  border-color: #0f6b3d;
+  color: #fff;
+}
+
+
+.goto-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #615195;
+  color: #fff;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.goto-btn:hover:not(:disabled) {
+  background-color: #4e4077;
+}
+
+.goto-btn:disabled {
+  background-color: #c8c8d4;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>

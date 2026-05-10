@@ -104,7 +104,7 @@
         <li class="nav-item">
           <button class="nav-link active" id="current-test-tab"
                   data-bs-toggle="pill" data-bs-target="#current-test"
-                  type="button" role="tab" @click="loadHourlyData">
+                  type="button" role="tab">
             Current test
           </button>
         </li>
@@ -289,6 +289,7 @@ export default {
       loopActive: false,
       currentHour: 0,
       hoursLeft: 0,
+      fineGrainData: [],
       hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
       hourlyTableContent: {},
       testHistoryHeader: ["Test No.", "Time", "Material", "Rainfall Rate", "Rainfall Duration", "Compare"],
@@ -441,12 +442,7 @@ export default {
     drawHourlyChart() {
       const el = document.getElementById("inquiry-hourly-chart");
       if (!el || !window.google || !window.google.visualization) return;
-
-      const rows = Object.values(this.hourlyTableContent);
-      if (!rows.length) return;
-
-      const keys = Object.keys(rows[0]);
-      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+      if (!this.fineGrainData.length) return;
 
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
@@ -454,11 +450,10 @@ export default {
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
 
-      const interpolated = this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey);
-      interpolated.forEach((pt) => data.addRow(pt));
+      this.fineGrainData.forEach((pt) => data.addRow(pt));
 
-      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
-      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
+      const maxTime = this.fineGrainData[this.fineGrainData.length - 1][0];
+      const hTicks = Array.from({ length: Math.round(maxTime) + 1 }, (_, i) => i);
       const options = {
         hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
         vAxis: { title: "Amount of Water (inches)", minValue: 0 },
@@ -472,22 +467,56 @@ export default {
         width: "100%",
         height: 260,
       };
-      const chart = new window.google.visualization.LineChart(el);
-      chart.draw(data, options);
+      new window.google.visualization.LineChart(el).draw(data, options);
     },
     toggleTableExpand() {
       this.tableExpanded = !this.tableExpanded;
       if (this.tableExpanded) this.chartExpanded = false;
-      this.$nextTick(() => this.drawHourlyChart());
+      setTimeout(() => this.drawHourlyChart(), 250);
     },
     toggleChartExpand() {
       this.chartExpanded = !this.chartExpanded;
       if (this.chartExpanded) this.tableExpanded = false;
-      this.$nextTick(() => this.drawHourlyChart());
+      setTimeout(() => this.drawHourlyChart(), 250);
+    },
+    generateHourlyData(maxHours) {
+      const dt = 0.1;
+      const rate = Number(this.rainfallRate);
+      const absRate = this.simAbsorptionLimit !== null ? Number(this.simAbsorptionLimit) : 0;
+      const absLimit = this.simAbsorption !== null ? Number(this.simAbsorption) : Infinity;
+      // effective absorption rate per tick is bounded by material rate and rainfall rate
+      const effectiveRate = Math.min(rate, absRate);
+
+      let totalRainfall = 0;
+      let totalAbsorption = 0;
+      let totalRunoff = 0;
+
+      const fineGrain = [[0, 0, 0, 0]];
+      const steps = Math.round(maxHours / dt);
+
+      for (let i = 1; i <= steps; i++) {
+        const t = Math.round(i * dt * 10) / 10;
+
+        totalRainfall += rate * dt;
+
+        // absorb only what the material can still hold; once full, remainingCapacity = 0
+        const remainingCapacity = Math.max(0, absLimit - totalAbsorption);
+        const absorbed = Math.min(effectiveRate * dt, remainingCapacity);
+        totalAbsorption += absorbed;
+        totalRunoff += (rate * dt) - absorbed;
+
+        fineGrain.push([
+          t,
+          Math.round(totalRainfall   * 10000) / 10000,
+          Math.round(totalAbsorption * 10000) / 10000,
+          Math.round(totalRunoff     * 10000) / 10000,
+        ]);
+      }
+
+      this.fineGrainData = fineGrain;
     },
     async loadHourlyData(expectedRows) {
       this.hourlyLoading = true;
-      // Give the simulation a moment to finish writing results before polling
       await new Promise((r) => setTimeout(r, 1500));
       const maxAttempts = 20;
       const interval = 500;
@@ -525,6 +554,7 @@ export default {
     async runFullStorm() {
       this.fullStormLoading = true;
       Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.rainfallDuration, "full storm": true });
+      this.generateHourlyData(this.rainfallDuration);
       await this.loadHourlyData(this.rainfallDuration);
       this.fullStormLoading = false;
       await this.captureAndStoreTest(this.hourlyTableContent);
@@ -540,6 +570,7 @@ export default {
       }
       const isLastHour = this.hoursLeft === 0;
       Simulation.runProject({ "hourly rainfall": this.rainfallRate, "rainfall duration": this.currentHour, "full storm": isLastHour });
+      this.generateHourlyData(this.currentHour);
       await this.loadHourlyData(this.currentHour);
       if (isLastHour) {
         this.loopActive = false;
@@ -605,21 +636,31 @@ export default {
       const el = document.getElementById(`${prefix}-${idx}`);
       if (!el || !window.google || !window.google.visualization) return;
       const test = this.compareTests[idx];
-      if (!test || !Object.keys(test.hourlyData).length) return;
-      const rows = Object.values(test.hourlyData);
-      const keys = Object.keys(rows[0]);
-      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+      if (!test) return;
+
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
 
-      const interpolated = this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey);
-      interpolated.forEach((pt) => data.addRow(pt));
+      let maxTime = 1;
 
-      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
-      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
+      if (test.fineGrainData && test.fineGrainData.length) {
+        test.fineGrainData.forEach((pt) => data.addRow(pt));
+        maxTime = test.fineGrainData[test.fineGrainData.length - 1][0];
+      } else if (test.hourlyData && Object.keys(test.hourlyData).length) {
+        const rows = Object.values(test.hourlyData);
+        const keys = Object.keys(rows[0]);
+        const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+        this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey)
+          .forEach((pt) => data.addRow(pt));
+        maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      } else {
+        return;
+      }
+
+      const hTicks = Array.from({ length: Math.round(maxTime) + 1 }, (_, i) => i);
       const options = {
         hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks },
         vAxis: { title: "Amount of Water (inches)", minValue: 0 },
@@ -639,7 +680,7 @@ export default {
       const result = await Visualize.getInquiryLastTestRecord(this.netsbloxTestCount);
       if (!result) return;
       this.netsbloxTestCount += 1;
-      const record = { ...result, hourlyData, hypothesisKey: this.selectedHypothesis };
+      const record = { ...result, hourlyData, fineGrainData: [...this.fineGrainData], hypothesisKey: this.selectedHypothesis };
       this.$store.dispatch("addInquiryTestRecord", record);
       this.$nextTick(() => {
         this.testHistoryChecked = Array(this.inquiryExperimentHistory.length).fill(false);

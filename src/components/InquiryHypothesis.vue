@@ -27,7 +27,7 @@
         <div class="options-row">
           <!-- Effect options -->
           <div class="options-group">
-            <div class="options-label">Runoff will…</div>
+            <div class="options-label">Runoff will… (Select one)</div>
             <div class="hyp-checkbox-list">
               <label v-for="opt in h.effectOptions" :key="opt"
                      class="hyp-option"
@@ -42,7 +42,7 @@
 
           <!-- Reason options -->
           <div class="options-group">
-            <div class="options-label">Reason…</div>
+            <div class="options-label">Reason… (Select one or more)</div>
             <div class="hyp-checkbox-list">
               <label v-for="opt in h.reasonOptions" :key="opt"
                      class="hyp-option"
@@ -52,6 +52,16 @@
               </label>
             </div>
           </div>
+        </div>
+
+        <div class="goto-row">
+          <button
+            class="goto-btn"
+            :disabled="!isAnswered(h.id)"
+            @click="goToExperiments"
+          >
+            Go to Experiments <i class="bi bi-arrow-right-circle"></i>
+          </button>
         </div>
       </div>
 
@@ -72,10 +82,9 @@ export default {
           condition: "If rainfall rate increases …",
           multiSelect: true,
           effectOptions: [
-            "Runoff will decrease",
-            "Runoff will increase",
-            "Runoff will change",
-            "Runoff will not change",
+            "Increase",
+            "Decrease",
+            "Not change",
           ],
           reasonOptions: [
             "Surface will absorb most of the water",
@@ -93,10 +102,9 @@ export default {
           condition: "If we change the surface material …",
           multiSelect: true,
           effectOptions: [
-            "Runoff will increase",
-            "Runoff will decrease",
-            "Runoff will change",
-            "Runoff will not change",
+            "Increase",
+            "Decrease",
+            "Not change",
           ],
           reasonOptions: [
             "Runoff only depends on rainfall rate",
@@ -116,10 +124,9 @@ export default {
           condition: "If rain continues for a long time …",
           multiSelect: true,
           effectOptions: [
-            "Runoff will increase",
-            "Runoff will decrease",
-            "Runoff will change",
-            "Runoff will not change",
+            "Increase",
+            "Decrease",
+            "Not change",
           ],
           reasonOptions: [
             "Runoff depends only on rainfall rate and material",
@@ -164,6 +171,9 @@ export default {
       const current = this.hypotheses[id][field];
       const newVal = current.includes(value) ? [] : [value];
       this.$store.dispatch("updateHypothesis", { id, field, value: newVal });
+    },
+    goToExperiments() {
+      document.getElementById("experiments-tab")?.click();
     },
     toggleSelection(id, field, value) {
       const current = [...this.hypotheses[id][field]];
@@ -308,6 +318,7 @@ export default {
   font-style: italic;
   margin-bottom: 16px;
   font-size: 1.05rem;
+  justify-content: flex-start;
 }
 
 .options-row {
@@ -377,5 +388,37 @@ export default {
 
 div {
   height: auto;
+}
+
+.goto-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.goto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #615195;
+  color: #fff;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.goto-btn:hover:not(:disabled) {
+  background-color: #4e4077;
+}
+
+.goto-btn:disabled {
+  background-color: #c8c8d4;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>
