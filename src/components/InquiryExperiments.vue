@@ -10,6 +10,11 @@
         <button class="btn btn-primary btn-sm" @click="runOneHour" :disabled="(loopActive && hoursLeft === 0) || !selectionReady || (loopActive && hourlyLoading) || fullStormLoading">
           {{ loopActive && hourlyLoading ? `Loading hr ${currentHour}…` : loopActive ? `Run hr ${currentHour + 1} of ${rainfallDuration}` : 'Run 1 hr' }}
         </button>
+        <transition name="run-complete-fade">
+          <span v-if="runComplete" class="run-complete-badge">
+            <i class="bi bi-check-circle-fill"></i> Run complete
+          </span>
+        </transition>
         <span v-if="loopActive" class="loop-hint">
           {{ hoursLeft }} hr{{ hoursLeft !== 1 ? 's' : '' }} left — keep clicking to advance the storm
         </span>
@@ -32,7 +37,10 @@
       </div>
 
       <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || fullStormLoading || !selectionReady }">
-        <div v-if="loopActive || fullStormLoading || !selectionReady" class="iframe-overlay"></div>
+        <div v-if="loopActive || fullStormLoading || !selectionReady" class="iframe-overlay">
+          <span v-if="!selectionReady" class="overlay-message">Select a hypothesis and variable to unlock</span>
+          <span v-else class="overlay-message"><i class="bi bi-hourglass-split me-1"></i>Simulation running…</span>
+        </div>
         <iframe-loader
           :source="iframeSrc"
           iframeid="iframe-id"
@@ -63,8 +71,8 @@
           <div class="slider-track">
             <span class="slider-min">1</span>
             <input type="range" class="form-range" v-model.number="rainfallDuration"
-                   min="1" max="24" step="1" @change="onSliderChange" :disabled="loopActive || fullStormLoading || !selectionReady" />
-            <span class="slider-max">24</span>
+                   min="1" max="12" step="1" @change="onSliderChange" :disabled="loopActive || fullStormLoading || !selectionReady" />
+            <span class="slider-max">12</span>
           </div>
         </div>
       </div>
@@ -301,6 +309,7 @@ export default {
       chartExpanded: false,
       hourlyLoading: false,
       fullStormLoading: false,
+      runComplete: false,
       compareData: null,
       simMaterial: null,
       simAbsorption: null,
@@ -557,6 +566,7 @@ export default {
       this.generateHourlyData(this.rainfallDuration);
       await this.loadHourlyData(this.rainfallDuration);
       this.fullStormLoading = false;
+      this.showRunComplete();
       await this.captureAndStoreTest(this.hourlyTableContent);
     },
     async runOneHour() {
@@ -576,6 +586,7 @@ export default {
         this.loopActive = false;
         this.currentHour = 0;
         await this.captureAndStoreTest(this.hourlyTableContent);
+        this.showRunComplete();
       }
     },
     onTestHistoryCheck({ index, status, event }) {
@@ -704,6 +715,10 @@ export default {
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
     },
+    showRunComplete() {
+      this.runComplete = true;
+      setTimeout(() => { this.runComplete = false; }, 2500);
+    },
     onSliderChange() {
       Simulation.setVariable("rainfallRate", this.rainfallRate);
       Simulation.setVariable("rainfallDuration", this.rainfallDuration);
@@ -800,6 +815,29 @@ export default {
   font-style: italic;
 }
 
+.run-complete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.run-complete-fade-enter-active,
+.run-complete-fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+.run-complete-fade-enter-from,
+.run-complete-fade-leave-to {
+  opacity: 0;
+}
+
 .sim-info-box {
   display: flex;
   flex-direction: column;
@@ -868,6 +906,22 @@ export default {
   z-index: 10;
   background: rgba(13, 110, 253, 0.08);
   cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay-message {
+  background: rgba(255, 255, 255, 0.93);
+  border: 1px solid #b6d0ff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0d6efd;
+  text-align: center;
+  max-width: 80%;
+  pointer-events: none;
 }
 
 .sim-sliders {

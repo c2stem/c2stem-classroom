@@ -22,17 +22,19 @@
 
       <!-- Accordion Body -->
       <div v-if="openQuestion === h.id && !isLocked(h.id)" class="accordion-body">
+
         <p class="condition-text">{{ h.condition }}</p>
 
         <div class="options-row">
           <!-- Effect options -->
           <div class="options-group">
-            <div class="options-label">Runoff will… (Select one)</div>
+            <div class="options-label">Runoff will… <span class="select-hint">(pick one)</span></div>
             <div class="hyp-checkbox-list">
               <label v-for="opt in h.effectOptions" :key="opt"
                      class="hyp-option"
                      :class="{ selected: hypotheses[h.id].effect.includes(opt) }"
                      @click="selectSingle(h.id, 'effect', opt)">
+                <i :class="hypotheses[h.id].effect.includes(opt) ? 'bi bi-record-circle-fill' : 'bi bi-circle'" class="option-icon"></i>
                 {{ opt }}
               </label>
             </div>
@@ -42,15 +44,30 @@
 
           <!-- Reason options -->
           <div class="options-group">
-            <div class="options-label">Reason… (Select one or more)</div>
+            <div class="options-label">Reason… <span class="select-hint">(pick all that apply)</span></div>
             <div class="hyp-checkbox-list">
               <label v-for="opt in h.reasonOptions" :key="opt"
                      class="hyp-option"
                      :class="{ selected: hypotheses[h.id].reason.includes(opt) }"
                      @click="toggleSelection(h.id, 'reason', opt)">
+                <i :class="hypotheses[h.id].reason.includes(opt) ? 'bi bi-check-square-fill' : 'bi bi-square'" class="option-icon"></i>
                 {{ opt }}
               </label>
             </div>
+          </div>
+        </div>
+
+        <!-- Live hypothesis preview -->
+        <div class="hypothesis-preview">
+          <div class="preview-label">Your hypothesis:</div>
+          <div class="preview-sentence">
+            <span class="preview-condition">{{ h.condition.replace(' …', '') }}</span>,
+            runoff will
+            <span :class="['preview-slot', hypotheses[h.id].effect.length ? 'preview-slot-filled' : '']">
+              {{ hypotheses[h.id].effect.length ? hypotheses[h.id].effect[0].toLowerCase() : 'effect?' }}
+            </span>
+            because
+            <template v-if="hypotheses[h.id].reason.length"><template v-for="(r, i) in hypotheses[h.id].reason" :key="r">{{ reasonSeparator(i, hypotheses[h.id].reason.length) }}<span class="preview-slot preview-slot-filled">{{ r }}</span></template></template><span v-else class="preview-slot">reason?</span>.
           </div>
         </div>
 
@@ -62,6 +79,9 @@
           >
             Go to Experiments <i class="bi bi-arrow-right-circle"></i>
           </button>
+          <p v-if="!isAnswered(h.id)" class="goto-hint">
+            <i class="bi bi-info-circle me-1"></i>Select a runoff outcome and at least one reason to continue
+          </p>
         </div>
       </div>
 
@@ -107,15 +127,13 @@ export default {
             "Not change",
           ],
           reasonOptions: [
+            "Runoff only depends on absorption limit",
             "Runoff only depends on rainfall rate",
             "Some surfaces absorb more water than others",
-            "Different surface materials can have different slopes",
             "All surfaces absorb water the same way",
             "Different surface materials have different absorption rates",
             "Different surface materials have different absorption limits",
             "Different surface materials have different absorption rates and absorption limits",
-            "Runoff only depends on temperature",
-            "Runoff only depends on humidity",
           ],
         },
         {
@@ -133,9 +151,7 @@ export default {
             "Once the surface is full, all additional rain becomes runoff",
             "Water keeps getting absorbed as long as it rains",
             "The longer it rains, the more water builds up over time",
-            "Runoff only depends on temperature",
             "The surface will eventually reach its absorption limit and become saturated",
-            "Runoff only depends on humidity",
             "Surface will stop absorbing water after some time",
           ],
         },
@@ -181,6 +197,12 @@ export default {
       if (idx === -1) current.push(value);
       else current.splice(idx, 1);
       this.$store.dispatch("updateHypothesis", { id, field, value: current });
+    },
+    reasonSeparator(index, total) {
+      if (index === 0) return '';
+      if (index === total - 1 && total === 2) return ' and ';
+      if (index === total - 1) return ', and ';
+      return ', ';
     },
   },
 };
@@ -314,10 +336,10 @@ export default {
 }
 
 .condition-text {
-  color: #666;
-  font-style: italic;
-  margin-bottom: 16px;
+  font-weight: 700;
   font-size: 1.05rem;
+  color: #2c2c2c;
+  margin-bottom: 24px;
   justify-content: flex-start;
 }
 
@@ -340,6 +362,14 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
+}
+
+.select-hint {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #888;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .because-label {
@@ -386,14 +416,85 @@ export default {
   border-radius: 4px;
 }
 
+.option-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  color: #999;
+  transition: color 0.15s ease;
+}
+
+.hyp-option.selected .option-icon {
+  color: #fff;
+}
+
+/* Live hypothesis preview */
+.hypothesis-preview {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: #eef4ff;
+  border: 1px solid #b6d0ff;
+  border-radius: 8px;
+}
+
+.preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0d6efd;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.preview-sentence {
+  font-size: 1rem;
+  color: #2c2c2c;
+  line-height: 1.7;
+}
+
+.preview-condition {
+  font-weight: 600;
+}
+
+.preview-slot {
+  display: inline;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: #d0e2ff;
+  color: #6c8ebf;
+  font-style: italic;
+  border: 1px dashed #90b8ff;
+}
+
+.preview-slot.preview-slot-filled {
+  background: #0d6efd;
+  color: #fff;
+  font-style: normal;
+  font-weight: 600;
+  border: none;
+}
+
 div {
   height: auto;
 }
 
 .goto-row {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
   margin-top: 16px;
+  gap: 6px;
+}
+
+.goto-hint {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-end;
+  text-align: right;
 }
 
 .goto-btn {
