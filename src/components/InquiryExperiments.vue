@@ -27,7 +27,7 @@
           <span class="sim-info-value">{{ simMaterial || '—' }}</span>
         </div>
         <div class="sim-info-row">
-          <span class="sim-info-label">Total Absorption (inches)</span>
+          <span class="sim-info-label">Total Absorption Limit (inches)</span>
           <span class="sim-info-value">{{ simAbsorption !== null ? simAbsorption : '—' }}</span>
         </div>
         <div class="sim-info-row">
@@ -36,16 +36,21 @@
         </div>
       </div>
 
-      <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || fullStormLoading || !selectionReady }">
+      <div class="sim-iframe-area" :class="{ 'sim-iframe-frozen': loopActive || fullStormLoading || !selectionReady }" @mouseenter="hoveringIframe = true" @mouseleave="hoveringIframe = false">
         <div v-if="loopActive || fullStormLoading || !selectionReady" class="iframe-overlay">
           <span v-if="!selectionReady" class="overlay-message">Select a hypothesis and variable to unlock</span>
           <span v-else class="overlay-message"><i class="bi bi-hourglass-split me-1"></i>Simulation running…</span>
+        </div>
+        <div v-else-if="needsMaterial && !hoveringIframe" class="material-hint-overlay">
+          <span class="material-hint-message">
+            <i class="bi bi-cursor-fill me-1"></i>Select material by clicking here
+          </span>
         </div>
         <iframe-loader
           :source="iframeSrc"
           iframeid="iframe-id"
           username="oele"
-          projectname="meigs-cm-inquiry"
+          projectname="meigs-cm-inquiry-arrows"
           :embed="true"
         ></iframe-loader>
       </div>
@@ -294,6 +299,7 @@ export default {
       rainfallDuration: 1,
       selectedHypothesis: "",
       selectedVariable: "",
+      hoveringIframe: false,
       loopActive: false,
       currentHour: 0,
       hoursLeft: 0,
@@ -329,6 +335,10 @@ export default {
     },
     selectionReady() {
       return !!this.selectedHypothesis && !!this.selectedVariable;
+    },
+    needsMaterial() {
+      const m = this.simMaterial;
+      return this.selectionReady && (!m || m.toLowerCase() === 'nothing');
     },
     hypotheses() {
       return this.$store.getters.getHypotheses;
@@ -388,8 +398,8 @@ export default {
       this.questions.forEach((q) => {
         if (q.id > this.currentQuestion) return;
         const h = this.hypotheses[q.id];
-        const effects = h.effect.length ? h.effect.join(" or ") : "…";
-        claims[q.key] = `${q.condition}, ${effects}`;
+        const effects = h.effect.length ? h.effect.join(" or ").toLowerCase() : "…";
+        claims[q.key] = `${q.condition}, runoff will ${effects}`;
       });
       return claims;
     },
@@ -456,10 +466,18 @@ export default {
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Absorption (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Runoff (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
 
-      this.fineGrainData.forEach((pt) => data.addRow(pt));
+      this.fineGrainData.forEach(([t, r, a, ru]) => data.addRow([
+        t,
+        r,  `Time (hours): ${t} | Rainfall (in): ${r}`,
+        a,  `Time (hours): ${t} | Absorption (in): ${a}`,
+        ru, `Time (hours): ${t} | Runoff (in): ${ru}`,
+      ]));
 
       const maxTime = this.fineGrainData[this.fineGrainData.length - 1][0];
       const hTicks = Array.from({ length: Math.round(maxTime) + 1 }, (_, i) => i);
@@ -652,20 +670,33 @@ export default {
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Absorption (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Runoff (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
 
       let maxTime = 1;
 
       if (test.fineGrainData && test.fineGrainData.length) {
-        test.fineGrainData.forEach((pt) => data.addRow(pt));
+        test.fineGrainData.forEach(([t, r, a, ru]) => data.addRow([
+          t,
+          r,  `Time (hours): ${t} | Rainfall (in): ${r}`,
+          a,  `Time (hours): ${t} | Absorption (in): ${a}`,
+          ru, `Time (hours): ${t} | Runoff (in): ${ru}`,
+        ]));
         maxTime = test.fineGrainData[test.fineGrainData.length - 1][0];
       } else if (test.hourlyData && Object.keys(test.hourlyData).length) {
         const rows = Object.values(test.hourlyData);
         const keys = Object.keys(rows[0]);
         const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
         this.interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey)
-          .forEach((pt) => data.addRow(pt));
+          .forEach(([t, r, a, ru]) => data.addRow([
+            t,
+            r,  `Time (hours): ${t} | Rainfall (in): ${r}`,
+            a,  `Time (hours): ${t} | Absorption (in): ${a}`,
+            ru, `Time (hours): ${t} | Runoff (in): ${ru}`,
+          ]));
         maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
       } else {
         return;
@@ -922,6 +953,27 @@ export default {
   text-align: center;
   max-width: 80%;
   pointer-events: none;
+}
+
+.material-hint-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.material-hint-message {
+  background: rgba(255, 248, 220, 0.96);
+  border: 1px solid #f0c040;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7a5200;
+  text-align: center;
 }
 
 .sim-sliders {
@@ -1193,7 +1245,8 @@ export default {
 }
 
 .ct-card-body {
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 4px;
   display: flex;
   flex-direction: column;

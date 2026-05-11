@@ -146,9 +146,8 @@ export default {
       this.questions.forEach((q) => {
         if (q.id > this.currentQuestion) return;
         const h = this.hypotheses[q.id];
-        const effects = h.effect.length ? h.effect.join(" or ") : "…";
-        const reasons = h.reason.length ? h.reason.join(" or ") : "…";
-        claims[q.key] = `${q.condition}, ${effects} because ${reasons}`;
+        const effects = h.effect.length ? h.effect.join(" or ").toLowerCase() : "…";
+        claims[q.key] = `${q.condition}, runoff will ${effects}`;
       });
       return claims;
     },
@@ -228,25 +227,35 @@ export default {
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
       data.addColumn("number", "Rainfall (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Absorption (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Runoff (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
 
       let maxTime = 1;
 
       if (test.fineGrainData && test.fineGrainData.length) {
-        test.fineGrainData.forEach((pt) => data.addRow(pt));
+        test.fineGrainData.forEach(([t, r, a, ru]) => data.addRow([
+          t,
+          r,  `Time (hours): ${t} | Rainfall (in): ${r}`,
+          a,  `Time (hours): ${t} | Absorption (in): ${a}`,
+          ru, `Time (hours): ${t} | Runoff (in): ${ru}`,
+        ]));
         maxTime = test.fineGrainData[test.fineGrainData.length - 1][0];
       } else if (test.hourlyData && Object.keys(test.hourlyData).length) {
         const rows = Object.values(test.hourlyData);
         const keys = Object.keys(rows[0]);
         const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
-        data.addRow([0, 0, 0, 0]);
+        data.addRow([0, 0, `Time (hours): 0 | Rainfall (in): 0`, 0, `Time (hours): 0 | Absorption (in): 0`, 0, `Time (hours): 0 | Runoff (in): 0`]);
         rows.forEach((row) => {
+          const t = Number(row[timeKey]), r = Number(row[rainfallKey]),
+                a = Number(row[absorptionKey]), ru = Number(row[runoffKey]);
           data.addRow([
-            Number(row[timeKey]),
-            Number(row[rainfallKey]),
-            Number(row[absorptionKey]),
-            Number(row[runoffKey]),
+            t,
+            r,  `Time (hours): ${t} | Rainfall (in): ${r}`,
+            a,  `Time (hours): ${t} | Absorption (in): ${a}`,
+            ru, `Time (hours): ${t} | Runoff (in): ${ru}`,
           ]);
         });
         maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
@@ -504,7 +513,7 @@ p {
   flex: 1 1 50%;
   min-width: 0;
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .findings-card-half :deep(table) {

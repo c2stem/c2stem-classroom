@@ -23,6 +23,9 @@
       >
         Save Project
       </button>
+      <span v-if="currentRouteName === 'Inquiry'" class="navbar-center-title">
+        Virtual Water Runoff Lab
+      </span>
       <div class="bttn-auth ms-2 me-2">
         <!--        <button-->
         <!--          v-if="-->
@@ -196,5 +199,16 @@ export default {
 }
 .btn:focus {
   box-shadow: none;
+}
+.navbar-center-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  white-space: nowrap;
 }
 </style>

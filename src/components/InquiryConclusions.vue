@@ -44,7 +44,6 @@
             <strong>{{ r }}</strong><template v-if="i < reasonList.length - 1"> or </template>
           </template>
         </div>
-        <p class="claim-prompt-sub">You can keep this claim or edit it before writing your reasoning.</p>
         <div class="claim-prompt-actions">
           <button class="btn btn-success" @click="answerClaim('no')">Yes</button>
           <button class="btn btn-outline-secondary" @click="answerClaim('yes')">No</button>
