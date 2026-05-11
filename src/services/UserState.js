@@ -16,6 +16,8 @@ function sanitizeExperimentHistory(history) {
     material: test.material,
     rainfallRate: test.rainfallRate,
     rainfallDuration: test.rainfallDuration,
+    hypothesisKey: test.hypothesisKey,
+    fineGrainData: test.fineGrainData || [],
     hourlyData: sanitizeHourlyData(test.hourlyData),
   }));
 }
@@ -47,6 +49,8 @@ export default {
     const findings = sanitizeFindings(state.findings);
     const conclusions = state.conclusions;
     const inquiryExperimentHistory = sanitizeExperimentHistory(state.inquiryExperimentHistory);
+    const currentQuestion = state.currentQuestion;
+    const completedQuestions = state.completedQuestions;
     let response = await axiosInstance.post("state/setState", {
       username: user,
       checkList: checkList,
@@ -57,6 +61,8 @@ export default {
       findings,
       conclusions,
       inquiryExperimentHistory,
+      currentQuestion,
+      completedQuestions,
     });
     if (response) {
       console.log("successfully saved state: ", response);

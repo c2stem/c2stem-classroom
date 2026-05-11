@@ -178,7 +178,7 @@ export default {
       return h && h.effect.length > 0 && h.reason.length > 0;
     },
     isLocked(id) {
-      return id > this.currentQuestion;
+      return !this.completedQuestions.includes(id) && id !== this.currentQuestion;
     },
     isCompleted(id) {
       return this.completedQuestions.includes(id);

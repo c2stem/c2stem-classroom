@@ -153,6 +153,22 @@ const store = createStore({
         if (response[0].findings) newState.findings = response[0].findings;
         if (response[0].conclusions) newState.conclusions = response[0].conclusions;
         if (response[0].inquiryExperimentHistory) newState.inquiryExperimentHistory = response[0].inquiryExperimentHistory;
+        if (response[0].completedQuestions && response[0].completedQuestions.length) {
+          newState.completedQuestions = response[0].completedQuestions;
+          if (response[0].currentQuestion) newState.currentQuestion = response[0].currentQuestion;
+        } else if (response[0].conclusions) {
+          // Infer from saved conclusions for sessions saved before completedQuestions was persisted.
+          // claim alone is unreliable (saveResults populates all 3 at once), so require reasoning or evidence too.
+          const keyToId = { rainfallRate: 1, surfaceMaterial: 2, rainfallDuration: 3 };
+          const completed = Object.entries(response[0].conclusions)
+            .filter(([, val]) => val?.reasoning || val?.evidence)
+            .map(([key]) => keyToId[key])
+            .filter(Boolean);
+          newState.completedQuestions = completed;
+          if (completed.length) {
+            newState.currentQuestion = Math.min(Math.max(...completed) + 1, 3);
+          }
+        }
         sessionStorage.setItem("store", JSON.stringify(newState));
       }
     },
@@ -223,14 +239,16 @@ const store = createStore({
         state.completedQuestions.push(questionId);
       }
       if (questionId < 3) {
-        state.currentQuestion = questionId + 1;
+        // Advance past any questions already completed so currentQuestion
+        // always points to the first question still needing work.
+        let next = questionId + 1;
+        while (next < 3 && state.completedQuestions.includes(next)) next++;
+        state.currentQuestion = next;
       }
     },
     resetQuestion(state, questionId) {
       state.completedQuestions = state.completedQuestions.filter((id) => id !== questionId);
-      if (state.currentQuestion > questionId) {
-        state.currentQuestion = questionId;
-      }
+      state.currentQuestion = questionId;
     },
     addInquiryTestRecord(state, record) {
       const countForHypothesis = state.inquiryExperimentHistory.filter(

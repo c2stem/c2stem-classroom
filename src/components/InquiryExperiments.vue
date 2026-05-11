@@ -50,7 +50,7 @@
           :source="iframeSrc"
           iframeid="iframe-id"
           username="oele"
-          projectname="meigs-cm-inquiry-arrows"
+          projectname="meigs-cm-inquiry"
           :embed="true"
         ></iframe-loader>
       </div>
@@ -132,6 +132,13 @@
           <button class="nav-link" id="compare-tab"
                   type="button" role="tab" @click="onCompareClick">
             Compare
+          </button>
+        </li>
+        <li class="nav-item ms-auto">
+          <button class="goto-findings-btn"
+                  :disabled="!inquiryExperimentHistory.length"
+                  @click="goToFindings">
+            Go to Findings <i class="bi bi-arrow-right-circle"></i>
           </button>
         </li>
       </ul>
@@ -366,11 +373,14 @@ export default {
     currentQuestion() {
       return this.$store.getters.getCurrentQuestion;
     },
+    completedQuestions() {
+      return this.$store.getters.getCompletedQuestions;
+    },
     testsByHypothesis() {
       return this.$store.getters.getTestsByHypothesis;
     },
     unlockedQuestions() {
-      return this.questions.filter((q) => q.id <= this.currentQuestion);
+      return this.questions.filter((q) => this.completedQuestions.includes(q.id) || q.id === this.currentQuestion);
     },
     totalChecked() {
       return Object.values(this.hypothesisChecked).flat().filter((v) => v).length;
@@ -396,9 +406,10 @@ export default {
     hypothesisClaims() {
       const claims = {};
       this.questions.forEach((q) => {
-        if (q.id > this.currentQuestion) return;
+        if (!this.completedQuestions.includes(q.id) && q.id !== this.currentQuestion) return;
         const h = this.hypotheses[q.id];
-        const effects = h.effect.length ? h.effect.join(" or ").toLowerCase() : "…";
+        if (!h.effect.length || !h.reason.length) return;
+        const effects = h.effect.join(" or ").toLowerCase();
         claims[q.key] = `${q.condition}, runoff will ${effects}`;
       });
       return claims;
@@ -428,6 +439,9 @@ export default {
     },
   },
   methods: {
+    goToFindings() {
+      document.getElementById("findings-tab")?.click();
+    },
     interpolateRows(rows, timeKey, rainfallKey, absorptionKey, runoffKey) {
       const points = [{ t: 0, r: 0, a: 0, ru: 0 }];
       rows.forEach((row) => {
@@ -1089,6 +1103,33 @@ export default {
 .tabs-frozen {
   opacity: 0.45;
   pointer-events: none;
+}
+
+.goto-findings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #615195;
+  color: #fff;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.goto-findings-btn:hover:not(:disabled) {
+  background-color: #4e4077;
+}
+
+.goto-findings-btn:disabled {
+  background-color: #c8c8d4;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .compare-modal-dialog {

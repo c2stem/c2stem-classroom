@@ -141,12 +141,16 @@ export default {
     currentQuestion() {
       return this.$store.getters.getCurrentQuestion;
     },
+    completedQuestions() {
+      return this.$store.getters.getCompletedQuestions;
+    },
     hypothesisClaims() {
       const claims = {};
       this.questions.forEach((q) => {
-        if (q.id > this.currentQuestion) return;
+        if (!this.completedQuestions.includes(q.id) && q.id !== this.currentQuestion) return;
         const h = this.hypotheses[q.id];
-        const effects = h.effect.length ? h.effect.join(" or ").toLowerCase() : "…";
+        if (!h.effect.length || !h.reason.length) return;
+        const effects = h.effect.join(" or ").toLowerCase();
         claims[q.key] = `${q.condition}, runoff will ${effects}`;
       });
       return claims;

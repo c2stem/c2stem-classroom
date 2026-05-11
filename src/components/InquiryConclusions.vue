@@ -107,6 +107,9 @@
         <p v-if="activeId !== currentQuestion && !isCompleted(activeId)" class="locked-note">
           Complete question {{ currentQuestion }} first before saving this one.
         </p>
+        <button v-if="isCompleted(activeId)" class="goto-hyp-btn" @click="goToHypothesis">
+          <i class="bi bi-arrow-left-circle"></i> Go to Hypothesis
+        </button>
       </div>
 
     </div>
@@ -148,7 +151,16 @@ export default {
     const keyMap = { 1: "rainfallRate", 2: "surfaceMaterial", 3: "rainfallDuration" };
     const saved = this.$store.getters.getConclusions;
     Object.entries(keyMap).forEach(([id, key]) => {
-      if (saved[key]?.reasoning) this.reasoning[Number(id)] = saved[key].reasoning;
+      const numId = Number(id);
+      if (saved[key]?.reasoning) this.reasoning[numId] = saved[key].reasoning;
+      // Mark claim as already answered if question is completed OR if the student saved reasoning/evidence.
+      // claim alone is unreliable — saveResults always writes all 3 keys even for incomplete questions.
+      if (this.isCompleted(numId) || saved[key]?.reasoning || saved[key]?.evidence) {
+        this.claimAnswer = { ...this.claimAnswer, [numId]: "saved" };
+        if (saved[key]?.updatedClaim && saved[key]?.claim) {
+          this.editedClaim = { ...this.editedClaim, [numId]: saved[key].claim };
+        }
+      }
     });
     this._prevHypotheses = JSON.stringify(this.$store.getters.getHypotheses);
   },
@@ -168,6 +180,7 @@ export default {
             this.$store.dispatch("resetQuestion", id);
             this.claimAnswer = { ...this.claimAnswer, [id]: null };
             this.editedClaim = { ...this.editedClaim, [id]: "" };
+            this.activeId = id;
           }
         });
         this._prevHypotheses = JSON.stringify(newVal);
@@ -224,6 +237,9 @@ export default {
     goToHypotheses() {
       document.getElementById("hypotheses-tab")?.click();
     },
+    goToHypothesis() {
+      document.getElementById("hypotheses-tab")?.click();
+    },
     answerClaim(answer) {
       const keyMap = { 1: "rainfallRate", 2: "surfaceMaterial", 3: "rainfallDuration" };
       const key = keyMap[this.activeId];
@@ -262,14 +278,21 @@ export default {
       this.$store.dispatch("completeQuestion", this.activeId);
       this.claimAnswer = { ...this.claimAnswer, [this.activeId]: "saved" };
       const activeKey = keyMap[this.activeId];
+      const activeH = this.hypotheses[this.activeId];
+      const activeQ = this.activeQuestion;
+      const activeEffects = activeH.effect.length ? activeH.effect.join(" or ") : "…";
+      const activeReasons = activeH.reason.length ? activeH.reason.join(" or ") : "…";
+      const originalClaim = `${activeQ.condition}, ${activeEffects} because ${activeReasons}`;
+      const claimWasEdited = snapshot[activeKey].updatedClaim;
       Logger.logUserActions({
         actionType: "inquiryConclusions",
         actionView: "InquiryConclusions",
         args: {
           questionId: this.activeId,
           hypothesis: activeKey,
-          claim: snapshot[activeKey].claim,
-          updatedClaim: snapshot[activeKey].updatedClaim,
+          ...(claimWasEdited
+            ? { originalClaim, updatedClaim: snapshot[activeKey].claim }
+            : { claim: originalClaim }),
           evidence: snapshot[activeKey].evidence,
           reasoning: snapshot[activeKey].reasoning,
         },
@@ -491,6 +514,28 @@ p {
 .save-row {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
   margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.goto-hyp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #615195;
+  color: #fff;
+  transition: background-color 0.15s ease;
+}
+
+.goto-hyp-btn:hover {
+  background-color: #4e4077;
 }
 </style>
