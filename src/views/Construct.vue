@@ -240,7 +240,7 @@ export default {
       data.addColumn("number", "Rainfall (in)");
       data.addColumn("number", "Absorption (in)");
       data.addColumn("number", "Runoff (in)");
-      data.addRow([0, 0, 0, 0]);
+      // data.addRow([0, 0, 0, 0]);
       rows.forEach((row) => {
         data.addRow([
           Number(row[timeKey]),
@@ -261,11 +261,14 @@ export default {
           2: { color: "#dc3545" },
         },
         legend: { position: "top" },
+        bars: "vertical",
+        bar : { groupWidth: "70%,"},
         chartArea: { left: 70, top: 45, width: "75%", height: "65%" },
         width: w,
         height: 320,
       };
-      new window.google.visualization.LineChart(el).draw(data, options);
+      // new window.google.visualization.LineChart(el).draw(data, options);
+      new window.google.visualization.ColumnChart(el).draw(data, options);
     },
   },
   mounted() {
