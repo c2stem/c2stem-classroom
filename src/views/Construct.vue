@@ -56,7 +56,7 @@
       @mousedown="focusPanel('table')"
     >
       <div class="float-panel-header" @mousedown="startDrag($event, 'table')">
-        <span class="float-panel-title">Hourly Test History</span>
+        <span class="float-panel-title">Current Test</span>
         <button class="float-close-btn" @click.stop="closePanel('table')">&times;</button>
       </div>
       <div class="float-panel-body">
@@ -93,7 +93,7 @@
       @mousedown="focusPanel('chart')"
     >
       <div class="float-panel-header" @mousedown="startDrag($event, 'chart')">
-        <span class="float-panel-title">Hourly Test Chart</span>
+        <span class="float-panel-title">Current Test Chart</span>
         <button class="float-close-btn" @click.stop="closePanel('chart')">&times;</button>
       </div>
       <div class="float-panel-body float-chart-body" id="construct-float-chart"></div>
@@ -237,16 +237,24 @@ export default {
       const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
       const data = new window.google.visualization.DataTable();
       data.addColumn("number", "Time (hours)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Rainfall (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Absorption (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
       data.addColumn("number", "Runoff (in)");
-      // data.addRow([0, 0, 0, 0]);
+      data.addColumn({ type: "string", role: "tooltip" });
+      data.addRow([0, null, 0, null, 0, null, 0, null]);
       rows.forEach((row) => {
+        const t = Number(row[timeKey]);
+        const r = Number(row[rainfallKey]);
+        const a = Number(row[absorptionKey]);
+        const ru = Number(row[runoffKey]);
         data.addRow([
-          Number(row[timeKey]),
-          Number(row[rainfallKey]),
-          Number(row[absorptionKey]),
-          Number(row[runoffKey]),
+          t, null,
+          r, `Time (hours): ${t} | Total Rainfall (in): ${r}`,
+          a, `Time (hours): ${t} | Total Absorption (in): ${a}`,
+          ru, `Time (hours): ${t} | Total Runoff (in): ${ru}`,
         ]);
       });
       const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
