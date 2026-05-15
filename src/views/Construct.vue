@@ -355,6 +355,7 @@ strong {
   gap: 10px;
   z-index: 1050;
   justify-content: flex-end;
+  pointer-events: none;
 }
 
 .fab-btn {
@@ -371,6 +372,7 @@ strong {
   cursor: pointer;
   box-shadow: 0 0 8px 2px rgba(180, 150, 255, 0.8), 0 4px 14px rgba(0, 0, 0, 0.35);
   transition: background 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
 }
 
 .fab-btn:hover {
