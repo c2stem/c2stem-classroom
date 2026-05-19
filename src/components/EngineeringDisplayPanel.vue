@@ -13,9 +13,22 @@
         role="tab"
         aria-controls="instructions"
         aria-selected="false"
-        @click="logAction('viewInstructions')"
+        @click="logAction('viewInstructions'); stopCtPolling(); emitter.emit('display-tab-change', 'instructions')"
       >
         Instructions
+      </button>
+    </li>
+    <li class="nav-item me-3" role="presentation">
+      <button
+        class="nav-link bg-info bg-gradient"
+        id="eng-current-test-tab"
+        data-bs-toggle="pill"
+        data-bs-target="#eng-current-test"
+        type="button"
+        role="tab"
+        @click="onCurrentTestTabClick"
+      >
+        Current Test
       </button>
     </li>
     <li class="nav-item me-3" role="presentation">
@@ -28,7 +41,7 @@
         role="tab"
         aria-controls="test-history"
         aria-selected="false"
-        @click="generateTable"
+        @click="generateTable(); stopCtPolling(); emitter.emit('display-tab-change', 'history')"
       >
         Design History
       </button>
@@ -79,6 +92,39 @@
     >
       <instructions routeName="Engineering" />
     </div>
+    <div class="tab-pane fade" id="eng-current-test" role="tabpanel" tabindex="0">
+      <div v-if="Object.keys(hourlyTableContent).length" class="current-test-layout">
+        <div class="ct-card" :class="ctTableExpanded ? 'ct-expanded' : ctChartExpanded ? 'ct-collapsed' : 'ct-half'">
+          <div class="ct-card-header">
+            <span class="ct-card-title">Hourly Data</span>
+            <div class="ct-card-actions">
+              <button class="ct-action-btn" @click="toggleCtTableExpand" :title="ctTableExpanded ? 'Restore' : 'Expand'">
+                <i :class="ctTableExpanded ? 'bi bi-arrows-angle-contract' : 'bi bi-arrows-angle-expand'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ct-card-body">
+            <div class="hourly-table-wrap">
+              <design-table :header="hourlyHeader" :contents="hourlyTableContent" :local-only="true"></design-table>
+            </div>
+          </div>
+        </div>
+        <div class="ct-card" :class="ctChartExpanded ? 'ct-expanded' : ctTableExpanded ? 'ct-collapsed' : 'ct-half'">
+          <div class="ct-card-header">
+            <span class="ct-card-title">Runoff Chart</span>
+            <div class="ct-card-actions">
+              <button class="ct-action-btn" @click="toggleCtChartExpand" :title="ctChartExpanded ? 'Restore' : 'Expand'">
+                <i :class="ctChartExpanded ? 'bi bi-arrows-angle-contract' : 'bi bi-arrows-angle-expand'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ct-card-body">
+            <div id="eng-ct-chart" class="hourly-chart"></div>
+          </div>
+        </div>
+      </div>
+      <p v-else class="text-muted fst-italic p-2">Run a test design to see hourly results.</p>
+    </div>
   </div>
   <div
     class="modal fade"
@@ -109,7 +155,7 @@
           <compare
             v-else
             :header="compareHeader"
-            :contents="designHistory"
+            :contents="compareDesignHistory"
             :checked="getCheckedDesigns"
             :images="getSimulationImages"
           ></compare>
@@ -147,7 +193,7 @@ import DesignTable from "./DesignTable.vue";
 import Compare from "./Compare.vue";
 import Instructions from "./Instructions.vue";
 import Logger from "../services/Logger";
-import Simulation from "../services/Simulation";
+// import Simulation from "../services/Simulation";
 export default {
   name: "EngineeringDisplayPanel",
   components: {
@@ -173,7 +219,7 @@ export default {
         "artificial turf",
         "poured rubber",
         "compare",
-        "submit",
+        // "submit",
       ],
       compareHeader: [
         "Stage",
@@ -191,6 +237,11 @@ export default {
         "poured rubber",
       ],
       checkedDesignStatus: [],
+      hourlyTableContent: {},
+      hourlyHeader: ["Time (hours)", "Total Rainfall (in)", "Total Absorption (in)", "Total Runoff (in)"],
+      ctTableExpanded: false,
+      ctChartExpanded: false,
+      ctPollInterval: null,
     };
   },
   computed: {
@@ -211,6 +262,14 @@ export default {
         }
       }
       return designHistory;
+    },
+    compareDesignHistory() {
+      let dh = this.$store.getters.getDesignHistory;
+      if (Object.keys(dh).length === 0) return dh;
+      if (!visualize.isDesignFormatted(dh)) {
+        return visualize.changeDesignFormatFull(dh);
+      }
+      return dh;
     },
     /**
      * Get a list of checkbox status in the design history table from the store.
@@ -249,6 +308,13 @@ export default {
       return sessionStorage.getItem("projectName");
     },
   },
+  watch: {
+    hourlyTableContent(newVal) {
+      if (Object.keys(newVal).length) {
+        this.$nextTick(() => this.drawEngCtChart());
+      }
+    },
+  },
   methods: {
     /**
      * Generates a table by accessing design history content from c2stem environment.
@@ -257,6 +323,7 @@ export default {
      */
     async generateTable() {
       this.designHistory_content = await visualize.getData();
+      if (!this.designHistory_content) return;
       if (this.currentRouteName === "Playground") {
         const dhList = [];
         const checkList = [];
@@ -335,21 +402,91 @@ export default {
       });
     },
 
-    async addDSummary() {
-      let dhs = {};
-      let dh = await visualize.getData();
-      let dhIndex = Object.keys(dh).length;
-      dhs["designHistory"] = dh[dhIndex];
-      dhs["checkStatus"] = false;
-      dhs["favoriteStatus"] = false;
-      dhs["stageMaterials"] = await Simulation.getEngineeringStageMaterials();
-      this.$store.dispatch("addDesignHistorySummary", dhs);
+    async onCurrentTestTabClick() {
+      this.emitter.emit('display-tab-change', 'current-test');
+      const data = await visualize.getInquiryHourlyData();
+      if (data) this.hourlyTableContent = data;
+      this.$nextTick(() => this.drawEngCtChart());
+      this.startCtPolling();
     },
+    startCtPolling() {
+      if (this.ctPollInterval) return;
+      this.ctPollInterval = setInterval(async () => {
+        const data = await visualize.getInquiryHourlyData();
+        if (data) this.hourlyTableContent = data;
+      }, 3000);
+    },
+    stopCtPolling() {
+      clearInterval(this.ctPollInterval);
+      this.ctPollInterval = null;
+    },
+    drawEngCtChart() {
+      const el = document.getElementById("eng-ct-chart");
+      if (!el || !window.google?.visualization) return;
+      const rows = Object.values(this.hourlyTableContent);
+      if (!rows.length) return;
+      const keys = Object.keys(rows[0]);
+      const [timeKey, rainfallKey, absorptionKey, runoffKey] = keys;
+      const data = new window.google.visualization.DataTable();
+      data.addColumn("number", "Time (hours)");
+      data.addColumn("number", "Rainfall (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
+      data.addColumn("number", "Absorption (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
+      data.addColumn("number", "Runoff (in)");
+      data.addColumn({ type: "string", role: "tooltip" });
+      data.addRow([0, 0, null, 0, null, 0, null]);
+      rows.forEach((row) => {
+        const t = Number(row[timeKey]);
+        const r = Number(row[rainfallKey]);
+        const a = Number(row[absorptionKey]);
+        const ru = Number(row[runoffKey]);
+        data.addRow([
+          t,
+          r,  `Time (hours): ${t} | Total Rainfall (in): ${r}`,
+          a,  `Time (hours): ${t} | Total Absorption (in): ${a}`,
+          ru, `Time (hours): ${t} | Total Runoff (in): ${ru}`,
+        ]);
+      });
+      const maxTime = Math.max(...rows.map((r) => Number(r[timeKey])));
+      const hTicks = Array.from({ length: maxTime + 1 }, (_, i) => i);
+      const options = {
+        hAxis: { title: "Time (hours)", minValue: 0, ticks: hTicks, titleTextStyle: { italic: false } },
+        vAxis: { title: "Amount of Water (inches)", minValue: 0, titleTextStyle: { italic: false } },
+        series: {
+          0: { color: "#0d6efd" },
+          1: { color: "#198754" },
+          2: { color: "#dc3545" },
+        },
+        legend: { position: "top" },
+        chartArea: { width: "65%", height: "65%" },
+        width: "100%",
+        height: 260,
+      };
+      new window.google.visualization.LineChart(el).draw(data, options);
+    },
+    toggleCtTableExpand() {
+      this.ctTableExpanded = !this.ctTableExpanded;
+      if (this.ctTableExpanded) this.ctChartExpanded = false;
+      setTimeout(() => this.drawEngCtChart(), 250);
+    },
+    toggleCtChartExpand() {
+      this.ctChartExpanded = !this.ctChartExpanded;
+      if (this.ctChartExpanded) this.ctTableExpanded = false;
+      setTimeout(() => this.drawEngCtChart(), 250);
+    },
+    // async addDSummary() {
+    //   let dhs = {};
+    //   let dh = await visualize.getData();
+    //   let dhIndex = Object.keys(dh).length;
+    //   dhs["designHistory"] = dh[dhIndex];
+    //   dhs["checkStatus"] = false;
+    //   dhs["favoriteStatus"] = false;
+    //   dhs["stageMaterials"] = await Simulation.getEngineeringStageMaterials();
+    //   this.$store.dispatch("addDesignHistorySummary", dhs);
+    // },
   },
   mounted() {
-    /**
-     * Load google visualization library
-     */
     window.google.charts.load("current", {
       packages: ["table", "corechart", "line"],
     });
@@ -357,10 +494,11 @@ export default {
     this.emitter.on("update-data", async (evt) => {
       if (evt.status) {
         this.generateTable();
-        // await Simulation.saveToCloud(this.getProjectName);
-        // this.addDSummary();
       }
     });
+  },
+  beforeUnmount() {
+    this.stopCtPolling();
   },
 };
 </script>
@@ -372,5 +510,87 @@ div {
 }
 .modal-dialog {
   --bs-modal-width: 100%;
+}
+.current-test-layout {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  height: 300px;
+  border: none;
+}
+.ct-half     { flex: 1 1 50%; min-width: 0; transition: flex 0.2s ease; }
+.ct-expanded { flex: 1 1 100%; min-width: 0; transition: flex 0.2s ease; }
+.ct-collapsed{ flex: 0 0 0; overflow: hidden; min-width: 0; transition: flex 0.2s ease; }
+.ct-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.ct-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: #f0f4ff;
+  border-bottom: 1px solid #dee2e6;
+  flex-shrink: 0;
+  border: none;
+}
+.ct-card-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #0d6efd;
+  border: none;
+}
+.ct-card-actions {
+  display: flex;
+  gap: 4px;
+  border: none;
+}
+.ct-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0 2px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+.ct-action-btn:hover {
+  color: #0d6efd;
+}
+.ct-card-body {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: none;
+}
+.hourly-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: none;
+}
+.hourly-table-wrap :deep(table) {
+  font-size: 0.9rem;
+}
+.hourly-table-wrap :deep(th),
+.hourly-table-wrap :deep(td) {
+  padding: 0.3rem 0.4rem !important;
+  white-space: nowrap;
+}
+.hourly-chart {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border: none;
 }
 </style>

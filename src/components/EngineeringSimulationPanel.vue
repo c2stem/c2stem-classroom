@@ -29,6 +29,16 @@ export default {
   components: {
     SeeCode,
   },
+  props: {
+    rainfallRate: {
+      type: Number,
+      default: 0.1,
+    },
+    rainfallDuration: {
+      type: Number,
+      default: 1,
+    },
+  },
   data() {
     return {
       designHistory_content: [],
@@ -70,7 +80,7 @@ export default {
      * Run scripts when green flag is pressed.
      * Extract a stage image after finishing running the script.
      */
-    async runModel(event) {
+    async runModel() {
       await Logger.logUserActions({
         actionType: "runModel",
         actionView: this.currentRouteName,
@@ -79,7 +89,10 @@ export default {
           projectName: this.getProjectName,
         },
       });
-      simulation.runProject(event);
+      simulation.runProject({
+        "hourly rainfall": this.rainfallRate,
+        "rainfall duration": this.rainfallDuration,
+      });
       this.sleep(10000).then(() => {
         this.processDesignData();
       });

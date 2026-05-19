@@ -1,9 +1,9 @@
 <template>
   <!-- Engineering Design View -->
   <div class="container">
-    <div class="row">
-      <div class="col">
-        <engineering-simulation-panel />
+    <div class="ed-row">
+      <div class="sim-col" :class="{ 'sim-col-shrink': tableExpanded }">
+        <engineering-simulation-panel :rainfall-rate="rainfallRate" :rainfall-duration="rainfallDuration" />
         <div v-if="containsRouteParams" class="iframe-panel">
           <iframe-loader
             :source="source"
@@ -18,12 +18,39 @@
             source="https://editor.c2stem.org"
             iframeid="iframe-id"
             username="oele"
-            projectname="cmise-project-engineering-gamification"
+            projectname="spice-project-ED-gamification-DH"
             :embed="true"
           ></iframe-loader>
         </div>
+
+        <div class="sim-sliders">
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <label class="slider-label">Rainfall rate (inch/hour)</label>
+              <span class="slider-value-badge">{{ rainfallRate }} inch/hr</span>
+            </div>
+            <div class="slider-track">
+              <span class="slider-min">0.1</span>
+              <input type="range" class="form-range" v-model.number="rainfallRate"
+                     min="0.1" max="3.0" step="0.1" @change="onSliderChange" />
+              <span class="slider-max">3.0</span>
+            </div>
+          </div>
+          <div class="slider-row">
+            <div class="slider-label-row">
+              <label class="slider-label">Rainfall duration (hours)</label>
+              <span class="slider-value-badge">{{ rainfallDuration }} hr{{ rainfallDuration !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="slider-track">
+              <span class="slider-min">1</span>
+              <input type="range" class="form-range" v-model.number="rainfallDuration"
+                     min="1" max="12" step="1" @change="onSliderChange" />
+              <span class="slider-max">12</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col">
+      <div class="display-col" :class="{ 'display-col-expanded': tableExpanded }">
         <div class="right-panel mt-4">
           <engineering-display-panel />
         </div>
@@ -77,6 +104,7 @@
 import IframeLoader from "../components/IframeLoader.vue";
 import EngineeringDisplayPanel from "../components/EngineeringDisplayPanel.vue";
 import EngineeringSimulationPanel from "../components/EngineeringSimulationPanel.vue";
+import Simulation from "../services/Simulation";
 import { Modal } from "bootstrap";
 
 export default {
@@ -95,6 +123,9 @@ export default {
       loadStatus: false,
       background: "static",
       projectSaved: true,
+      rainfallRate: 0.1,
+      rainfallDuration: 1,
+      tableExpanded: false,
     };
   },
   computed: {
@@ -115,6 +146,10 @@ export default {
     },
     getUser() {
       return sessionStorage.getItem("user");
+    },
+    onSliderChange() {
+      Simulation.setVariable("rainfallRate", this.rainfallRate);
+      Simulation.setVariable("rainfallDuration", this.rainfallDuration);
     },
   },
   // beforeRouteLeave(to, from, next) {
@@ -141,6 +176,9 @@ export default {
         this.projectSaved = false;
       }
     });
+    this.emitter.on("display-tab-change", (tab) => {
+      this.tableExpanded = tab === "history";
+    });
     iframe.onload = () => {
       api.addEventListener("projectSaved", this.saveProject);
       api.addEventListener("action", (e) => {
@@ -159,6 +197,29 @@ export default {
   max-width: 100%;
   max-height: 80%;
   display: grid;
+}
+.ed-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  width: 100%;
+}
+.sim-col {
+  flex: 0 0 40%;
+  min-width: 0;
+  transition: flex-basis 0.25s ease;
+}
+.sim-col.sim-col-shrink {
+  flex: 0 0 auto;
+}
+.display-col {
+  flex: 0 0 60%;
+  min-width: 0;
+  overflow: auto;
+  transition: flex 0.25s ease;
+}
+.display-col.display-col-expanded {
+  flex: 1 1 auto;
 }
 div {
   min-height: 0;
@@ -202,5 +263,53 @@ div {
 strong {
   font-size: x-large;
   color: aliceblue;
+}
+.sim-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  margin: 4px 10px 0 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  height: auto;
+  resize: horizontal;
+  overflow: hidden;
+}
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.slider-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.slider-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.slider-min,
+.slider-max {
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+}
+.slider-value-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0d6efd;
+  background-color: #e7f0ff;
+  border: 1px solid #b6d0ff;
+  border-radius: 4px;
+  padding: 1px 7px;
+  white-space: nowrap;
 }
 </style>

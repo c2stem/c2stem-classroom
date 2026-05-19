@@ -22,8 +22,6 @@
         <tr
           v-for="(content, index) in contents"
           :key="index"
-          @mouseover="submitFinalDesign(index, $event)"
-          @mouseleave="submitFinalDesign(index, $event)"
         >
           <td v-if="favorite.length" class="table-warning">
             <button
@@ -52,6 +50,7 @@
               @change="check(index, $event)"
             />
           </td>
+          <!-- Submit design column (commented out)
           <td v-if="currentRouteName === 'Engineering'">
             <p
               v-if="index.includes(submitCheckedIndex)"
@@ -62,6 +61,7 @@
               <SubmitDesign :designIndex="index" />
             </p>
           </td>
+          -->
         </tr>
       </tbody>
     </table>
@@ -71,7 +71,7 @@
 <script>
 import { vModelCheckbox } from "vue";
 import Logger from "../services/Logger";
-import SubmitDesign from "./SubmitDesign.vue";
+// import SubmitDesign from "./SubmitDesign.vue";
 export default {
   /**
    * Design Table component
@@ -84,13 +84,13 @@ export default {
    */
   name: "Table",
   components: {
-    SubmitDesign,
+    // SubmitDesign,
   },
   emits: ["check-change"],
   data() {
     return {
       // submitCheckedList: [],
-      submitCheckedIndex: 0,
+      // submitCheckedIndex: 0,
       checkStatus: vModelCheckbox,
     };
   },
@@ -160,10 +160,10 @@ export default {
           index: i,
           status: e.target.checked,
         });
-        this.$store.dispatch("updateDHSummaryCheck", {
-          index: i,
-          status: e.target.checked,
-        });
+        // this.$store.dispatch("updateDHSummaryCheck", {
+        //   index: i,
+        //   status: e.target.checked,
+        // });
       }
     },
 
@@ -186,10 +186,10 @@ export default {
           index: i,
           status: status,
         });
-        this.$store.dispatch("updateDHSummaryFavorite", {
-          index: i,
-          status: status,
-        });
+        // this.$store.dispatch("updateDHSummaryFavorite", {
+        //   index: i,
+        //   status: status,
+        // });
       }
     },
 
@@ -208,13 +208,13 @@ export default {
       }
     },
 
-    submitFinalDesign(i, status) {
-      if (status.type === "mouseover") {
-        this.submitCheckedIndex = i;
-      } else {
-        this.submitCheckedIndex = 0;
-      }
-    },
+    // submitFinalDesign(i, status) {
+    //   if (status.type === "mouseover") {
+    //     this.submitCheckedIndex = i;
+    //   } else {
+    //     this.submitCheckedIndex = 0;
+    //   }
+    // },
   },
 };
 </script>
@@ -232,8 +232,7 @@ thead {
 .header {
   position: sticky;
   top: 0;
-  white-space: normal;
-  word-break: break-word;
+  white-space: nowrap;
 }
 th,
 td {

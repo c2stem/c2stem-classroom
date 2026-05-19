@@ -10,9 +10,13 @@ export default {
    * @returns a VariableFrame object from NetsBlox that contains global variables
    */
   async getGlobalVariables() {
-    const iframe = document.getElementById("iframe-id");
-    const api = new window.EmbeddedNetsBloxAPI(iframe);
-    return await api.getGlobalVariables();
+    try {
+      const iframe = document.getElementById("iframe-id");
+      const api = new window.EmbeddedNetsBloxAPI(iframe);
+      return await api.getGlobalVariables();
+    } catch (error) {
+      console.warn("getGlobalVariables failed:", error.message);
+    }
   },
   /**
    * Method to get the accurate keys of all the global variable names to retrieve respective values.
@@ -100,7 +104,9 @@ export default {
   async getInquiryHourlyData() {
     try {
       const gb = await this.getGlobalVariables();
+      if (!gb) return null;
       const varName = this.getGlobalVariableName(gb, "hourly test history");
+      if (!varName || !gb.vars[varName]) return null;
       const thContents = gb.vars[varName].value.contents;
       let obj = {};
       for (let i = 1; i < Object.keys(thContents).length; i++) {
@@ -114,7 +120,8 @@ export default {
       }
       return obj;
     } catch (error) {
-      alert(error.message);
+      console.warn("getInquiryHourlyData:", error.message);
+      return null;
     }
   },
   async getInquiryCompareData(testNumbers) {
@@ -382,15 +389,9 @@ export default {
           //   childObj[header[j + 2]] = childContent[j + 2];
           //   childObj[header[j]] = childContent[j];
         } else if (j === 4) {
-          if (header.includes("absorption limit")) {
-            let absorption = parseFloat(childContent[j + 8]).toFixed(4);
-            childObj["Absorption (inches)"] = String(absorption);
-            childObj[header[j]] = childContent[j];
-          } else {
-            childObj["Absorption (inches)"] = await this.getTotalAbsorption();
-            childObj[header[j]] = childContent[j];
-          }
-        } else if (j !== 0 && j !== 12 && j !== 5) {
+          childObj[header[j+9]] = childContent[j+9];
+          childObj[header[j]] = childContent[j];
+        } else if (j !== 0 && j !== 12 && j !== 13) {
           childObj[header[j]] = childContent[j];
         }
       }
@@ -529,8 +530,43 @@ export default {
    * Check if the format fits the 2025 SPICe requirement.
    * */
   isDesignFormatted(designHistory) {
-    const index = Object.keys(designHistory[0]).indexOf("rainfall");
-    return index === 2;
+    const indexRainfall = Object.keys(designHistory[0]).indexOf("rainfall");
+    const indexConcrete = Object.keys(designHistory[0]).indexOf("concrete");
+    return indexRainfall === 2 && indexConcrete === 5;
+  },
+
+  /**
+   * If the format does not fit the SPICe 2025 study requirement. Then change the format.
+   * Includes "accessible squares" for use in the compare modal.
+   * */
+  changeDesignFormatFull(designHistory) {
+    let header = [
+      "design/date",
+      "cost",
+      "rainfall",
+      "total absorption",
+      "runoff",
+      "accessible squares",
+      "concrete",
+      "permeable concrete",
+      "grass",
+      "wood chips",
+      "artificial turf",
+      "poured rubber",
+    ];
+    let obj = {};
+    for (let i = 0; i < Object.keys(designHistory).length; i++) {
+      let childObj = {};
+      for (let j = 0; j < header.length; j++) {
+        if (j === 0) {
+          childObj[header[j]] = designHistory[i][NaN];
+        } else {
+          childObj[header[j]] = designHistory[i][header[j]];
+        }
+      }
+      obj[i] = childObj;
+    }
+    return obj;
   },
 
   /**
@@ -541,7 +577,7 @@ export default {
       "design/date",
       "cost",
       "rainfall",
-      "absorption",
+      "total absorption",
       "runoff",
       "concrete",
       "permeable concrete",
@@ -557,9 +593,7 @@ export default {
       for (let j = 0; j < header.length; j++) {
         if (j === 0) {
           childObj[header[j]] = designHistory[i][NaN];
-        } else if (header[j].includes("absorption")) {
-          childObj[header[j]] = designHistory[i]["Absorption (inches)"];
-        } else {
+        } else if (!header[j].includes("accessible squares")) {
           childObj[header[j]] = designHistory[i][header[j]];
         }
       }
