@@ -4,6 +4,20 @@
  */
 import axios from "axios";
 
+/**
+ * NetsBlox URL-encodes each entry of the project list (encodeURI), so names
+ * with spaces arrive as e.g. "Chris%20Greene%20Lake%20Model". Decode them so
+ * they match the plain project names used in the views.
+ */
+function decodeProjectName(name) {
+  if (name === undefined) return name;
+  try {
+    return decodeURIComponent(name);
+  } catch (e) {
+    return name;
+  }
+}
+
 export default {
   runProject() {
     try {
@@ -50,7 +64,7 @@ export default {
         const pl = response.data.split(" ");
         pl.forEach((element) => {
           const project = element.split("&")[0];
-          const projectName = project.split("=")[1];
+          const projectName = decodeProjectName(project.split("=")[1]);
           projects.push(projectName);
         });
       } catch (error) {
@@ -87,7 +101,7 @@ export default {
         const pl = response.data.split(" ");
         pl.forEach((element) => {
           const project = element.split("&")[0];
-          const projectName = project.split("=")[1];
+          const projectName = decodeProjectName(project.split("=")[1]);
           projects.push(projectName);
         });
       } catch (error) {
