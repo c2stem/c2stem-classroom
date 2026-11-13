@@ -10,7 +10,7 @@
             projectname="cmise-project-engineering"
             username="oele"
             iframeid="iframe-id"
-            source="https://editor.c2-stem.org"
+            source="https://spiceeditor.c2-stem.org"
           ></IframeLoader>
         </div>
       </div>

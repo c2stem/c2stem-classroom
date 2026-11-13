@@ -49,7 +49,7 @@ export default {
     return {
       username: "",
       password: "",
-      ServerURL: "https://editor.c2-stem.org",
+      ServerURL: "https://spiceeditor.c2-stem.org",
       cardActive: false,
       alertMessage: "",
     };
