@@ -3,9 +3,9 @@
   <div class="container">
     <coding-panel lessonName="Construct"></coding-panel>
     <iframe-loader
-      source="https://editor.c2-stem.org"
+      source="https://spiceeditor.c2-stem.org"
       iframeid="iframe-id"
-      username="oele"
+      username="uva"
       projectname="Chris Greene Lake Model"
       :embed="false"
     ></iframe-loader>

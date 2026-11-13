@@ -15,9 +15,9 @@
         </div>
         <div v-else class="iframe-panel">
           <iframe-loader
-            source="https://editor.c2-stem.org"
+            source="https://spiceeditor.c2-stem.org"
             iframeid="iframe-id"
-            username="oele"
+            username="uva"
             projectname="UVA-ED-project"
             :embed="true"
           ></iframe-loader>
