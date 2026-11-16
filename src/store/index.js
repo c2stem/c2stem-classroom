@@ -1,13 +1,29 @@
 import { createStore } from "vuex";
 import userStateService from "@/services/UserState.js";
 
+/**
+ * Convert the server's stageLayouts list
+ * ([{ projectName, designKey, materials }]) into
+ * { [projectName]: { [designKey]: materials } }.
+ */
+function stageLayoutsByProject(list) {
+  const byProject = {};
+  (Array.isArray(list) ? list : []).forEach((entry) => {
+    if (!entry || !entry.projectName || !entry.designKey) return;
+    byProject[entry.projectName] = byProject[entry.projectName] || {};
+    byProject[entry.projectName][entry.designKey] = entry.materials || {};
+  });
+  return byProject;
+}
+
 const store = createStore({
   state: {
     designHistory: {},
     designHistoryLength: 0,
     checkedStatus: [],
-    simulationStageImages: [],
-    stageImagesLength: 0,
+    // { [projectName]: { [designKey]: { A: "grass", D: "concrete", ... } } }
+    // tile layout of each design, used to redraw its stage in Compare
+    stageLayouts: {},
     runSimulation: false,
     user: "",
     testHistory: {},
@@ -16,7 +32,6 @@ const store = createStore({
     playHistory: {},
     playCheckedStatus: [],
     playFavStatus: [],
-    simulationPlayStageImages: [],
     // submittedDesigns: [],
     // designHistorySummary feature disabled
     // designHistorySummary: {},
@@ -27,9 +42,12 @@ const store = createStore({
       const localStore = sessionStorage.getItem("store");
       if (localStore) {
         if (sessionStorage.getItem("user")) {
-          this.replaceState(
-            Object.assign(state, JSON.parse(sessionStorage.getItem("store")))
-          );
+          const saved = JSON.parse(localStore);
+          // drop screenshots stored by the old Compare implementation
+          delete saved.simulationStageImages;
+          delete saved.stageImagesLength;
+          delete saved.simulationPlayStageImages;
+          this.replaceState(Object.assign(state, saved));
         }
       }
     },
@@ -83,15 +101,14 @@ const store = createStore({
       state.checkedStatus[data.index] = data.status;
     },
     /**
-     * Add a new stage image to the simulationStageImages List
+     * Record the tile layout of one design.
      * @param {state} state Current state of the store.
-     * @param {Image} image stage image after running simulation.
+     * @param {Object} data { projectName, designKey, materials }.
      */
-    addStageImage(state, image) {
-      if (state.simulationStageImages.length >= 50) {
-        state.simulationStageImages.shift();
-      }
-      state.simulationStageImages.push(image);
+    setStageLayout(state, { projectName, designKey, materials }) {
+      const project = { ...(state.stageLayouts[projectName] || {}) };
+      project[designKey] = materials;
+      state.stageLayouts = { ...state.stageLayouts, [projectName]: project };
     },
     /**
      * Status of green flag.
@@ -133,6 +150,9 @@ const store = createStore({
         let newState = state;
         newState.checkedStatus = response[0].checkStatus;
         newState.favoriteStatus = response[0].favoriteStatus;
+        newState.stageLayouts = stageLayoutsByProject(
+          response[0].stageLayouts
+        );
         // designHistorySummary feature disabled
         // newState.designHistorySummary = response[0].designHistorySummary;
         // newState.designHistorySummaryLength = response[0].designHistorySummaryLength;
@@ -166,12 +186,6 @@ const store = createStore({
     },
     updatePlayFavs(state, data) {
       state.playFavStatus[data.index] = data.status;
-    },
-    addPlayStageImage(state, image) {
-      if (state.simulationPlayStageImages.length >= 50) {
-        state.simulationPlayStageImages.shift();
-      }
-      state.simulationPlayStageImages.push(image);
     },
     resetCheckedDesigns(state) {
       state.checkedStatus = [];
@@ -240,12 +254,12 @@ const store = createStore({
       return state.checkedStatus;
     },
     /**
-     * Get a list of all the stage images from each design run by user.
+     * Tile layouts of a project's designs, keyed by design key.
      * @param {state} state
-     * @returns simulationStageImages
+     * @returns function(projectName) -> { [designKey]: materials }
      */
-    getStageImages(state) {
-      return state.simulationStageImages;
+    getStageLayouts: (state) => (projectName) => {
+      return (state.stageLayouts && state.stageLayouts[projectName]) || {};
     },
     /**
      * Get boolean status of green flag.
@@ -297,8 +311,8 @@ const store = createStore({
     updateCheckedDesigns(context, data) {
       context.commit("updateCheckedDesigns", data);
     },
-    addStageImage(context, image) {
-      context.commit("addStageImage", image);
+    setStageLayout(context, data) {
+      context.commit("setStageLayout", data);
     },
     updateSimulationStatus(context, status) {
       context.commit("updateSimulationStatus", status);
@@ -332,9 +346,6 @@ const store = createStore({
     },
     updatePlayFavs(context, data) {
       context.commit("updatePlayFavs", data);
-    },
-    addPlayStageImage(context, image) {
-      context.commit("addPlayStageImage", image);
     },
     resetCheckedDesigns(context) {
       context.commit("resetCheckedDesigns");

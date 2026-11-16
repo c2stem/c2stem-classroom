@@ -131,7 +131,6 @@ export default {
   methods: {
     /**
      * Run scripts when green flag is pressed.
-     * Extract a stage image after finishing running the script.
      */
     async runModel(event) {
       await Logger.logUserActions({
@@ -143,8 +142,6 @@ export default {
         },
       });
       simulation.runProject(event);
-      let stageImg = await simulation.getImage();
-      this.$store.dispatch("addStageImage", stageImg);
       // this.$store.dispatch("updateSimulationStatus", true);
     },
     /**

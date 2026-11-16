@@ -1,0 +1,156 @@
+{
+  "source": "uva-ed.xml",
+  "stage": {
+    "width": 480,
+    "height": 360
+  },
+  "background": "background.png",
+  "tileMaterials": {
+    "artificial turf": "tiles/artificial-turf.png",
+    "clear": "tiles/clear.png",
+    "concrete": "tiles/concrete.png",
+    "grass": "tiles/grass.png",
+    "permeable concrete": "tiles/permeable-concrete.png",
+    "poured rubber": "tiles/poured-rubber.png",
+    "wood chips": "tiles/wood-chips.png",
+    "riparian buffer": "tiles/riparian-buffer.png"
+  },
+  "tileCenter": {
+    "cx": 60,
+    "cy": 31
+  },
+  "layers": [
+    {
+      "name": "reset",
+      "x": -197.04785125517174,
+      "y": 136.2009303835386,
+      "scale": 0.11,
+      "type": "static",
+      "image": "reset.png",
+      "cx": 128,
+      "cy": 128
+    },
+    {
+      "name": "A",
+      "x": -98.92562903294947,
+      "y": 81.46332354593213,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "D",
+      "x": -66.18203928936077,
+      "y": 97.43768252029118,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "E",
+      "x": -32.529087589896335,
+      "y": 115.58039768626226,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "F",
+      "x": -0.3394632607362382,
+      "y": 131.668650518701,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "G",
+      "x": -66.33767435197069,
+      "y": 65.6831605564671,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "I",
+      "x": -31.996787848290978,
+      "y": 80.69687552366997,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "J",
+      "x": -2.4360643340805836,
+      "y": 97.95328578008056,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "L",
+      "x": 33.93324594220462,
+      "y": 113.7771776504838,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "M",
+      "x": -33.395913270673645,
+      "y": 47.11567894247375,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "N",
+      "x": 0.4639555426849711,
+      "y": 64.76525159204647,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "O",
+      "x": 33.62972775496769,
+      "y": 81.73961056640522,
+      "scale": 0.55,
+      "type": "tile"
+    },
+    {
+      "name": "runoff gauge",
+      "x": 161.10245399513633,
+      "y": -60.66366058105211,
+      "scale": 0.4,
+      "type": "gauge",
+      "gauge": "runoff",
+      "prefix": "gauges/runoff-gauge-",
+      "cx": 80,
+      "cy": 80
+    },
+    {
+      "name": "absorption gauge",
+      "x": -20.31757042488789,
+      "y": -60.38283030022234,
+      "scale": 0.4,
+      "type": "gauge",
+      "gauge": "absorption",
+      "prefix": "gauges/absorption-gauge-",
+      "cx": 80,
+      "cy": 80
+    },
+    {
+      "name": "rain gauge",
+      "x": -127.86702097433772,
+      "y": -59.04339196078308,
+      "scale": 0.4,
+      "type": "gauge",
+      "gauge": "rain",
+      "prefix": "gauges/rain-gauge-",
+      "cx": 80,
+      "cy": 80
+    }
+  ],
+  "watchers": [
+    {
+      "var": "total cost",
+      "x": 282.6791587367161,
+      "y": 2.419756127105167
+    },
+    {
+      "var": "total pollution",
+      "x": 282.14975446428593,
+      "y": 24.77489873561605
+    }
+  ]
+}

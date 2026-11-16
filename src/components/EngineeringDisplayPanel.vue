@@ -104,14 +104,14 @@
             :header="compareHeader"
             :contents="playHistory"
             :checked="getPlayChecks"
-            :images="getPlayFavs"
+            :layouts="stageLayouts()"
           ></compare>
           <compare
             v-else
             :header="compareHeader"
             :contents="designHistory"
             :checked="getCheckedDesigns"
-            :images="getSimulationImages"
+            :layouts="stageLayouts()"
           ></compare>
         </div>
         <div class="modal-footer">
@@ -222,12 +222,6 @@ export default {
       return this.$store.getters.getCheckedDesigns;
     },
     /**
-     * Get a list of Stage images from the store.
-     */
-    getSimulationImages() {
-      return this.$store.getters.getStageImages;
-    },
-    /**
      * Get the status of green flag from store.
      */
     getRunStatus() {
@@ -253,6 +247,16 @@ export default {
     },
   },
   methods: {
+    /**
+     * Tile layouts of this project's designs (designKey -> materials),
+     * used by Compare to redraw each design's stage. A method, not a
+     * computed, because the project name lives in sessionStorage.
+     */
+    stageLayouts() {
+      return this.$store.getters.getStageLayouts(
+        sessionStorage.getItem("projectName")
+      );
+    },
     /**
      * Generates a table by accessing design history content from c2stem environment.
      * The method gets design history from c2stem and compares the results with the history in the store.

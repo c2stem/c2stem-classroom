@@ -15,6 +15,18 @@ export default {
     }
   },
 
+  /**
+   * Save one design's tile layout (used to redraw its stage in Compare).
+   * The server takes the username from the auth token.
+   */
+  async saveStageLayout(projectName, designKey, materials) {
+    return axiosInstance.post("state/setStageLayout", {
+      projectName,
+      designKey,
+      materials,
+    });
+  },
+
   async gerUserState(user) {
     let response = await axiosInstance.get("state/getState/" + user, {
       withCredentials: true,

@@ -29,29 +29,6 @@ export default {
     }
   },
 
-  async getImage() {
-    try {
-      const iframe = document.getElementById("iframe-id");
-      const api = new window.EmbeddedNetsBloxAPI(iframe);
-      const stage = await api.getStageImage();
-      const compressed = await new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = Math.floor(img.width * 0.5);
-          canvas.height = Math.floor(img.height * 0.5);
-          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL("image/jpeg", 0.6));
-        };
-        img.src = stage;
-      });
-      let image = new Image();
-      image.src = compressed;
-      return image;
-    } catch (error) {
-      alert(error.message);
-    }
-  },
   async getProjectList() {
     const projects = [];
     const user = sessionStorage.getItem("user");
@@ -216,13 +193,18 @@ export default {
     }
   },
 
+  /**
+   * Material on each schoolyard tile, e.g. { A: "grass", D: "concrete" }.
+   * Returns {} if the editor does not answer (no popup: called after runs).
+   */
   async getEngineeringStageMaterials() {
     try {
       const iframe = document.getElementById("iframe-id");
       const api = new window.EmbeddedNetsBloxAPI(iframe);
-      return await api.getEngineeringStageMaterials();
+      return (await api.getEngineeringStageMaterials()) || {};
     } catch (error) {
-      alert(error.message);
+      console.warn("Could not read stage materials:", error.message);
+      return {};
     }
   },
   /**
@@ -249,22 +231,6 @@ export default {
     } catch (error) {
       alert(error.message);
     }
-  },
-
-  /**
-   * Accesses the NetsBloxMorph of C2STEM and capture the Stage image.
-   * @returns current stage image
-   */
-  getImageOnDomain() {
-    const iframe = document.getElementById("iframe-id"),
-      world = iframe.contentWindow.world,
-      ide = world.children[0],
-      // stage = ide.children[4], // stage location for physdev
-      stage = ide.children[3],
-      imgCanvas = stage.fullImage();
-    let image = new Image();
-    image.src = imgCanvas.toDataURL();
-    return image;
   },
 
   // async saveHistory(checkList, user){

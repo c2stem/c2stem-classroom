@@ -15,20 +15,24 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(content, index) in filteredContent" :key="index">
-          <td>
+        <tr v-for="content in filteredContent" :key="designKey(content)">
+          <td class="stage-cell">
             <img
-              v-if="images[index]"
-              :src="images[index]"
+              v-if="renderedStages[designKey(content)]"
+              :src="renderedStages[designKey(content)]"
               class="img-fluid"
-              alt="..."
+              :alt="'Stage for design ' + designKey(content)"
             />
-            <img
-              v-else
-              src="../../public/stage.png"
-              class="img-fluid"
-              alt="..."
-            />
+            <template v-else>
+              <img
+                src="../../public/stage.png"
+                class="img-fluid placeholder-stage"
+                alt="Stage not available"
+              />
+              <small v-if="!layouts[designKey(content)]" class="text-muted">
+                Stage not recorded for this design
+              </small>
+            </template>
           </td>
           <td v-for="(items, i) in content" :key="i">
             <p>{{ items }}</p>
@@ -42,14 +46,18 @@
 <script>
 /**
  * Compare component.
- * Contains a table of the selected designs with stage images.
+ * Contains a table of the selected designs with their stages.
+ * Each stage is redrawn from the tile layout recorded when the design was
+ * run (see services/StageLayout.js and services/StageRender.js).
  * @example <compare >
         header=[designHistory Header names list]
         contents=[Design History contents List]
         checked=[checked list]
-        images=[Stage Images List]
+        layouts={ designKey: { A: "grass", ... } }
       </compare>
  */
+import StageRender from "../services/StageRender";
+
 export default {
   name: "Table",
   props: {
@@ -77,12 +85,18 @@ export default {
       required: true,
     },
     /**
-     * Array List of Stage images of all the designs.
+     * Tile layout of each design, keyed by design key
+     * (the "design/date" value of the design).
      */
-    images: {
-      type: Array,
-      required: true,
+    layouts: {
+      type: Object,
+      default: () => ({}),
     },
+  },
+  data() {
+    return {
+      renderedStages: {},
+    };
   },
   computed: {
     filteredContent() {
@@ -93,6 +107,42 @@ export default {
       return Object.fromEntries(filteredData);
     },
   },
+  watch: {
+    filteredContent: {
+      handler() {
+        this.renderStages();
+      },
+      immediate: true,
+    },
+    layouts: {
+      handler() {
+        this.renderStages();
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    designKey(design) {
+      return StageRender.designKey(design);
+    },
+    /**
+     * Draw the stage of every selected design that has a recorded layout.
+     */
+    renderStages() {
+      Object.values(this.filteredContent).forEach((design) => {
+        const key = this.designKey(design);
+        const materials = this.layouts[key];
+        if (!key || !materials) return;
+        StageRender.renderDesign(design, materials)
+          .then((url) => {
+            this.renderedStages = { ...this.renderedStages, [key]: url };
+          })
+          .catch((error) => {
+            console.warn("Could not render stage for", key, error);
+          });
+      });
+    },
+  },
 };
 </script>
 
@@ -100,5 +150,11 @@ export default {
 table {
   font-size: 0.9vw;
   font-weight: 700;
+}
+.stage-cell {
+  min-width: 240px;
+}
+.placeholder-stage {
+  opacity: 0.4;
 }
 </style>

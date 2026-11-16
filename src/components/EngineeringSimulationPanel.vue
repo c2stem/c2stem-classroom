@@ -23,6 +23,7 @@ import simulation from "../services/Simulation";
 import SeeCode from "./SeeCode.vue";
 import Visualize from "../services/Visualize";
 import Logger from "../services/Logger";
+import StageLayout from "../services/StageLayout";
 
 export default {
   name: "Simulation Panel",
@@ -55,20 +56,11 @@ export default {
         return true;
       });
     },
-    async processDesignData() {
-      // let response = this.getDesignData();
-      simulation.getImage().then((response) => {
-        if (this.currentRouteName === "Playground") {
-          this.$store.dispatch("addPlayStageImage", response.src);
-        } else {
-          this.$store.dispatch("addStageImage", response.src);
-        }
-        this.updateData();
-      });
-    },
     /**
-     * Run scripts when green flag is pressed.
-     * Extract a stage image after finishing running the script.
+     * Run scripts when "Test Design" is pressed.
+     * Waits for the run to add its row to the design history, records the
+     * tile layout for that design (used to redraw its stage in Compare),
+     * then refreshes the design table.
      */
     async runModel(event) {
       await Logger.logUserActions({
@@ -79,16 +71,16 @@ export default {
           projectName: this.getProjectName,
         },
       });
+      const rowsBefore = await StageLayout.getDesignRowCount();
       simulation.runProject(event);
-      this.sleep(10000).then(() => {
-        this.processDesignData();
-      });
+      const finished = await StageLayout.waitForNewDesign(rowsBefore);
+      if (finished) {
+        await StageLayout.captureLatest(this.$store, this.getProjectName);
+      }
+      this.updateData();
     },
     updateData() {
       this.emitter.emit("update-data", { status: true });
-    },
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
     },
   },
 };
