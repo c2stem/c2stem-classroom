@@ -86,6 +86,8 @@ export default {
         "Absorption limit (inches)",
         "Absorption (inches)",
         "Runoff (inches)",
+        "Pollution Rate",
+        "Total Pollution",
       ],
       activeTableContent: this.testHistory,
     };

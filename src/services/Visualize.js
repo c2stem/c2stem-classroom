@@ -282,25 +282,38 @@ export default {
    * @returns An Object representation of the test contents.
    */
   async getTestObject(content) {
-    let obj = {};
-    let header = content[0].contents;
-    for (let i = 1; i < Object.keys(content).length; i++) {
-      let childObj = {};
-      let childContent = content[i].contents;
-      for (let j = 0; j < childContent.length; j++) {
-        if (j === 1) {
-          const updatedContent = this.formatDate(childContent[j]);
-          childObj[header[j]] = updatedContent;
-          // } else if ([4, 5, 6].indexOf(j) > -1) {
-          //   childObj[header[j]] = childContent[j];
-          // }
-        } else if (j === 4) {
-          childObj[header[7]] = childContent[7];
-          childObj[header[j]] = childContent[j];
-        } else if (j !== 6 && j !== 7) {
-          childObj[header[j]] = childContent[j];
-        }
-      }
+    const obj = {};
+    const header = content[0].contents;
+    const names = header.map((h) => String(h).toLowerCase());
+    // Columns are looked up by name so that adding columns to the project
+    // (e.g. pollution rate) does not shift the table. The number is the
+    // legacy position used when the name is not found (-1 = no fallback).
+    const find = (match, legacyIndex) => {
+      const idx = names.findIndex(match);
+      return idx !== -1 ? idx : legacyIndex;
+    };
+    const isRate = (h) => h.includes("pollution") && h.includes("rate");
+    const columns = [
+      find((h) => h.includes("test"), 0),
+      find((h) => h.includes("date"), 1),
+      find((h) => h.includes("rainfall"), 2),
+      find((h) => h.includes("material") || h.includes("surface"), 3),
+      find((h) => h.includes("absorption") && h.includes("limit"), 7),
+      find((h) => h.includes("absorption") && !h.includes("limit"), 4),
+      find((h) => h.includes("runoff"), 5),
+      find(isRate, -1),
+      find((h) => h.includes("pollution") && !isRate(h), 8),
+    ];
+    const dateIndex = columns[1];
+
+    for (let i = 1; i < content.length; i++) {
+      const childObj = {};
+      const childContent = content[i].contents;
+      columns.forEach((j) => {
+        if (j < 0 || j >= childContent.length) return;
+        childObj[header[j]] =
+          j === dateIndex ? this.formatDate(childContent[j]) : childContent[j];
+      });
       obj[i] = childObj;
     }
     return obj;

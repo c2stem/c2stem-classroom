@@ -17,10 +17,15 @@
     aria-labelledby="seeCodeLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
-          <img src="../assets/UVA-code.png" class="img-fluid" alt="..." />
+          <img
+            src="../assets/UVA-code.png"
+            class="code-img"
+            alt="Code snippet"
+            data-bs-dismiss="modal"
+          />
         </div>
       </div>
     </div>
@@ -54,7 +59,24 @@ export default {
   border: 0;
 }
 .modal-dialog {
-  top: 10%;
-  left: 30%;
+  max-width: 80vw;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+.code-img {
+  display: block;
+  max-width: 80vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 </style>
